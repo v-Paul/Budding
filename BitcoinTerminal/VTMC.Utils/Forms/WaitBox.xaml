@@ -1,0 +1,38 @@
+﻿<Window x:Class="VTMC.Utils.WaitBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VTMC.Utils"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Loaded="Window_Loaded"
+        WindowState="Maximized"
+        Background="#50000000"
+        Topmost="True"
+        Title="MainWindow">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="1">
+        <!--<Grid Height="100" Background="Black" Opacity="0.5"/>-->
+        <Grid Height="80">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="11"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="11"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="11"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="11"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="11"/>
+                <ColumnDefinition Width="4"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Name="pan1A" Grid.Column="1" Background="#FF991B20" Width="11" Height="40" HorizontalAlignment="Center"></StackPanel>
+            <StackPanel Name="pan2A" Grid.Column="3" Background="#FF991B20" Width="11" Height="40" HorizontalAlignment="Center"></StackPanel>
+            <StackPanel Name="pan3A" Grid.Column="5" Background="#FF991B20" Width="11" Height="40" HorizontalAlignment="Center"></StackPanel>
+            <StackPanel Name="pan4A" Grid.Column="7" Background="#FF991B20" Width="11" Height="40" HorizontalAlignment="Center"></StackPanel>
+            <StackPanel Name="pan5A" Grid.Column="9" Background="#FF991B20" Width="11" Height="40" HorizontalAlignment="Center"></StackPanel>
+        </Grid>
+    </Grid>
+</Window>

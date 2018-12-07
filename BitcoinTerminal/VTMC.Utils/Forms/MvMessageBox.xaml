@@ -1,0 +1,123 @@
+﻿<Window x:Class="VTMC.Utils.MvMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VTMC.Utils"
+        mc:Ignorable="d"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True" Background="Transparent"
+        Topmost="True"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
+        FontFamily="Microsoft YaHei"
+        Title="MvMessageBox" Height="300" Width="800">
+    <Window.Resources>
+        <Style x:Key="TimeOut" TargetType="{x:Type Button}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="MinHeight" Value="23"/>
+            <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="2" BorderThickness="1" Background="White" BorderBrush="LightGray">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#EDEDED" />
+                            </Trigger>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#FFFBB03B" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#FFFBB03B" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#FFFBB09B" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#FFFBB03B" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Border" Property="Background" Value="#EEEEEE" />
+                                <Setter TargetName="Border"  Property="BorderBrush" Value="#EEEEEE" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CancelStyle" TargetType="{x:Type Button}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="MinHeight" Value="23"/>
+            <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" BorderThickness="2" Background="White" BorderBrush="#959595">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"  RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#959595" />
+                            </Trigger>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#959595" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="White" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#959595" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="false">
+                                <Setter TargetName="Border" Property="Background" Value="White" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#959595" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Border" Property="Background" Value="White" />
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderThickness="0" BorderBrush="Black" Background="White">
+        <Grid Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="103"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Image x:Name="msgIcon" Width="50" Height="50" Source="pack://siteoforigin:,,,/Resources/msgWarning.png"/>
+                <Label  x:Name="lblCaption"  Content="Attention" Grid.Row="1" Foreground="#F7931E" FontWeight="Bold" FontSize="20"/>
+            </Grid>
+
+            <TextBlock  Grid.Row="0" x:Name="lblMessage" Text="Message Zone." MaxWidth="895" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" Margin="39,38,0,-200"/>
+            <Grid Grid.Row="2" x:Name="grdBtn" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                    <Button x:Name="btnCancel" Style="{StaticResource ResourceKey=CancelStyle}" Content="Cancel" Height="40" Width="130"  FontSize="18" Click="btnCancel_Click" Cursor="Hand" FontFamily="Microsoft YaHei"/>
+                    <Button x:Name="btnCancelOK" Content="OK" Height="40" Width="130" IsDefault="True" FontSize="18" Click="btnCancelOK_Click" Margin="20,0,35,0" Cursor="Hand" FontFamily="Microsoft YaHei"/>
+                </StackPanel>
+            </Grid>
+            <Button x:Name="btnOK" Grid.Row="2" IsDefault="True" Content="OK" Height="40" Width="130" FontSize="18" Click="btnOK_Click" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="35,0" FontFamily="Microsoft YaHei" />
+            <Label Visibility="Collapsed" Margin="20,0,0,0" x:Name="lblErrorCode" Content="Error Code:{0}" Grid.Row="3" Foreground="Black" FontWeight="Bold" VerticalAlignment="Center" FontSize="15" />
+        </Grid>
+    </Border>
+</Window>

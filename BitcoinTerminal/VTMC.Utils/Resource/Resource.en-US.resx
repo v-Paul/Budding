@@ -1,0 +1,1551 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>取消</comment>
+  </data>
+  <data name="Button_Close" xml:space="preserve">
+    <value>Close</value>
+    <comment>关闭</comment>
+  </data>
+  <data name="Button_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+    <comment>确认</comment>
+  </data>
+  <data name="Login_btn_Login" xml:space="preserve">
+    <value>Login</value>
+    <comment>登录</comment>
+  </data>
+  <data name="Login_btn_Quit" xml:space="preserve">
+    <value>Quit</value>
+    <comment>退出</comment>
+  </data>
+  <data name="Login_lbl_Password" xml:space="preserve">
+    <value>Password</value>
+    <comment>密码</comment>
+  </data>
+  <data name="Login_lbl_StaffID" xml:space="preserve">
+    <value>Account</value>
+    <comment>账号</comment>
+  </data>
+  <data name="E20206" xml:space="preserve">
+    <value>Failed to write Log.</value>
+    <comment>写日志失败。</comment>
+  </data>
+  <data name="E20207" xml:space="preserve">
+    <value>Failed to delete the file.</value>
+    <comment>删除文件失败。</comment>
+  </data>
+  <data name="E20208" xml:space="preserve">
+    <value>Failed to delete folder.</value>
+    <comment>删除文件夹失败。</comment>
+  </data>
+  <data name="E20210" xml:space="preserve">
+    <value>Failed to upload file.</value>
+    <comment>文件上传失败。</comment>
+  </data>
+  <data name="E20211" xml:space="preserve">
+    <value>Failed to obtain  device information</value>
+    <comment>获取设备信息失败</comment>
+  </data>
+  <data name="E20507" xml:space="preserve">
+    <value>Failed to open the carapace.</value>
+    <comment>断开背甲失败。</comment>
+  </data>
+  <data name="E20703" xml:space="preserve">
+    <value>The monitoring folder directory does not exist.</value>
+    <comment>监控文件夹目录不存在。</comment>
+  </data>
+  <data name="E21203" xml:space="preserve">
+    <value>Failed to get token.</value>
+    <comment>获取Token失败。</comment>
+  </data>
+  <data name="E21204" xml:space="preserve">
+    <value>Setting system language failed.</value>
+    <comment>设置系统语言失败。</comment>
+  </data>
+  <data name="E219301" xml:space="preserve">
+    <value>E219301 : {0}</value>
+    <comment>E219301 : {0}</comment>
+  </data>
+  <data name="E219302" xml:space="preserve">
+    <value>Failed to get server token, please contact administrator.</value>
+    <comment>获取服务器Token失败，请和管理员联系。</comment>
+  </data>
+  <data name="E219397" xml:space="preserve">
+    <value>Start application failed, please check the tablet network settings,  If it still doesn't work after retry, please contact the administrator. Error code: {0}</value>
+  </data>
+  <data name="E219398" xml:space="preserve">
+    <value>System configuration is not correct,\rconfig key:[{0}],\rdirectory:[{1}],is not exist.please contact the administrator.Error code:{2}</value>
+    <comment>系统配置不正确，\r配置项:[{0}]\r配置路径：[{1}]不存在，请联系管理员。Error code：E219398</comment>
+  </data>
+  <data name="E21999" xml:space="preserve">
+    <value>System issue, please restart your device. If it still doesn't work after retry, please contact administrator. Error code:{0}</value>
+    <comment>系统异常，请重启设备，重新尝试后如不能恢复请联系管理员。Error code：{0}</comment>
+  </data>
+  <data name="E221099" xml:space="preserve">
+    <value>VideoRecordTool communication error occurred.</value>
+    <comment>RecordTool通讯异常发生。</comment>
+  </data>
+  <data name="E221201" xml:space="preserve">
+    <value>Failed to open VideoRecordTool</value>
+    <comment>打开视频录制工具VideoRecordTool失败</comment>
+  </data>
+  <data name="E221202" xml:space="preserve">
+    <value>Failed to close VideoRecordTool</value>
+    <comment>关闭视频录制工具VideoRecordTool失败</comment>
+  </data>
+  <data name="E221203" xml:space="preserve">
+    <value>Failed to start record</value>
+    <comment>开始录制失败</comment>
+  </data>
+  <data name="E221204" xml:space="preserve">
+    <value>Multiple click start</value>
+    <comment>多次点击开始录制</comment>
+  </data>
+  <data name="E221205" xml:space="preserve">
+    <value>Failed to pause record</value>
+    <comment>暂停录制失败</comment>
+  </data>
+  <data name="E221206" xml:space="preserve">
+    <value>Failed to stop record</value>
+    <comment>停止录制失败</comment>
+  </data>
+  <data name="E221207" xml:space="preserve">
+    <value>Not match any condition,connot executive the command:{0}</value>
+    <comment>不满足命令{0}执行条件</comment>
+  </data>
+  <data name="E221208" xml:space="preserve">
+    <value>Failed to continue record</value>
+    <comment>恢复中状态异常</comment>
+  </data>
+  <data name="E221209" xml:space="preserve">
+    <value>Current status is recording, please stop before close!</value>
+    <comment>正在录制中，关闭前请先停止录制!</comment>
+  </data>
+  <data name="E221210" xml:space="preserve">
+    <value>Abnormal state during close the record tool</value>
+    <comment>关闭录制程序异常</comment>
+  </data>
+  <data name="E221211" xml:space="preserve">
+    <value>Not at recording state, cannot pause</value>
+    <comment>当前不在录制中Recording状态，不能调用暂停</comment>
+  </data>
+  <data name="E221212" xml:space="preserve">
+    <value>Not at pause state, cannot continue.</value>
+    <comment>当前不在暂停Pause状态，不能调用continue按钮</comment>
+  </data>
+  <data name="E221213" xml:space="preserve">
+    <value>VideoRecord  RecordingController failed to initialize.</value>
+    <comment>VideoRecord录屏控件初始化失败</comment>
+  </data>
+  <data name="E221214" xml:space="preserve">
+    <value>Happen exception during recording the camera</value>
+    <comment>录制摄像头过程中异常</comment>
+  </data>
+  <data name="E221215" xml:space="preserve">
+    <value>Happen exception during during recording sounds</value>
+    <comment>录制音频过程中异常</comment>
+  </data>
+  <data name="E221216" xml:space="preserve">
+    <value>Happen exception during during recording video</value>
+    <comment>录制视频过程中异</comment>
+  </data>
+  <data name="E221217" xml:space="preserve">
+    <value>Happen exception during during recording microphone</value>
+    <comment>录制麦克风过程中异常</comment>
+  </data>
+  <data name="E221218" xml:space="preserve">
+    <value>VideoRecordTool is in error state, can not do {0}, if you are recording, please try to stop before doing the closing action.</value>
+    <comment>录像工具处于错误状态，不能做{0}，如正在录制请尝试先做停止后做关闭动作</comment>
+  </data>
+  <data name="E221219" xml:space="preserve">
+    <value>The captured video image is abnormal</value>
+    <comment>采集到的视频图像异常</comment>
+  </data>
+  <data name="E221220" xml:space="preserve">
+    <value>The saved video duration is abnormal</value>
+    <comment>保存的视频时长异常</comment>
+  </data>
+  <data name="E221221" xml:space="preserve">
+    <value>The size of the saved video is abnormal</value>
+    <comment>保存的视频大小异常</comment>
+  </data>
+  <data name="E221222" xml:space="preserve">
+    <value>VideoRecordTool encountered an unhandled system exception</value>
+    <comment>VideoRecord遇到未处理系统的异常</comment>
+  </data>
+  <data name="E221223" xml:space="preserve">
+    <value>VideoRecordTool encountered the current program domain can not catch the exception.</value>
+    <comment>VideoRecord遇到当前程序域无法扑捉异常处理</comment>
+  </data>
+  <data name="E221303" xml:space="preserve">
+    <value>Failed to get current state.</value>
+    <comment>获取当前状态失败。</comment>
+  </data>
+  <data name="E22401" xml:space="preserve">
+    <value>Camera is occupied.</value>
+    <comment>摄像头被占用。</comment>
+  </data>
+  <data name="E22612" xml:space="preserve">
+    <value>PDF signature board failed to initialize.</value>
+    <comment>PDF签名板初始化失败。</comment>
+  </data>
+  <data name="E22613" xml:space="preserve">
+    <value>PDF signature board size change failed.</value>
+    <comment>PDF签名板大小变化失败。</comment>
+  </data>
+  <data name="E22701" xml:space="preserve">
+    <value>Start monitoring the file system failed.</value>
+    <comment>开始监控文件系统失败。</comment>
+  </data>
+  <data name="E22702" xml:space="preserve">
+    <value>Stop monitoring the file system failed.</value>
+    <comment>停止监控文件系统失败。</comment>
+  </data>
+  <data name="E22807" xml:space="preserve">
+    <value>An error occurred while changing the size of the signature board.</value>
+    <comment>签名板大小变化时出错。</comment>
+  </data>
+  <data name="E22808" xml:space="preserve">
+    <value>Signature board initialization failed.</value>
+    <comment>签名板初始化失败。</comment>
+  </data>
+  <data name="E22809" xml:space="preserve">
+    <value>Failed to close signature board</value>
+    <comment>关闭签名板失败。</comment>
+  </data>
+  <data name="E231001" xml:space="preserve">
+    <value>Failed to establish communication channel.</value>
+    <comment>建立通讯通道失败。</comment>
+  </data>
+  <data name="E231003" xml:space="preserve">
+    <value>Failed to send message.</value>
+    <comment>发送消息失败。</comment>
+  </data>
+  <data name="E231004" xml:space="preserve">
+    <value>VideoRecordTool process failed to start</value>
+    <comment>VideoRecordTool进程启动失败</comment>
+  </data>
+  <data name="E231005" xml:space="preserve">
+    <value>VideoRecordTool  process does not exist</value>
+    <comment>录屏进程不存在</comment>
+  </data>
+  <data name="E231006" xml:space="preserve">
+    <value>Not OpenRecord</value>
+    <comment>未OpenRecord</comment>
+  </data>
+  <data name="E231007" xml:space="preserve">
+    <value>Record is open</value>
+    <comment>Record已Open</comment>
+  </data>
+  <data name="E231008" xml:space="preserve">
+    <value>Stop saving the video</value>
+    <comment>未Stop保存视频</comment>
+  </data>
+  <data name="E231009" xml:space="preserve">
+    <value>Illegal operation, the current operation is not executable.</value>
+    <comment>非法操作，当前操作不可执行。</comment>
+  </data>
+  <data name="E23101" xml:space="preserve">
+    <value>Photo start failed.</value>
+    <comment>拍照启动失败。</comment>
+  </data>
+  <data name="E231010" xml:space="preserve">
+    <value>The current environment no temporary documents</value>
+    <comment>当前环境无临时文件</comment>
+  </data>
+  <data name="E231011" xml:space="preserve">
+    <value>video record is not started and cannot be stopped</value>
+    <comment>视频录制未开始，不可停止</comment>
+  </data>
+  <data name="E231012" xml:space="preserve">
+    <value>The video  json file does not exist</value>
+    <comment>视频json文件不存在</comment>
+  </data>
+  <data name="E231013" xml:space="preserve">
+    <value>There are more than one video json files</value>
+    <comment>视频json文件存在多个</comment>
+  </data>
+  <data name="E231014" xml:space="preserve">
+    <value>Failed to read video json file</value>
+    <comment>视频json文件读取失败</comment>
+  </data>
+  <data name="E23102" xml:space="preserve">
+    <value>No camera available.</value>
+    <comment>没有可用的摄像头。</comment>
+  </data>
+  <data name="E231020" xml:space="preserve">
+    <value>The OpenRecord interface failed unexpectedly</value>
+    <comment>OpenRecord接口异常失败</comment>
+  </data>
+  <data name="E231021" xml:space="preserve">
+    <value>StartRecord interface failed</value>
+    <comment>StartRecord接口异常失败</comment>
+  </data>
+  <data name="E231022" xml:space="preserve">
+    <value>PauseRecord interface failed</value>
+    <comment>PauseRecord接口异常失败</comment>
+  </data>
+  <data name="E231023" xml:space="preserve">
+    <value>ContinueRecord interface failed</value>
+    <comment>ContinueRecord接口异常失败</comment>
+  </data>
+  <data name="E231024" xml:space="preserve">
+    <value>StopRecord interface failed</value>
+    <comment>StopRecord接口异常失败</comment>
+  </data>
+  <data name="E231025" xml:space="preserve">
+    <value>The GetStatus interface failed</value>
+    <comment>GetStatus接口异常失败</comment>
+  </data>
+  <data name="E231026" xml:space="preserve">
+    <value>SendCommand interface failed</value>
+    <comment>SendCommand接口异常失败</comment>
+  </data>
+  <data name="E231027" xml:space="preserve">
+    <value>CloseRecord interface failed</value>
+    <comment>CloseRecord接口异常失败</comment>
+  </data>
+  <data name="E231028" xml:space="preserve">
+    <value>Clear temporary video files failed</value>
+    <comment>清除临时视频文件失败。</comment>
+  </data>
+  <data name="E231029" xml:space="preserve">
+    <value>AddVideoStatus interface has  an exception </value>
+    <comment>添加视频状态接口异常</comment>
+  </data>
+  <data name="E23103" xml:space="preserve">
+    <value>The specified camera name does not exist.</value>
+    <comment>指定摄像头名称不存在。</comment>
+  </data>
+  <data name="E23105" xml:space="preserve">
+    <value>Take Photo error occurred.</value>
+    <comment>拍照发生错误。</comment>
+  </data>
+  <data name="E23106" xml:space="preserve">
+    <value>Camera is occupied.</value>
+    <comment>摄像头被占用。</comment>
+  </data>
+  <data name="E23107" xml:space="preserve">
+    <value>Camera failure.</value>
+    <comment>摄像头故障。</comment>
+  </data>
+  <data name="E231101" xml:space="preserve">
+    <value>Failed to open the display video window.</value>
+    <comment>打开监视视频窗口失败。</comment>
+  </data>
+  <data name="E231102" xml:space="preserve">
+    <value>Closing the monitor window failed.</value>
+    <comment>关闭监视视频窗口失败。</comment>
+  </data>
+  <data name="E231103" xml:space="preserve">
+    <value>No monitor camera available.</value>
+    <comment>没有可用的监视摄像头。</comment>
+  </data>
+  <data name="E231104" xml:space="preserve">
+    <value>Specified monitor camera name does not exist.</value>
+    <comment>指定监视摄像头名称不存在。</comment>
+  </data>
+  <data name="E231105" xml:space="preserve">
+    <value>Designated monitor  camera is occupied.</value>
+    <comment>指定监视摄像头被占用。</comment>
+  </data>
+  <data name="E231106" xml:space="preserve">
+    <value>monitor camera status is not correct or camera is occupied.</value>
+    <comment>监视摄像头状态不正或被占用。</comment>
+  </data>
+  <data name="E231107" xml:space="preserve">
+    <value>Camera failure.</value>
+    <comment>摄像头故障。</comment>
+  </data>
+  <data name="E231301" xml:space="preserve">
+    <value>Failed to async upload file.</value>
+    <comment>开始异步上传文件失败。</comment>
+  </data>
+  <data name="E231302" xml:space="preserve">
+    <value>Failed to stop upload file.</value>
+    <comment>停止上传失败。</comment>
+  </data>
+  <data name="E231304" xml:space="preserve">
+    <value>Failed to connect to sftp server.</value>
+    <comment>连接SFTP服务器失败。</comment>
+  </data>
+  <data name="E231305" xml:space="preserve">
+    <value>The update upload video status Java interface is called to return to the execution failure.</value>
+    <comment>调用更新上传视频状态Java接口返回执行失败。</comment>
+  </data>
+  <data name="E231306" xml:space="preserve">
+    <value>The update uploaded video status Java interface cannot be connected or verified.</value>
+    <comment>调用更新上传视频状态Java接口无法连接或验证不通过。</comment>
+  </data>
+  <data name="E23201" xml:space="preserve">
+    <value>File upload failed.</value>
+    <comment>文件上传失败。</comment>
+  </data>
+  <data name="E23202" xml:space="preserve">
+    <value>File download failed.</value>
+    <comment>文件下载失败。</comment>
+  </data>
+  <data name="E23205" xml:space="preserve">
+    <value>Base64 file upload failed.</value>
+    <comment>Base64文件上传失败。</comment>
+  </data>
+  <data name="E23209" xml:space="preserve">
+    <value>File is too large.</value>
+    <comment>文件超大。</comment>
+  </data>
+  <data name="E233101" xml:space="preserve">
+    <value>Scanner issue. If the scanner can't be recovered after restarting the tablet , please contact the administrator. Error code: {0}</value>
+    <comment>身份证读卡器打开失败。</comment>
+  </data>
+  <data name="E233102" xml:space="preserve">
+    <value>Close ID card reader  failed.</value>
+    <comment>身份证读卡器关闭失败。</comment>
+  </data>
+  <data name="E233103" xml:space="preserve">
+    <value>Failed to get ID card reader status.</value>
+    <comment>获取身份证读卡器状态失败。</comment>
+  </data>
+  <data name="E233104" xml:space="preserve">
+    <value>Reset ID card reader failed.</value>
+    <comment>重置身份证读卡器失败。</comment>
+  </data>
+  <data name="E233105" xml:space="preserve">
+    <value>Asynchronously scan id failed.</value>
+    <comment>异步扫描身份证失败。</comment>
+  </data>
+  <data name="E233106" xml:space="preserve">
+    <value>Exit card failed.</value>
+    <comment>退卡失败。</comment>
+  </data>
+  <data name="E233107" xml:space="preserve">
+    <value>Cancel operation failed.</value>
+    <comment>取消操作失败。</comment>
+  </data>
+  <data name="E233120" xml:space="preserve">
+    <value>The card is jammed and requires operator intervention.</value>
+    <comment>卡被夹住需要操作人员干预。</comment>
+  </data>
+  <data name="E233121" xml:space="preserve">
+    <value>Due to operational errors or hardware failures, failure to open or close the gate ,requires operator intervention.</value>
+    <comment>由于操作失误或者硬件故障，而未能成功打开或关闭卡口，需要操作人员的干预。</comment>
+  </data>
+  <data name="E233122" xml:space="preserve">
+    <value>Invalid input track, resulting in failed read data.</value>
+    <comment>输入的磁道无效导致读取数据失败。</comment>
+  </data>
+  <data name="E233123" xml:space="preserve">
+    <value>The card is removed before completing.</value>
+    <comment>完成之前卡被移除。</comment>
+  </data>
+  <data name="E233124" xml:space="preserve">
+    <value>Did not find the track, insert/swipe  the card in wrong way.</value>
+    <comment>没有发现磁道，插卡或者刷卡的方式错误。</comment>
+  </data>
+  <data name="E233125" xml:space="preserve">
+    <value>Did not find the specified form.</value>
+    <comment>没有找到指定的表单。</comment>
+  </data>
+  <data name="E233126" xml:space="preserve">
+    <value>Safe Mode did not successfully read the card's mark.</value>
+    <comment>安全模式没有成功读取卡的标志。</comment>
+  </data>
+  <data name="E233127" xml:space="preserve">
+    <value>Inserted card is too short.</value>
+    <comment>插入的卡太短。</comment>
+  </data>
+  <data name="E233128" xml:space="preserve">
+    <value>The inserted card is too long.</value>
+    <comment>插入的卡太长。</comment>
+  </data>
+  <data name="E233129" xml:space="preserve">
+    <value>When exit the card, the card is swallowed.</value>
+    <comment>在退卡时候卡被吞。</comment>
+  </data>
+  <data name="E233140" xml:space="preserve">
+    <value>The request was canceled by WFSCancelBlockingCall.</value>
+    <comment>请求被WFSCancelBlockingCall取消。</comment>
+  </data>
+  <data name="E233141" xml:space="preserve">
+    <value>hardware error.</value>
+    <comment>硬件故障。</comment>
+  </data>
+  <data name="E233142" xml:space="preserve">
+    <value>ID card module  internal error.</value>
+    <comment>内部错误。</comment>
+  </data>
+  <data name="E233143" xml:space="preserve">
+    <value>This command is not supported.</value>
+    <comment>不支持此命令。</comment>
+  </data>
+  <data name="E233144" xml:space="preserve">
+    <value>ID card module  Command execution timed out.</value>
+    <comment>命令执行超时。</comment>
+  </data>
+  <data name="E233145" xml:space="preserve">
+    <value>ID card module has not open successfully</value>
+    <comment>身份证模块未OPEN成功</comment>
+  </data>
+  <data name="E233146" xml:space="preserve">
+    <value>SP connection lost.</value>
+    <comment>SP连接丢失。</comment>
+  </data>
+  <data name="E233147" xml:space="preserve">
+    <value>Incorrect logical name or SP service not found.</value>
+    <comment>逻辑名不正确或SP服务没有找到。</comment>
+  </data>
+  <data name="E233160" xml:space="preserve">
+    <value>ID card module is busy at this time can not run the Executive Order.</value>
+    <comment>身份证模块处于忙碌状态此时不能运行执行命令。</comment>
+  </data>
+  <data name="E233161" xml:space="preserve">
+    <value>ID card module is restarting, please try again later.</value>
+    <comment>身份证模块发生故障正在重启，请稍后再试。</comment>
+  </data>
+  <data name="E233199" xml:space="preserve">
+    <value>An unknown error occurred in the ID card reader.</value>
+    <comment>身份证读卡器发生未知错误。</comment>
+  </data>
+  <data name="E223201" xml:space="preserve">
+    <value>Failed Restore page zoom to 100%.</value>
+    <comment>恢复页面缩放到100%失败</comment>
+  </data>
+  <data name="E223301" xml:space="preserve">
+    <value>Failed  Serialize the given anonymous object to JSON.</value>
+    <comment>将对象序列化为JSON格式出异常</comment>
+  </data>
+  <data name="E223302" xml:space="preserve">
+    <value>Failed  Deserialize JSON to the given anonymous object.</value>
+    <comment>反序列化JSON到给定的匿名对象出异常</comment>
+  </data>
+  <data name="E223401" xml:space="preserve">
+    <value>Parameter is Null/Empty/WhiteSpace.</value>
+    <comment>传参为Null/空字符串/空格</comment>
+  </data>
+  <data name="E23401" xml:space="preserve">
+    <value>Face recognition ended unsuccessfully.</value>
+    <comment>人脸识别结束失败。</comment>
+  </data>
+  <data name="E23501" xml:space="preserve">
+    <value>Asynchronous access to ID card information failed.</value>
+    <comment>异步获取身份证信息失败。</comment>
+  </data>
+  <data name="E23502" xml:space="preserve">
+    <value>Failed to get device status.</value>
+    <comment>获取设备状态失败。</comment>
+  </data>
+  <data name="E23503" xml:space="preserve">
+    <value>Connection carapace failed.</value>
+    <comment>连接背甲失败。</comment>
+  </data>
+  <data name="E23504" xml:space="preserve">
+    <value>Failed to get device information.</value>
+    <comment>获取设备信息失败。</comment>
+  </data>
+  <data name="E23505" xml:space="preserve">
+    <value>ID photo storage path does not exist.</value>
+    <comment>二代证照片存储路径不存在。</comment>
+  </data>
+  <data name="E23506" xml:space="preserve">
+    <value>Carapace is not open.</value>
+    <comment>背甲未开启。</comment>
+  </data>
+  <data name="E23601" xml:space="preserve">
+    <value>PDF file download failed.</value>
+    <comment>PDF文件下载失败。</comment>
+  </data>
+  <data name="E23602" xml:space="preserve">
+    <value>PDF file does not exist.</value>
+    <comment>PDF文件不存在。</comment>
+  </data>
+  <data name="E23603" xml:space="preserve">
+    <value>Failed to convert PDF file to the picture.</value>
+    <comment>PDF文件转图片失败。</comment>
+  </data>
+  <data name="E23604" xml:space="preserve">
+    <value>PDF file signature failed to save.</value>
+    <comment>PDF文件签名保存失败。</comment>
+  </data>
+  <data name="E23605" xml:space="preserve">
+    <value>Customer signature information failed to save.</value>
+    <comment>客户签名信息保存失败。</comment>
+  </data>
+  <data name="E23606" xml:space="preserve">
+    <value>Signature Box open failed.</value>
+    <comment>签名板打开失败。</comment>
+  </data>
+  <data name="E23607" xml:space="preserve">
+    <value>PDF  zoom change failed.</value>
+    <comment>PDF显示缩放变化失败。</comment>
+  </data>
+  <data name="E23608" xml:space="preserve">
+    <value>Failed to switch PDF display content.</value>
+    <comment>PDF显示内容切换失败。</comment>
+  </data>
+  <data name="E23609" xml:space="preserve">
+    <value>Customer signature failed.</value>
+    <comment>客户签名失败。</comment>
+  </data>
+  <data name="E23610" xml:space="preserve">
+    <value>Customer signature submission failed.</value>
+    <comment>客户签名提交失败。</comment>
+  </data>
+  <data name="E23611" xml:space="preserve">
+    <value>PDF sliding failed.</value>
+    <comment>PDF滑动失败。</comment>
+  </data>
+  <data name="E23614" xml:space="preserve">
+    <value>PDF signature box Cancel failed.</value>
+    <comment>PDF签名板Cancel处理失败。</comment>
+  </data>
+  <data name="E23615" xml:space="preserve">
+    <value>PDF signature box Clear failed.</value>
+    <comment>PDF签名板Clear处理失败。</comment>
+  </data>
+  <data name="E23616" xml:space="preserve">
+    <value>PDF signature box Confirm failed.</value>
+    <comment>PDF签名板Confirm处理失败。</comment>
+  </data>
+  <data name="E23617" xml:space="preserve">
+    <value>PDF signature processing failed.</value>
+    <comment>PDF签名处理失败。</comment>
+  </data>
+  <data name="E23619" xml:space="preserve">
+    <value>Failed to display PDF timeout message window.</value>
+    <comment>显示PDF超时消息窗口失败。</comment>
+  </data>
+  <data name="E23620" xml:space="preserve">
+    <value>Failed to close PDF timeout message window.</value>
+    <comment>关闭PDF超时消息窗口失败。</comment>
+  </data>
+  <data name="E23621" xml:space="preserve">
+    <value>SMP PDF file not ready</value>
+    <comment>SMP PDF文件未准备好</comment>
+  </data>
+  <data name="E23622" xml:space="preserve">
+    <value>SMP PDF folder contains more than one pdf file </value>
+    <comment>SMP PDF 目录包含多个PDF文件</comment>
+  </data>
+  <data name="E23623" xml:space="preserve">
+    <value>SMP PDF indicator file has been generated, but there is none pdf file </value>
+    <comment>SMP PDF indicator file已存在，但无PDF文件</comment>
+  </data>
+  <data name="E23624" xml:space="preserve">
+    <value>Get PDF file fullpath face an exception</value>
+    <comment>获取SMP PDF 路径异常失败</comment>
+  </data>
+  <data name="E23625" xml:space="preserve">
+    <value>SMPPDFSignature interface face an exception</value>
+    <comment>SMPPDFSignature 接口异常失败</comment>
+  </data>
+  <data name="E23626" xml:space="preserve">
+    <value>SMP PDF file size is abnormal</value>
+  </data>
+  <data name="E23627" xml:space="preserve">
+    <value>Temporary working directory PDF file size is zero</value>
+  </data>
+  <data name="E23699" xml:space="preserve">
+    <value>PDF workflow termination failed.</value>
+    <comment>PDF业务终止失败。</comment>
+  </data>
+  <data name="E23802" xml:space="preserve">
+    <value>Failed to open signing board.</value>
+    <comment>打开签名板失败</comment>
+  </data>
+  <data name="E23803" xml:space="preserve">
+    <value>An error occurred in the signature.</value>
+    <comment>签名中出现错误。</comment>
+  </data>
+  <data name="E23804" xml:space="preserve">
+    <value>Sign board Clear processing failed.</value>
+    <comment>签名板Clear处理失败。</comment>
+  </data>
+  <data name="E23805" xml:space="preserve">
+    <value>Sign board Cancel processing failed.</value>
+    <comment>签名板Cancel处理失败。</comment>
+  </data>
+  <data name="E23806" xml:space="preserve">
+    <value>Failed to save signature information.</value>
+    <comment>保存签名信息失败。</comment>
+  </data>
+  <data name="E239201" xml:space="preserve">
+    <value>E239201：{0}</value>
+    <comment>E239201：{0}</comment>
+  </data>
+  <data name="E239202" xml:space="preserve">
+    <value>MVTM is already running and can not be opened again.</value>
+    <comment>MVTM已经运行，不能再次打开。</comment>
+  </data>
+  <data name="E239501" xml:space="preserve">
+    <value>Signature authorization failed.</value>
+    <comment>签名授权失败。</comment>
+  </data>
+  <data name="E241002" xml:space="preserve">
+    <value>Closing the communication channel failed.</value>
+    <comment>关闭通讯通道失败。</comment>
+  </data>
+  <data name="E24104" xml:space="preserve">
+    <value>Closing the camera failed.</value>
+    <comment>关闭摄像头失败。</comment>
+  </data>
+  <data name="E24618" xml:space="preserve">
+    <value>PDF processing exception.</value>
+    <comment>PDF处理异常。</comment>
+  </data>
+  <data name="E24801" xml:space="preserve">
+    <value>Failed to close signature window.</value>
+    <comment>关闭签名窗口失败。</comment>
+  </data>
+  <data name="E249101" xml:space="preserve">
+    <value>E249101：{0}</value>
+    <comment>E249101：{0}</comment>
+  </data>
+  <data name="E249102" xml:space="preserve">
+    <value>E249102：{0}Successed</value>
+    <comment>E249102：{0}成功。</comment>
+  </data>
+  <data name="E249103" xml:space="preserve">
+    <value>E249103：{0}Failed</value>
+    <comment>E249103：{0}失败。</comment>
+  </data>
+  <data name="E249401" xml:space="preserve">
+    <value>E249401：{0}</value>
+    <comment>E249401：{0}</comment>
+  </data>
+  <data name="FamilyName" xml:space="preserve">
+    <value>Univers</value>
+    <comment>汇丰字体</comment>
+  </data>
+  <data name="Label_Tips" xml:space="preserve">
+    <value>Photograph document on a light background and keep within red box.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>en</value>
+    <comment>zh</comment>
+  </data>
+  <data name="M_Button_Amend" xml:space="preserve">
+    <value>Amend</value>
+    <comment>修改</comment>
+  </data>
+  <data name="M_Button_BackHome" xml:space="preserve">
+    <value>BackHome</value>
+    <comment>返回首页</comment>
+  </data>
+  <data name="M_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>取消</comment>
+  </data>
+  <data name="M_Button_CancelOK" xml:space="preserve">
+    <value>OK</value>
+    <comment>确定</comment>
+  </data>
+  <data name="M_Button_Continue" xml:space="preserve">
+    <value>Continue</value>
+    <comment>继续</comment>
+  </data>
+  <data name="M_Button_No" xml:space="preserve">
+    <value>No</value>
+    <comment>否</comment>
+  </data>
+  <data name="M_Button_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>确定</comment>
+  </data>
+  <data name="M_Button_Retry" xml:space="preserve">
+    <value>Retry</value>
+    <comment>重试</comment>
+  </data>
+  <data name="M_Button_Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>是</comment>
+  </data>
+  <data name="M_Caption_Attention" xml:space="preserve">
+    <value>Attention</value>
+    <comment>注意</comment>
+  </data>
+  <data name="M_Caption_Error" xml:space="preserve">
+    <value>Error</value>
+    <comment>错误</comment>
+  </data>
+  <data name="M_Caption_Info" xml:space="preserve">
+    <value>Info</value>
+    <comment>信息</comment>
+  </data>
+  <data name="M_Caption_Question" xml:space="preserve">
+    <value>Questions</value>
+    <comment>提问</comment>
+  </data>
+  <data name="M_Label_Timeout" xml:space="preserve">
+    <value>Operation timed out</value>
+    <comment>操作超时</comment>
+  </data>
+  <data name="PDF_Button_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+    <comment>确认</comment>
+  </data>
+  <data name="PDF_Button_Redo" xml:space="preserve">
+    <value>Amend</value>
+    <comment>PDF重做</comment>
+  </data>
+  <data name="PDF_Read" xml:space="preserve">
+    <value>Slide down to Sign</value>
+    <comment>往下签名</comment>
+  </data>
+  <data name="PDF_Sign" xml:space="preserve">
+    <value>Sign and confirm</value>
+    <comment>请签名</comment>
+  </data>
+  <data name="Q249402" xml:space="preserve">
+    <value>The camera will be closed. Do you wish to redo the e-Form?</value>
+    <comment>录像设备将被关闭，您是否需要修改开户申请表格？</comment>
+  </data>
+  <data name="Sign_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>取消</comment>
+  </data>
+  <data name="Sign_Clear" xml:space="preserve">
+    <value>Clear</value>
+    <comment>清空</comment>
+  </data>
+  <data name="Sign_Click_Msg" xml:space="preserve">
+    <value>Tap here to sign</value>
+  </data>
+  <data name="Sign_Done" xml:space="preserve">
+    <value>Done</value>
+    <comment>完成</comment>
+  </data>
+  <data name="Sign_Icon" xml:space="preserve">
+    <value>./Resources/Sign_icon_E.png</value>
+  </data>
+  <data name="Sign_Title" xml:space="preserve">
+    <value>Please sign with stylus</value>
+    <comment>请使用签名笔</comment>
+  </data>
+  <data name="E233130" xml:space="preserve">
+    <value>Scanner connection fail. Please restart the scanner and connect to the Bluetooth device again. Error code: {0}</value>
+    <comment>身份证模块SP Open同步返回失败，请检测蓝牙连接或重启手持终端</comment>
+  </data>
+  <data name="E233501" xml:space="preserve">
+    <value>Pinpad open failed</value>
+    <comment>PIN密码键盘打开失败</comment>
+  </data>
+  <data name="E233502" xml:space="preserve">
+    <value>Pinpad close failed</value>
+    <comment>PIN密码键盘关闭失败</comment>
+  </data>
+  <data name="E233503" xml:space="preserve">
+    <value>Pinpad get info failed</value>
+    <comment>PIN密码键盘取状态失败</comment>
+  </data>
+  <data name="E233504" xml:space="preserve">
+    <value>Pinpad get capability failed</value>
+    <comment>PIN密码键盘取能力失败</comment>
+  </data>
+  <data name="E233505" xml:space="preserve">
+    <value>Pinpad reset failed</value>
+    <comment>PIN密码键盘重置失败</comment>
+  </data>
+  <data name="E233506" xml:space="preserve">
+    <value>Pinpad Cancel execute command  failed</value>
+    <comment>取消操作失败</comment>
+  </data>
+  <data name="E233507" xml:space="preserve">
+    <value>Getdata failed</value>
+    <comment>明文输入失败</comment>
+  </data>
+  <data name="E233508" xml:space="preserve">
+    <value>Getpin failed</value>
+    <comment>密文输入失败</comment>
+  </data>
+  <data name="E233509" xml:space="preserve">
+    <value>Initialize HSM failed</value>
+    <comment>初始化加密模块失败</comment>
+  </data>
+  <data name="E233510" xml:space="preserve">
+    <value>Import secret key failed</value>
+    <comment>导入密钥失败</comment>
+  </data>
+  <data name="E233511" xml:space="preserve">
+    <value>GetPinblock failed </value>
+    <comment>GetPinBlock失败</comment>
+  </data>
+  <data name="E233512" xml:space="preserve">
+    <value>Encrypt data failed</value>
+    <comment>数据加密失败</comment>
+  </data>
+  <data name="E233513" xml:space="preserve">
+    <value>Decrypt data failed</value>
+    <comment>数据解密失败</comment>
+  </data>
+  <data name="E233520" xml:space="preserve">
+    <value>Secret key is not found</value>
+    <comment>密钥没有找到</comment>
+  </data>
+  <data name="E233521" xml:space="preserve">
+    <value>Secret key is no value</value>
+    <comment>密钥没有值</comment>
+  </data>
+  <data name="E233522" xml:space="preserve">
+    <value>The key is not entered before GetPinBlock</value>
+    <comment>GetPinBlock前未输入密钥</comment>
+  </data>
+  <data name="E233523" xml:space="preserve">
+    <value>Secret key length is invalid</value>
+    <comment>密钥长度无效</comment>
+  </data>
+  <data name="E233524" xml:space="preserve">
+    <value>The active key is invalid when GetPin or Getdata</value>
+    <comment>GetPin、GetData选择的激活按键无效</comment>
+  </data>
+  <data name="E233525" xml:space="preserve">
+    <value>The active key is not supported  when GetPin or Getdata</value>
+    <comment>GetPin、GetData选择的激活按键不支持</comment>
+  </data>
+  <data name="E233526" xml:space="preserve">
+    <value>There is  no active keys when GetPin or Getdata</value>
+    <comment>GetPin、GetData没有激活按键</comment>
+  </data>
+  <data name="E233527" xml:space="preserve">
+    <value>The minimum input length is not reached</value>
+    <comment>未达到最小输入长度</comment>
+  </data>
+  <data name="E233528" xml:space="preserve">
+    <value>The format is not supported when GetPINBlock</value>
+    <comment>GetPinblock Format不支持</comment>
+  </data>
+  <data name="E233529" xml:space="preserve">
+    <value>Accessing was denied, HSM dose not import any secret key after initialize</value>
+    <comment>操作被拒绝，加密模块初始化后未导入任何密钥</comment>
+  </data>
+  <data name="E233530" xml:space="preserve">
+    <value>Pinpad connection fail. Please restart the scanner and connect to the Bluetooth device again. Error code: {0}</value>
+    <comment>密码键盘连接失败，请重启密码键盘后，重新连接蓝牙设备。Error code： {0}</comment>
+  </data>
+  <data name="E233540" xml:space="preserve">
+    <value>The request was canceled</value>
+    <comment>密码键盘执行命令被取消</comment>
+  </data>
+  <data name="E233541" xml:space="preserve">
+    <value>Pinpad hardware error</value>
+    <comment>密码键盘硬件故障</comment>
+  </data>
+  <data name="E233542" xml:space="preserve">
+    <value>Pinpad internal error</value>
+    <comment>密码键盘内部错误</comment>
+  </data>
+  <data name="E233543" xml:space="preserve">
+    <value>Pinpad  dose not support this command</value>
+    <comment>密码键盘不支持此命令</comment>
+  </data>
+  <data name="E233544" xml:space="preserve">
+    <value>Pinpad  Command execution timed out.</value>
+    <comment>密码键盘命令执行超时</comment>
+  </data>
+  <data name="E233545" xml:space="preserve">
+    <value>No open pinpad</value>
+    <comment>未OPEN 密码键盘</comment>
+  </data>
+  <data name="E233546" xml:space="preserve">
+    <value>Pinpad connect lost</value>
+    <comment>密码键盘SP连接丢失</comment>
+  </data>
+  <data name="E233547" xml:space="preserve">
+    <value>The requested  command input parameter was invalid</value>
+    <comment>密码键盘命令输入参数无效</comment>
+  </data>
+  <data name="E233560" xml:space="preserve">
+    <value>Pinpad is busying now,Please retry later</value>
+    <comment>密码键盘设备正忙，请稍后再试</comment>
+  </data>
+  <data name="E233561" xml:space="preserve">
+    <value>Pinpad is rebooting, Please retry later</value>
+    <comment>密码键盘设备故障正在重启，请稍后再试</comment>
+  </data>
+  <data name="E233599" xml:space="preserve">
+    <value>Pinpad other error</value>
+    <comment>密码键盘其他错误</comment>
+  </data>
+  <data name="E233901" xml:space="preserve">
+    <value>TrackReader open failed</value>
+    <comment>TrackReader刷卡刷折器打开失败</comment>
+  </data>
+  <data name="E233902" xml:space="preserve">
+    <value>TrackReader close failed</value>
+    <comment>TrackReader刷卡刷折器关闭失败</comment>
+  </data>
+  <data name="E233903" xml:space="preserve">
+    <value>TrackReader GetInfo failed</value>
+    <comment>TrackReader刷卡刷折器取状态失败</comment>
+  </data>
+  <data name="E233904" xml:space="preserve">
+    <value>TrackReader get capability failed</value>
+    <comment>TrackReader刷卡刷折器取能力失败</comment>
+  </data>
+  <data name="E233905" xml:space="preserve">
+    <value>TrackReader reset failed</value>
+    <comment>TrackReader刷卡刷折器重置失败</comment>
+  </data>
+  <data name="E233906" xml:space="preserve">
+    <value>Trackreader Cancel execute command  failed</value>
+    <comment>取消操作失败</comment>
+  </data>
+  <data name="E233907" xml:space="preserve">
+    <value>Read Track data failed</value>
+    <comment>读磁卡接口失败</comment>
+  </data>
+  <data name="E233920" xml:space="preserve">
+    <value>There is on card in reading position</value>
+    <comment>没有卡片在读卡位置</comment>
+  </data>
+  <data name="E233921" xml:space="preserve">
+    <value>invalid data</value>
+    <comment>无效的数据</comment>
+  </data>
+  <data name="E233922" xml:space="preserve">
+    <value>invalid card</value>
+    <comment>无效的卡片</comment>
+  </data>
+  <data name="E233930" xml:space="preserve">
+    <value>TrackReader connection fail. Please restart the scanner and connect to the Bluetooth device again. Error code: {0}</value>
+    <comment>刷卡器SP Open同步返回失败，请检测蓝牙连接或重启手持终端</comment>
+  </data>
+  <data name="E233940" xml:space="preserve">
+    <value>The request was canceled</value>
+    <comment>命令被取消</comment>
+  </data>
+  <data name="E233941" xml:space="preserve">
+    <value>Trackreader hardware error</value>
+    <comment>刷卡刷折器硬件故障</comment>
+  </data>
+  <data name="E233942" xml:space="preserve">
+    <value>Trackreader internal error</value>
+    <comment>刷卡刷折器内部错误</comment>
+  </data>
+  <data name="E233943" xml:space="preserve">
+    <value>Trackreader  dose not support this command</value>
+    <comment>刷卡刷折器不支持此命令</comment>
+  </data>
+  <data name="E233944" xml:space="preserve">
+    <value>Trackreader  Command execution timed out.</value>
+    <comment>刷卡刷折器命令执行超时</comment>
+  </data>
+  <data name="E233945" xml:space="preserve">
+    <value>No open trackreader</value>
+    <comment>未OPEN 刷卡器</comment>
+  </data>
+  <data name="E233946" xml:space="preserve">
+    <value>Trackreader sp connect lost</value>
+    <comment>刷卡刷折器SP连接丢失</comment>
+  </data>
+  <data name="E233960" xml:space="preserve">
+    <value>Trackreade is busying now ,Please retry later</value>
+    <comment>设备正忙，请稍后再试</comment>
+  </data>
+  <data name="E233961" xml:space="preserve">
+    <value>Trackreade is rebooting, Please retry later</value>
+    <comment>设备故障正在重启，请稍后再试</comment>
+  </data>
+  <data name="E233999" xml:space="preserve">
+    <value>Trackreade other error</value>
+    <comment>刷卡刷折器其他错误</comment>
+  </data>
+  <data name="E233514" xml:space="preserve">
+    <value>Access soft encrypted card password failed</value>
+    <comment>软加密获取卡密码密文失败</comment>
+  </data>
+  <data name="E233515" xml:space="preserve">
+    <value>Access soft encrypted telephone bank password failed</value>
+    <comment>软加密获取电话银行密码密文失败</comment>
+  </data>
+  <data name="E20212" xml:space="preserve">
+    <value>Set Token value failed</value>
+    <comment>设置token值异常</comment>
+  </data>
+  <data name="E20213" xml:space="preserve">
+    <value>Authentication Failed when upload file</value>
+    <comment>上传文件Token验证失败</comment>
+  </data>
+  <data name="E231401" xml:space="preserve">
+    <value>Read MyKad data fail</value>
+    <comment>读取mykad信息接口异常</comment>
+  </data>
+  <data name="E231402" xml:space="preserve">
+    <value>Verify thumb fail</value>
+    <comment>对比指纹接口异常</comment>
+  </data>
+  <data name="E231403" xml:space="preserve">
+    <value>Clear local temporary data fail</value>
+    <comment>清除本地临时信息接口异常</comment>
+  </data>
+  <data name="E231421" xml:space="preserve">
+    <value>Connect MyKad fail</value>
+    <comment>与Mykad建立连接失败</comment>
+  </data>
+  <data name="E231422" xml:space="preserve">
+    <value>Thumb not match</value>
+    <comment>指纹不匹配</comment>
+  </data>
+  <data name="E234001" xml:space="preserve">
+    <value>CashAcceptor open failed</value>
+  </data>
+  <data name="E234002" xml:space="preserve">
+    <value>CashAcceptor close failed</value>
+  </data>
+  <data name="E234003" xml:space="preserve">
+    <value>CashAcceptor get status failed</value>
+  </data>
+  <data name="E234004" xml:space="preserve">
+    <value>CashAcceptor get caps failed</value>
+  </data>
+  <data name="E234005" xml:space="preserve">
+    <value>CashInstart failed </value>
+  </data>
+  <data name="E234006" xml:space="preserve">
+    <value>CashIn failed</value>
+  </data>
+  <data name="E234007" xml:space="preserve">
+    <value>CashInEnd failed</value>
+  </data>
+  <data name="E234008" xml:space="preserve">
+    <value>CashRollback failed</value>
+  </data>
+  <data name="E234020" xml:space="preserve">
+    <value>INVALIDCURRENCY</value>
+  </data>
+  <data name="E234021" xml:space="preserve">
+    <value>CASHUNITERROR</value>
+  </data>
+  <data name="E234022" xml:space="preserve">
+    <value>TOOMANYITEMS</value>
+  </data>
+  <data name="E234023" xml:space="preserve">
+    <value>UNSUPPOSITION</value>
+  </data>
+  <data name="E234024" xml:space="preserve">
+    <value>SAFEDOOROPEN</value>
+  </data>
+  <data name="E234025" xml:space="preserve">
+    <value>SHUTTERNOTOPEN</value>
+  </data>
+  <data name="E234026" xml:space="preserve">
+    <value>SHUTTERCLOSED</value>
+  </data>
+  <data name="E234027" xml:space="preserve">
+    <value>INVALIDCASHUNIT</value>
+  </data>
+  <data name="E234028" xml:space="preserve">
+    <value>NOITEMS</value>
+  </data>
+  <data name="E234029" xml:space="preserve">
+    <value>EXCHANGEACTIVE</value>
+  </data>
+  <data name="E234030" xml:space="preserve">
+    <value>NOEXCHANGEACTIVE</value>
+  </data>
+  <data name="E234031" xml:space="preserve">
+    <value>SHUTTERNOTCLOSED</value>
+  </data>
+  <data name="E234032" xml:space="preserve">
+    <value>ITEMSTAKEN</value>
+  </data>
+  <data name="E234033" xml:space="preserve">
+    <value>CASHINACTIVE</value>
+  </data>
+  <data name="E234034" xml:space="preserve">
+    <value>NOCASHINACTIVE</value>
+  </data>
+  <data name="E234035" xml:space="preserve">
+    <value>POSITION_NOT_EMPTY</value>
+  </data>
+  <data name="E234036" xml:space="preserve">
+    <value>INVALIDRETRACTPOSITION</value>
+  </data>
+  <data name="E234037" xml:space="preserve">
+    <value>NOTRETRACTAREA</value>
+  </data>
+  <data name="E234040" xml:space="preserve">
+    <value>CANCELED</value>
+  </data>
+  <data name="E234041" xml:space="preserve">
+    <value>HARDWARE_ERROR</value>
+  </data>
+  <data name="E234042" xml:space="preserve">
+    <value>INTERNAL_ERROR</value>
+  </data>
+  <data name="E234043" xml:space="preserve">
+    <value>INVALID_COMMAND</value>
+  </data>
+  <data name="E234044" xml:space="preserve">
+    <value>TIMEOUT</value>
+  </data>
+  <data name="E234045" xml:space="preserve">
+    <value>INVALID_HSERVICE</value>
+  </data>
+  <data name="E234046" xml:space="preserve">
+    <value>CONNECTION_LOST</value>
+  </data>
+  <data name="E234120" xml:space="preserve">
+    <value>CRD_MEDIAJAM</value>
+  </data>
+  <data name="E234121" xml:space="preserve">
+    <value>CRD_NOMEDIA</value>
+  </data>
+  <data name="E234122" xml:space="preserve">
+    <value>CRD_MEDIARETAINED</value>
+  </data>
+  <data name="E234123" xml:space="preserve">
+    <value>CRD_RETAINBINFULL</value>
+  </data>
+  <data name="E234124" xml:space="preserve">
+    <value>CRD_SHUTTERFAIL</value>
+  </data>
+  <data name="E234125" xml:space="preserve">
+    <value>CRD_DEVICE_OCCUPIED</value>
+  </data>
+  <data name="E234126" xml:space="preserve">
+    <value>CRD_CARDUNITERROR</value>
+  </data>
+  <data name="E234127" xml:space="preserve">
+    <value>CRD_INVALIDCARDUNIT</value>
+  </data>
+  <data name="E234128" xml:space="preserve">
+    <value>CRD_INVALID_PORT</value>
+  </data>
+  <data name="E234129" xml:space="preserve">
+    <value>CRD_INVALIDRETAINBIN</value>
+  </data>
+  <data name="E234130" xml:space="preserve">
+    <value>CRD_POWERSAVETOOSHORT</value>
+  </data>
+  <data name="E234131" xml:space="preserve">
+    <value>CRD_POWERSAVEMEDIAPRESENT</value>
+  </data>
+  <data name="E234140" xml:space="preserve">
+    <value>CANCELED</value>
+  </data>
+  <data name="E234141" xml:space="preserve">
+    <value>HARDWARE_ERROR</value>
+  </data>
+  <data name="E234142" xml:space="preserve">
+    <value>INTERNAL_ERROR</value>
+  </data>
+  <data name="E234143" xml:space="preserve">
+    <value>INVALID_COMMAND</value>
+  </data>
+  <data name="E234144" xml:space="preserve">
+    <value>TIMEOUT</value>
+  </data>
+  <data name="E234145" xml:space="preserve">
+    <value>INVALID_HSERVICE</value>
+  </data>
+  <data name="E234146" xml:space="preserve">
+    <value>CONNECTION_LOST</value>
+  </data>
+  <data name="E233001" xml:space="preserve">
+    <value>启动指纹仪失败</value>
+  </data>
+  <data name="E233002" xml:space="preserve">
+    <value>关闭指纹仪失败</value>
+  </data>
+  <data name="E233003" xml:space="preserve">
+    <value>获取指纹仪状态失败</value>
+  </data>
+  <data name="E233004" xml:space="preserve">
+    <value>重置指纹仪失败</value>
+  </data>
+  <data name="E233005" xml:space="preserve">
+    <value>获取指纹仪能力集失败</value>
+  </data>
+  <data name="E233006" xml:space="preserve">
+    <value>录取指纹模板失败</value>
+  </data>
+  <data name="E233007" xml:space="preserve">
+    <value>获取指纹特征值失败</value>
+  </data>
+  <data name="E233008" xml:space="preserve">
+    <value>对比指纹信息失败</value>
+  </data>
+  <data name="E233009" xml:space="preserve">
+    <value>取消操作失败</value>
+  </data>
+  <data name="E233010" xml:space="preserve">
+    <value>设备正忙，请稍候再试</value>
+  </data>
+  <data name="E233011" xml:space="preserve">
+    <value>设备故障正在重启，请稍后再试</value>
+  </data>
+  <data name="E234101" xml:space="preserve">
+    <value>发卡器打开失败。</value>
+  </data>
+  <data name="E234102" xml:space="preserve">
+    <value>异步发卡失败。</value>
+  </data>
+  <data name="E234103" xml:space="preserve">
+    <value>异步读卡失败。</value>
+  </data>
+  <data name="E234104" xml:space="preserve">
+    <value>异步获取设备信息失败。</value>
+  </data>
+  <data name="E234105" xml:space="preserve">
+    <value>异步吞卡失败。</value>
+  </data>
+  <data name="E234106" xml:space="preserve">
+    <value>异步退卡失败。</value>
+  </data>
+  <data name="E23214" xml:space="preserve">
+    <value>User name or password is Incorrect</value>
+  </data>
+  <data name="E23215" xml:space="preserve">
+    <value>远程服务器内部异常。</value>
+  </data>
+  <data name="E23216" xml:space="preserve">
+    <value>远程服务器响应异常。</value>
+  </data>
+  <data name="E23217" xml:space="preserve">
+    <value>当前用户未登录。</value>
+  </data>
+  <data name="E23218" xml:space="preserve">
+    <value>刷新AccessToken失败。</value>
+  </data>
+  <data name="E234107" xml:space="preserve">
+    <value>发卡器关闭失败。</value>
+  </data>
+  <data name="E233201" xml:space="preserve">
+    <value>护照扫描器打开失败。</value>
+  </data>
+  <data name="E233202" xml:space="preserve">
+    <value>护照扫描器关闭失败。</value>
+  </data>
+  <data name="E233204" xml:space="preserve">
+    <value>重置护照扫描器失败。</value>
+  </data>
+  <data name="E233205" xml:space="preserve">
+    <value>异步扫描护照失败。</value>
+  </data>
+  <data name="E233207" xml:space="preserve">
+    <value>护照取消操作失败。</value>
+  </data>
+  <data name="E233230" xml:space="preserve">
+    <value>同步获取护照扫描仪状态。</value>
+  </data>
+  <data name="E233108" xml:space="preserve">
+    <value>同步对比指纹失败</value>
+  </data>
+  <data name="E234201" xml:space="preserve">
+    <value>凭条打印机打开失败</value>
+  </data>
+  <data name="E234202" xml:space="preserve">
+    <value>凭条打印机关闭失败</value>
+  </data>
+  <data name="E234203" xml:space="preserve">
+    <value>凭条打印机切纸失败</value>
+  </data>
+  <data name="E234204" xml:space="preserve">
+    <value>获取设备状态失败</value>
+  </data>
+  <data name="E234205" xml:space="preserve">
+    <value>获取设备能力失败</value>
+  </data>
+  <data name="E234206" xml:space="preserve">
+    <value>获取可用的Form及media列表失败</value>
+  </data>
+  <data name="E234207" xml:space="preserve">
+    <value>重置失败</value>
+  </data>
+  <data name="E234208" xml:space="preserve">
+    <value>取消操作失败</value>
+  </data>
+  <data name="E234209" xml:space="preserve">
+    <value>凭条打印失败</value>
+  </data>
+  <data name="E234210" xml:space="preserve">
+    <value>凭条回收失败</value>
+  </data>
+  <data name="E234260" xml:space="preserve">
+    <value>设备正忙，请稍后再试</value>
+  </data>
+  <data name="E234261" xml:space="preserve">
+    <value>设备故障正在重启，请稍后再试</value>
+  </data>
+  <data name="E234299" xml:space="preserve">
+    <value>凭条打印其他错误</value>
+  </data>
+  <data name="E233908" xml:space="preserve">
+    <value>吐卡接口失败</value>
+  </data>
+  <data name="E233909" xml:space="preserve">
+    <value>吞卡接口失败</value>
+  </data>
+  <data name="E234108" xml:space="preserve">
+    <value>获取卡位置失败。</value>
+  </data>
+  <data name="E234109" xml:space="preserve">
+    <value>获取模块信息失败。</value>
+  </data>
+  <data name="E23223" xml:space="preserve">
+    <value>Encryption failed.</value>
+  </data>
+  <data name="E23224" xml:space="preserve">
+    <value>Username and password cannot be empty.</value>
+  </data>
+  <data name="E249403" xml:space="preserve">
+    <value>Failed to read EJ file.</value>
+  </data>
+  <data name="E249404" xml:space="preserve">
+    <value>Failed to reset Kiosk.</value>
+  </data>
+  <data name="E249405" xml:space="preserve">
+    <value>Failed to re-print EJ file.</value>
+  </data>
+  <data name="E249406" xml:space="preserve">
+    <value>Failed to complete EJ file.</value>
+  </data>
+  <data name="E249407" xml:space="preserve">
+    <value>Do you confirm to re-print current E-J record?</value>
+  </data>
+  <data name="E249408" xml:space="preserve">
+    <value>Re-print EJ file successfully.</value>
+  </data>
+  <data name="E249409" xml:space="preserve">
+    <value>Complete EJ file successfully.</value>
+  </data>
+  <data name="E249410" xml:space="preserve">
+    <value>Reset Kiosk successfully.</value>
+  </data>
+  <data name="E249411" xml:space="preserve">
+    <value>Failed to load EJ model.</value>
+  </data>
+  <data name="E249412" xml:space="preserve">
+    <value>Filed to launch Supervisor, please check log.</value>
+  </data>
+  <data name="E249413" xml:space="preserve">
+    <value>Failed to print EJ file.</value>
+  </data>
+  <data name="E249414" xml:space="preserve">
+    <value>Please confirm to complete EJ file?</value>
+  </data>
+  <data name="E249415" xml:space="preserve">
+    <value>Please confirm to exit Supervisor?</value>
+  </data>
+  <data name="E249402" xml:space="preserve">
+    <value>Please confirm to start reset this machine, E-J record will be generated and printed.\r*Please be aware that this operation can not be reversed.</value>
+  </data>
+</root>

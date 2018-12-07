@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9691FE57-AECB-4CD5-9C4E-4754E26C9940}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VTMC.Utils</RootNamespace>
+    <AssemblyName>VTMC.Utils</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Output\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;VTMCDEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\Output\VTMC.Utils.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\MVTMCExe\</OutputPath>
+    <DefineConstants>TRACE;VTMCDEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\MVTMCExe\VTMC.Utils.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'A|AnyCPU'">
+    <OutputPath>bin\A\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Log4net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Camera\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\sFTPDLL\Renci.SshNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Windows.Graphics">
+      <HintPath>..\Libraries\Common\Windows.Graphics.winmd</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppHelper.cs" />
+    <Compile Include="ClassHelper.cs" />
+    <Compile Include="EncryptHelper.cs" />
+    <Compile Include="Forms\BarrierBed.xaml.cs">
+      <DependentUpon>BarrierBed.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TabitemHeaderUC.xaml.cs">
+      <DependentUpon>TabitemHeaderUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TabitemUC.cs" />
+    <Compile Include="Forms\WaitBlackspot.xaml.cs">
+      <DependentUpon>WaitBlackspot.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WaitBox2.xaml.cs">
+      <DependentUpon>WaitBox2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageCodes.cs" />
+    <Compile Include="Models\ActiveXFS\CardDispenserModel.cs" />
+    <Compile Include="Models\ActiveXFS\IdCardReadModel.cs" />
+    <Compile Include="Models\ActiveXFS\RJPrintModel.cs" />
+    <Compile Include="Models\ActiveXFS\PassportScannerModel.cs" />
+    <Compile Include="Models\ActiveXFS\GrgP2600Model.cs" />
+    <Compile Include="Models\ActiveXFS\WOSADeviceSettingModel.cs" />
+    <Compile Include="Models\ActiveXFS\WOSAHeadModel.cs" />
+    <Compile Include="Models\ActiveXFS\TrackReaderModel.cs" />
+    <Compile Include="Models\CommonConfiguration.cs" />
+    <Compile Include="Models\EJPrintMode.cs" />
+    <Compile Include="Models\HttpModel.cs" />
+    <Compile Include="Models\MYKADModel.cs" />
+    <Compile Include="Models\OAuthTokenModel.cs" />
+    <Compile Include="Models\UserConfiguration.cs" />
+    <Compile Include="Models\SFTPUploadFilesModel.cs" />
+    <Compile Include="PrintHelper.cs" />
+    <Compile Include="SFTPHelper.cs" />
+    <Compile Include="Models\TerminalInfoModel.cs" />
+    <Compile Include="SingleInstance.cs" />
+    <Compile Include="Forms\WaitBox.xaml.cs">
+      <DependentUpon>WaitBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ByteHelper.cs" />
+    <Compile Include="Models\SocketsModel.cs" />
+    <Compile Include="Models\NamedPipeModel.cs" />
+    <Compile Include="Models\RecordModel.cs" />
+    <Compile Include="ProcessHelper.cs" />
+    <Compile Include="SocketsHelper.cs" />
+    <Compile Include="StringHelper.cs" />
+    <Compile Include="DpiHelper.cs" />
+    <Compile Include="ErrorCodes.cs" />
+    <Compile Include="ConvertHelper.cs" />
+    <Compile Include="ExceptionManager.cs" />
+    <Compile Include="FileWatcherHelper.cs" />
+    <Compile Include="Forms\MvMessageBox.xaml.cs">
+      <DependentUpon>MvMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FileModel.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceHelper.cs" />
+    <Compile Include="AppSettings.cs" />
+    <Compile Include="InvokeScriptHelper.cs" />
+    <Compile Include="JsonHelper.cs" />
+    <Compile Include="ImageHelper.cs" />
+    <Compile Include="AppConfigHelper.cs" />
+    <Compile Include="FileIOHelper.cs" />
+    <Compile Include="ConstHelper.cs" />
+    <Compile Include="HttpHelper.cs" />
+    <Compile Include="LogHelper.cs" />
+    <Compile Include="MessageHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateToken.cs" />
+    <Compile Include="WaitBoxHelper.cs" />
+    <Compile Include="OSHelper.cs" />
+    <Compile Include="WindowsAPI.cs" />
+    <Compile Include="XMLHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Resource.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Resource.ms-MY.resx" />
+    <EmbeddedResource Include="Resource\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Resource.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Forms\BarrierBed.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\TabitemHeaderUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\WaitBlackspot.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Forms\WaitBox2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Forms\WaitBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Forms\MvMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\msgWarning.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
