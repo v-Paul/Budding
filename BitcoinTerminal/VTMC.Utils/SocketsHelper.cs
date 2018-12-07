@@ -17,7 +17,7 @@ namespace VTMC.Utils
         /// <summary>
         /// 回调事件
         /// </summary>
-        public Func<XXPSocketsModel, XXPSocketsModel> XXPCoinSocketsExecuteCallBack;
+        public Func<XXPSocketsModel, XXPSocketsModel> XXPSocketsExecuteCallBack;
 
         public Func<SocketsModel, SocketsModel> SocketsExecuteCallBack;
         /// <summary>
@@ -66,7 +66,7 @@ namespace VTMC.Utils
                         SocketsModel reqModel = ByteHelper.BytesToObject<SocketsModel>(Request);
                         SocketsModel resModel = new SocketsModel();
 
-                        if (this.XXPCoinSocketsExecuteCallBack != null)
+                        if (this.SocketsExecuteCallBack != null)
                         {
                             resModel = this.SocketsExecuteCallBack(reqModel);
                         }
@@ -367,9 +367,9 @@ namespace VTMC.Utils
                         XXPSocketsModel reqModel = ByteHelper.BytesToObject<XXPSocketsModel>(Request);
                         XXPSocketsModel resModel = new XXPSocketsModel();
 
-                        if (this.XXPCoinSocketsExecuteCallBack != null)
+                        if (this.XXPSocketsExecuteCallBack != null)
                         {
-                            resModel = this.XXPCoinSocketsExecuteCallBack(reqModel);
+                            resModel = this.XXPSocketsExecuteCallBack(reqModel);
                         }
 
                         byte[] Response = ByteHelper.ObjectToBytes<XXPSocketsModel>(resModel);
