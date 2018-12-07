@@ -164,7 +164,7 @@ namespace VTMC.Utils
         public const string NewtransactionsEvent = "NewtransactionsEvent";
 
         public const string MessageEvent = "MessageEvent";
-        public const string ResponseEvent = "MessageEvent";
+        public const string ResponseEvent = "ResponseEvent";
     }
 
 

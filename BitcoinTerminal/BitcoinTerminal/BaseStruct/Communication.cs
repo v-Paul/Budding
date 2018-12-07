@@ -8,7 +8,6 @@ using System.Threading;
 using System.Data;
 using VTMC.Utils;
 using System.Text.RegularExpressions;
-using VTMC.Utils;
 namespace BaseSturct
 {
     class Communication
@@ -22,38 +21,40 @@ namespace BaseSturct
         {
             this.SocketsHelp = new SocketsHelper();
 
-           // this.SocketsHelp.SocketsExecuteCallBack = this.SocketsExecuteCallBack;
-            if (!this.SocketsHelp.StartReceive(Convert.ToInt32(AppSettings.XXPCommport)));
+            this.SocketsHelp.XXPSocketsExecuteCallBack = this.XXPSocketsExecuteCallBack;
+            if (!this.SocketsHelp.XXPCoinStartReceiveMsg(Convert.ToInt32(AppSettings.XXPCommport)));
             {
                 LogHelper.WriteErrorLog("SocketsHelp.StartReceive fail");
             }
         }
 
-        private SocketsModel SocketsExecuteCallBack(SocketsModel mod)
+        private XXPSocketsModel XXPSocketsExecuteCallBack(XXPSocketsModel mod)
         {
-            switch (mod.Code)
+            XXPSocketsModel refMod = new XXPSocketsModel();
+            refMod.Type = XXPCoinEvent.ResponseEvent;
+
+            switch (mod.Type)
             {
-                case RecordEvent.OpenComplete:
+                case XXPCoinEvent.HandshakeEvent:
                     
                     break;
-                case RecordEvent.StartComplete:
+                case XXPCoinEvent.MessageEvent:
                     break;
-                case RecordEvent.StopComplete:
+                case XXPCoinEvent.ResponseEvent:
                    
                     break;
-                case RecordEvent.StatusEvent:
+                case XXPCoinEvent.NewtransactionsEvent:
                     break;
-                case RecordEvent.ErrorEvent:
+                case XXPCoinEvent.NewNodeEvent:
                     break;
                 default:
-                    mod.Code = RecordEvent.ErrorEvent;
+                    
                     break;
             }
 
            // this.ExecuteCallBack(mod.Code, mod);
 
-            SocketsModel refMod = new SocketsModel();
-            refMod.hResult = ConstHelper.CNT_SUCCESS;
+
             return refMod;
         }
 
