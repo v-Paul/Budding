@@ -294,15 +294,24 @@ namespace BitcoinTerminal
             {
                 DBFileInfo df = this.commHandler.RequestHightestDBInfo();
                 string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
-                MessageBox.Show(str);
+                
                 Task.Run(() => {
 
-                    this.commHandler.StartReceiveFile(df.IP);
+                    long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize);
+                    if(lRet == -1)
+                    {
+                        MessageBox.Show("try later, there is a file transfering now");                      
+                    }
+                    else
+                    {
+                        MessageBox.Show("Received: " + lRet.ToString());
+                    }
+
                 });
-
-                if (this.commHandler.RequestStartTransDB(df.IP))
+                MessageBox.Show(str);
+                if (this.commHandler.RequestStartTransDB(df.IP) != ConstHelper.BC_OK)
                 {
-
+                    
                 }
             }
 

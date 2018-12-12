@@ -271,6 +271,7 @@ namespace VTMC.Utils
                     totalBytes += bytesRead;
 
                 } while (bytesRead > 0);
+                fs.Close();
                 return totalBytes;
             }
             catch(Exception ex)
@@ -280,7 +281,7 @@ namespace VTMC.Utils
             }
         }
 
-        public int StartReceivefile(string savePath, string IP, int port )
+        public long StartReceivefile(string savePath, string IP, int port , long Size)
         {
             try
             {
@@ -298,15 +299,16 @@ namespace VTMC.Utils
 
                 //从缓存Buffer中读入到文件流中  
                 int ibytesRead;
-                int itotalBytes = 0;
-                do
+                long itotalBytes = 0;
+                while (itotalBytes != Size)
                 {
                     ibytesRead = stream.Read(fileBuffer, 0, fileBuffer.Length);
 
                     fs.Write(fileBuffer, 0, ibytesRead);
                     itotalBytes += ibytesRead;
 
-                } while (ibytesRead > 0);
+                }
+                fs.Close();
                 return itotalBytes;
             }
             catch(Exception ex)

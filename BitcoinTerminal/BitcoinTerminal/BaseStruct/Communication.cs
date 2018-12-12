@@ -38,13 +38,13 @@ namespace BaseSturct
         /// Sockets操作类
         /// </summary>
         private SocketsHelper SocketsHelp;
-       
+        private SocketsHelper TransFileHelper;
         private Dictionary<string, int> dicAddressesPool;
 
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
-            
+           
             this.dicAddressesPool = new Dictionary<string,int>();
 
             this.SocketsHelp.XXPSocketsExecuteCallBack = this.XXPSocketsExecuteCallBack;
@@ -176,35 +176,30 @@ namespace BaseSturct
             
             return hightestDBInfo;
         }
-        public bool RequestStartTransDB(string IP)
+        public string RequestStartTransDB(string IP)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.DBfile;
             sendMod.Value = DBRequestType.StratTransfer;
             
             XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(IP, sendMod, AppSettings.XXPCommport);
-            if(RetMod.Value == ConstHelper.BC_OK)
-            {
-                return true;
-            }
-            else
-            {
-                LogHelper.WriteErrorLog(RetMod.Value);
-                return false;
-            }
+            return RetMod.Value;
         }
 
-        public void StartReceiveFile(string IP)
+        public long StartReceiveFile(string IP, long size)
         {
-            SocketsHelper TransFileHelper = new SocketsHelper();
-            //bool bRet = TransFileHelper.OpenFileTransConnect(IP, AppSettings.XXPCommport);
-            //if (bRet)
-            //{
-                string tempPath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
-                TransFileHelper.StartReceivefile(tempPath, IP, AppSettings.XXPTransFilePort );                
-            //}
+            if(this.TransFileHelper != null)
+            {
+                return -1;
+            }
 
+            this.TransFileHelper = new SocketsHelper();
+            string tempPath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
+            long lTotal = TransFileHelper.StartReceivefile(tempPath, IP, AppSettings.XXPTransFilePort, size);
+
+            return lTotal;
         }
+         
 
         public string StartSendDBZip(string IP)
         {
@@ -212,7 +207,7 @@ namespace BaseSturct
             {
                 Task.Run(()=>{
                     SocketsHelper SendFileHelper = new SocketsHelper();
-                    SendFileHelper.OpenFileTransConnect(IP, AppSettings.XXPTransFilePort);
+                    bool bRet = SendFileHelper.OpenFileTransConnect(IP, AppSettings.XXPTransFilePort);
                     string tempzip = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
                     SendFileHelper.StartSendFile(tempzip);
 
