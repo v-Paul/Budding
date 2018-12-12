@@ -19,9 +19,13 @@ namespace VTMC.Utils
         public const string BC_All = "All";
         public const string BC_InputAmount = "InputAmount";
         public const string BC_BaseCoinInputTxHash = "0000000000000000000000000000000000000000000000000000000000000000";
-
-
-
+        public const string BC_RequestHandshake = "星宿老仙，法力无边";
+        public const string BC_ReturnHandshake = "神通广大，法驾中原";
+        public const string BC_DBZipName = "DBZipName.zip";
+        /// <summary>
+        ///  ZIP文件扩展名[.zip]
+        /// </summary>
+        public const string ZIPExtension = ".zip";
         /// <summary>
         /// token key
         /// </summary>

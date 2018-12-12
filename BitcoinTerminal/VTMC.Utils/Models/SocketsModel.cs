@@ -150,21 +150,27 @@ namespace VTMC.Utils
 
     }
 
+
+
+    [Serializable]
     public class XXPSocketsModel
     {
+        public string IpAddress { set; get; }
         public string Type { set; get; }
         public string Value { set; get; }
+
     }
 
-    public static class XXPCoinEvent
+    [Serializable]
+    public static class XXPCoinMsgType
     {
-        public const string HandshakeEvent = "HandshakeEvent";
-        public const string NewNodeEvent = "NewNodeEvent";
-
-        public const string NewtransactionsEvent = "NewtransactionsEvent";
-
-        public const string MessageEvent = "MessageEvent";
-        public const string ResponseEvent = "ResponseEvent";
+        public const string DBfile = "DBfile";
+        public const string Handshake = "Handshake";
+        public const string NewBlock = "NewBlock";
+        public const string Newtransactions = "Newtransactions";
+        public const string NewAddresses = "NewAddresses";
+        public const string Message = "Message";
+        public const string Exception = "Exception";
     }
 
 

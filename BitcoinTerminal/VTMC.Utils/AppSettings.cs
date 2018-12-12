@@ -213,8 +213,10 @@ namespace VTMC.Utils
         public static string XXPDBFolder { get; set; }
         public static string XXPKeysFolder { get; set; }
         public static string XXPLogFolder { get; set; }
-
-        public static string XXPCommport { get; set; }
+        public static string XXPTempFolder { get; set; }
+        public static int XXPCommport { get; set; }
+        public static int XXPTransFilePort { get; set; }
+        //
         #endregion
 
         #region Public Function
