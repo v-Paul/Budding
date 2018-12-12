@@ -40,6 +40,9 @@
             this.TextBoxAmount = new System.Windows.Forms.TextBox();
             this.textBoxPaytoHash = new System.Windows.Forms.TextBox();
             this.textBoxKeyHash = new System.Windows.Forms.TextBox();
+            this.textBoxConnectedNodes = new System.Windows.Forms.TextBox();
+            this.textBoxSeedIP = new System.Windows.Forms.TextBox();
+            this.ResearchNodes = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Digcoin
@@ -143,11 +146,38 @@
             this.textBoxKeyHash.Size = new System.Drawing.Size(397, 20);
             this.textBoxKeyHash.TabIndex = 11;
             // 
+            // textBoxConnectedNodes
+            // 
+            this.textBoxConnectedNodes.Location = new System.Drawing.Point(400, 294);
+            this.textBoxConnectedNodes.Name = "textBoxConnectedNodes";
+            this.textBoxConnectedNodes.Size = new System.Drawing.Size(44, 20);
+            this.textBoxConnectedNodes.TabIndex = 12;
+            // 
+            // textBoxSeedIP
+            // 
+            this.textBoxSeedIP.Location = new System.Drawing.Point(222, 294);
+            this.textBoxSeedIP.Name = "textBoxSeedIP";
+            this.textBoxSeedIP.Size = new System.Drawing.Size(169, 20);
+            this.textBoxSeedIP.TabIndex = 13;
+            // 
+            // ResearchNodes
+            // 
+            this.ResearchNodes.Location = new System.Drawing.Point(99, 294);
+            this.ResearchNodes.Name = "ResearchNodes";
+            this.ResearchNodes.Size = new System.Drawing.Size(108, 23);
+            this.ResearchNodes.TabIndex = 14;
+            this.ResearchNodes.Text = "ResearchNodes";
+            this.ResearchNodes.UseVisualStyleBackColor = true;
+            this.ResearchNodes.Click += new System.EventHandler(this.ResearchNodes_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 375);
+            this.Controls.Add(this.ResearchNodes);
+            this.Controls.Add(this.textBoxSeedIP);
+            this.Controls.Add(this.textBoxConnectedNodes);
             this.Controls.Add(this.textBoxKeyHash);
             this.Controls.Add(this.textBoxPaytoHash);
             this.Controls.Add(this.TextBoxAmount);
@@ -182,6 +212,9 @@
         private System.Windows.Forms.TextBox TextBoxAmount;
         private System.Windows.Forms.TextBox textBoxPaytoHash;
         private System.Windows.Forms.TextBox textBoxKeyHash;
+        private System.Windows.Forms.TextBox textBoxConnectedNodes;
+        private System.Windows.Forms.TextBox textBoxSeedIP;
+        private System.Windows.Forms.Button ResearchNodes;
     }
 }
 

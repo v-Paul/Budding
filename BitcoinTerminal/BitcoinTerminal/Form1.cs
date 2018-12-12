@@ -21,6 +21,7 @@ namespace BitcoinTerminal
         private BkHandler bkHandler;
         private TxHandler txHandler;
         private KeyHandler keyHandler;
+        private Communication commHandler;
 
         //private string MyAddressScript;
 
@@ -30,20 +31,41 @@ namespace BitcoinTerminal
             LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
 
             InitializeComponent();
+            this.InitAppseting();
+
+
+            this.bkHandler = new BkHandler();
+            this.txHandler = new TxHandler();
+            this.keyHandler = new KeyHandler();
+            this.commHandler = new Communication();
+
+
+            this.bkHandler.GetLastBlock();          
+            this.textBox1.Text = this.bkHandler.strPuzzle;
+            this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
+            this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
+            this.InitKeyValues();
+
+            this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
+        }
+
+
+        private void InitAppseting()
+        {
 
             #region init peizhi
             //应用程序版本号
             AppSettings.ProductVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             AppSettings.XXPCommonFolder = string.Format(AppConfigHelper.GetConfigValByKey("XXPCommonFolder"), Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            AppSettings.XXPCommport = AppConfigHelper.GetConfigValByKey("XXPCommPort");
+            AppSettings.XXPCommport = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPCommPort"));
 
-
+            AppSettings.XXPTransFilePort = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPTransFilePort"));
             if (!System.IO.Directory.Exists(AppSettings.XXPCommonFolder))
             {
                 Directory.CreateDirectory(AppSettings.XXPCommonFolder);
             }
 
-            AppSettings.XXPDBFolder = Path.Combine(AppSettings.XXPCommonFolder,"leveldb");
+            AppSettings.XXPDBFolder = Path.Combine(AppSettings.XXPCommonFolder, "leveldb");
             if (!System.IO.Directory.Exists(AppSettings.XXPDBFolder))
             {
                 Directory.CreateDirectory(AppSettings.XXPDBFolder);
@@ -60,30 +82,20 @@ namespace BitcoinTerminal
             {
                 Directory.CreateDirectory(AppSettings.XXPLogFolder);
             }
+
+            AppSettings.XXPTempFolder = Path.Combine(AppSettings.XXPCommonFolder, "temp");
+            if (!System.IO.Directory.Exists(AppSettings.XXPTempFolder))
+            {
+                Directory.CreateDirectory(AppSettings.XXPTempFolder);
+            }
             #endregion
-
-            //this.poolTx = new List<Transaction>();
-            //this.lastPuzzle = new int[4];
-
-            this.bkHandler = new BkHandler();
-            this.txHandler = new TxHandler();
-            this.keyHandler = new KeyHandler();
-
-
-            this.bkHandler.GetLastBlock();          
-            this.textBox1.Text = this.bkHandler.strPuzzle;
-
-            this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
-
-            this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
-
-            this.InitKeyValues();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            LeveldbOperator.CloseDB();
-        }
+        //protected override void OnClosing(CancelEventArgs e)
+        //{
+        //    LeveldbOperator.CloseDB();
+            
+        //}
 
         /// <summary>
         /// Creat Block
@@ -248,5 +260,52 @@ namespace BitcoinTerminal
             this.textBoxValue.Text = dVal.ToString("0.0000");
         }
 
+        private void ResearchNodes_Click(object sender, EventArgs e)
+        {
+            string Ip = this.textBoxSeedIP.Text;
+            //step1 handshake
+            bool bRet = this.commHandler.RequestHandshake(Ip);
+            if(!bRet)
+            {
+                MessageBox.Show("Invalid seed IP");
+                return;
+            }
+            //step2 get more Nodes IP
+            List<string> lstAddress= this.commHandler.RequestMoreNodes(Ip);
+            List<string> lstNew = new List<string>();           
+            // step3 handshake lstAddress
+            foreach (var item in lstAddress)
+            {
+                if(item == OSHelper.GetLocalIP())
+                {
+                    continue;
+                }
+                if(this.commHandler.RequestHandshake(item))
+                {
+                    lstNew.Add(item);
+                }
+
+            }
+            // step4 send new addresses to all I know
+            this.commHandler.SendNewAddress2Others(lstNew);
+            this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
+
+           if( LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
+            {
+                DBFileInfo df = this.commHandler.RequestHightestDBInfo();
+                string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
+                MessageBox.Show(str);
+                Task.Run(() => {
+
+                    this.commHandler.StartReceiveFile(df.IP);
+                });
+
+                if (this.commHandler.RequestStartTransDB(df.IP))
+                {
+
+                }
+            }
+
+        }
     }
 }

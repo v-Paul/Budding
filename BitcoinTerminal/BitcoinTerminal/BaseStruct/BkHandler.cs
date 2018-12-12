@@ -30,13 +30,6 @@ namespace BaseSturct
 
     }
 
-
-
-
-
-
-
-
         //public static bool Verify24Puzzel(int[] arrPuzzle, string strExpress);
         public Block GetLastBlock()
         {
@@ -44,7 +37,7 @@ namespace BaseSturct
            
             string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
            
-            if (!string.IsNullOrEmpty(strRet))
+            if (strRet == ConstHelper.BC_OK)
             {
                 string strlastBlock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
                 if (!string.IsNullOrEmpty(strlastBlock))

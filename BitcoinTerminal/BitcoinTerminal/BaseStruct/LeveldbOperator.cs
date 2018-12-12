@@ -52,7 +52,15 @@ namespace BaseSturct
 
         public static void CloseDB( )
         {
-            IntPtr IntRes = closeDB();
+            try
+            {
+                IntPtr IntRes = closeDB();
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
         }
         public static string GetValue(string strkey)
         {
