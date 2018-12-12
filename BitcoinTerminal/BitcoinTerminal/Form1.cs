@@ -31,6 +31,16 @@ namespace BitcoinTerminal
             LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
 
             InitializeComponent();
+            
+
+
+            //this.InitFromDB(false);
+
+           
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
             this.InitAppseting();
 
 
@@ -38,17 +48,13 @@ namespace BitcoinTerminal
             this.txHandler = new TxHandler();
             this.keyHandler = new KeyHandler();
             this.commHandler = new Communication();
+            this.commHandler.NewTransactionCallBack = this.NewTransactionCallBack;
+            this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
 
 
-            this.bkHandler.GetLastBlock();          
-            this.textBox1.Text = this.bkHandler.strPuzzle;
-            this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
-            this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
-            this.InitKeyValues();
-
+            this.InitFromDB();
             this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
         }
-
 
         private void InitAppseting()
         {
@@ -90,6 +96,21 @@ namespace BitcoinTerminal
             }
             #endregion
         }
+
+        private void InitFromDB()
+        {
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                this.bkHandler.GetLastBlock();
+
+                this.textBox1.Text = this.bkHandler.strPuzzle;
+                this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
+                this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
+                this.InitKeyValues();
+
+            }));
+        }
+
 
         //protected override void OnClosing(CancelEventArgs e)
         //{
@@ -136,10 +157,7 @@ namespace BitcoinTerminal
             this.textBox2.Text = "";
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+       
 
         private void buttonSpent_Click(object sender, EventArgs e)
         {
@@ -297,7 +315,8 @@ namespace BitcoinTerminal
                 
                 Task.Run(() => {
 
-                    long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize);
+                    string SavePath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
+                    long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
                     if(lRet == -1)
                     {
                         MessageBox.Show("try later, there is a file transfering now");                      
@@ -305,7 +324,14 @@ namespace BitcoinTerminal
                     else
                     {
                         MessageBox.Show("Received: " + lRet.ToString());
+                        FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
+                        Directory.CreateDirectory(AppSettings.XXPDBFolder);
+                        ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
+                        this.InitFromDB();
                     }
+                    this.commHandler.DisposeTransFileHelper();
+                   
+
 
                 });
                 MessageBox.Show(str);
@@ -315,6 +341,39 @@ namespace BitcoinTerminal
                 }
             }
 
+            LeveldbOperator.CloseDB();
+
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //LeveldbOperator.CloseDB();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+           // LeveldbOperator.CloseDB();
+        }
+
+
+        private string NewTransactionCallBack(Transaction Ts)
+        {
+
+            if(this.txHandler.isValidTx(Ts))
+            {
+
+            }
+            else
+            {
+                return Decision.Reject;
+            }
+            
+            return "reject";
+        }
+
+        private string NewBlockCallBack(Block Ts)
+        {
+            return "reject";
         }
     }
 }

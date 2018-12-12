@@ -31,6 +31,13 @@ namespace BaseSturct
         public const string StratTransfer = "StratTransfer";
     }
 
+    class Decision
+    {
+        public const string Accept = "Accept";
+        public const string Reject = "Reject";
+        public const string Accepted = "Accepted";
+    }
+
     class Communication
     {
 
@@ -40,7 +47,8 @@ namespace BaseSturct
         private SocketsHelper SocketsHelp;
         private SocketsHelper TransFileHelper;
         private Dictionary<string, int> dicAddressesPool;
-
+        public Func<Transaction, string> NewTransactionCallBack;
+        public Func<Block, string> NewBlockCallBack;
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
@@ -93,10 +101,13 @@ namespace BaseSturct
                     refMod.Type = XXPCoinMsgType.NewAddresses;
                     refMod.Value = handleNewAddress(mod);
                     break;
+                case XXPCoinMsgType.Newtransactions:
+                    refMod.Type = XXPCoinMsgType.Newtransactions;
+
+                    break;
                 case XXPCoinMsgType.NewBlock:
                     break;
-                case XXPCoinMsgType.Newtransactions:
-                    break;
+
                 case XXPCoinMsgType.Message:
                     break;
                 default:
@@ -106,6 +117,8 @@ namespace BaseSturct
 
             return refMod;
         }
+
+        #region DBFile
         private string HandlleDBfileEvent(XXPSocketsModel socketMod)
         {
             string strRet = string.Empty;
@@ -186,7 +199,7 @@ namespace BaseSturct
             return RetMod.Value;
         }
 
-        public long StartReceiveFile(string IP, long size)
+        public long StartReceiveFile(string IP, long size, string SavePath)
         {
             if(this.TransFileHelper != null)
             {
@@ -194,12 +207,20 @@ namespace BaseSturct
             }
 
             this.TransFileHelper = new SocketsHelper();
-            string tempPath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
-            long lTotal = TransFileHelper.StartReceivefile(tempPath, IP, AppSettings.XXPTransFilePort, size);
+            
+            if(File.Exists(SavePath))
+            {
+                FileIOHelper.DeleteFile(SavePath);
+            }
+            long lTotal = TransFileHelper.StartReceivefile(SavePath, IP, AppSettings.XXPTransFilePort, size);
 
             return lTotal;
         }
-         
+        public void DisposeTransFileHelper()
+        {
+            this.TransFileHelper?.Dispose();
+            this.TransFileHelper = null;
+        } 
 
         public string StartSendDBZip(string IP)
         {
@@ -220,9 +241,9 @@ namespace BaseSturct
                 return "exception";
             }
         }
+        #endregion
 
-
-
+        #region Handshake
         public bool RequestHandshake(string ip)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
@@ -252,8 +273,10 @@ namespace BaseSturct
             }
             return sRet;
         }
+        #endregion
 
-        public  List<string> RequestMoreNodes(string ip)
+        #region NewAddresses
+        public List<string> RequestMoreNodes(string ip)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
             XXPSocketsModel RcvMod = new XXPSocketsModel();
@@ -330,7 +353,14 @@ namespace BaseSturct
                 return "ths";
             }
         }
+        #endregion
 
+        #region Newtransactions
+        private string handleNewtransactions(XXPSocketsModel socketMod)
+        {
+            return "";
+        }
+        #endregion
 
 
 

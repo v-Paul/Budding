@@ -49,7 +49,7 @@ char* OpenDB(const char* cDBPath)
 	//}
 	//leveldb::DB* db;
 	leveldb::Options options;
-	options.create_if_missing = true;
+	options.create_if_missing = false;
 	leveldb::Status s = leveldb::DB::Open(options, cDBPath, &db);
 	if (s.ok())
 	{

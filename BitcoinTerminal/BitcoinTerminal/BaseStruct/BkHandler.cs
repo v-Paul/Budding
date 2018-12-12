@@ -18,7 +18,8 @@ namespace BaseSturct
         //private string mLastBlockHash;
         //private int[] lastPuzzle;
         private Block mLastBlock;
-        public string strPuzzle { get; set; }
+
+        public string strPuzzle { get; set; } = string.Empty;
 
         public BkHandler()
         {

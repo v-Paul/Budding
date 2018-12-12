@@ -289,7 +289,7 @@ void CTripleDesExeDlg::OnBnClickedButton3()
 
 	//string sRet = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\test");
 
-	string sRet1 = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\leveldb");
+	string sRet1 = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\leveldb222");
 	//string sputRet = PutKeyValue("testKey", "testValue");
 	string lastKey = GetlastKey();
 	string preKey = "10566987FAD49F8B64F7B4AB05D2A62919B7D8380D43935F9D9B5385B09CD4AC";
