@@ -103,9 +103,11 @@ namespace BaseSturct
                     break;
                 case XXPCoinMsgType.Newtransactions:
                     refMod.Type = XXPCoinMsgType.Newtransactions;
-
+                    refMod.Value = handleNewtransactions(mod);
                     break;
                 case XXPCoinMsgType.NewBlock:
+                    refMod.Type = XXPCoinMsgType.NewBlock;
+                    refMod.Value = handleNewBlock(mod);
                     break;
 
                 case XXPCoinMsgType.Message:
@@ -247,10 +249,10 @@ namespace BaseSturct
         public bool RequestHandshake(string ip)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
-            XXPSocketsModel RcvMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.Handshake;
             sendMod.Value = ConstHelper.BC_RequestHandshake;
-            RcvMod = this.XXPSendMessage(ip, sendMod);
+
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
             if (RcvMod.Value == ConstHelper.BC_ReturnHandshake)
             {
                 this.Add2AddressPool(RcvMod.IpAddress);
@@ -356,12 +358,81 @@ namespace BaseSturct
         #endregion
 
         #region Newtransactions
+
+
+        public string SendNewtransactions(string ip, Transaction Tx)
+        {
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.Newtransactions;
+            sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            return RcvMod.Value;
+        }
+
+        public void SendNewTx2AddressLst(Transaction Tx)
+        {
+            foreach (var item in this.dicAddressesPool)
+            {
+                string str = SendNewtransactions(item.Key, Tx);
+            }
+
+        }
+
         private string handleNewtransactions(XXPSocketsModel socketMod)
         {
-            return "";
+            Transaction tx = new Transaction();
+            if(string.IsNullOrEmpty(socketMod.Value) )
+            {
+                tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
+            }
+            string sRet = this.NewTransactionCallBack(tx);
+            if(sRet == Decision.Accept)
+            {
+                Task.Run(()=> {
+                    this.SendNewTx2AddressLst(tx);
+                });
+            }
+            return sRet;
         }
         #endregion
 
+        #region NewBlock
+        public string SendNewBlock(string ip,Block block)
+        {
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.NewBlock;
+            sendMod.Value = JsonHelper.Serializer<Block>(block);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            return RcvMod.Value;
+        }
+
+        public void SendNewBlock2AddressLst(Block block)
+        {
+            foreach (var item in this.dicAddressesPool)
+            {
+                string str = SendNewBlock(item.Key, block);
+            }
+
+        }
+
+        private string handleNewBlock(XXPSocketsModel socketMod)
+        {
+            Block block = new Block();
+            if (string.IsNullOrEmpty(socketMod.Value))
+            {
+                block = JsonHelper.Deserialize<Block>(socketMod.Value);
+            }
+            string sRet = this.NewBlockCallBack(block);
+            if (sRet == Decision.Accept)
+            {
+                Task.Run(() => {
+                    this.SendNewBlock2AddressLst(block);
+                });
+            }
+            return sRet;
+        }
+
+        #endregion
 
 
     }

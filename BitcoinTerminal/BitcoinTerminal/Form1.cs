@@ -172,7 +172,11 @@ namespace BitcoinTerminal
                 MessageBox.Show("Please enter receiver publicKey hash ");
                 return;
             }
-
+            if( this.commHandler.GetAddressCount() == 0)
+            {
+                MessageBox.Show("Offline, Please search seeds first");
+                return;
+            }
 
             string strChoice = this.comboBox1.SelectedItem.ToString();
 
@@ -207,6 +211,10 @@ namespace BitcoinTerminal
             this.TextBoxAmount.Text = "";
             this.textBoxPaytoHash.Text = "";
 
+            Task.Run(()=> {
+                this.commHandler.SendNewTx2AddressLst(trans);
+
+            });
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -361,19 +369,36 @@ namespace BitcoinTerminal
 
             if(this.txHandler.isValidTx(Ts))
             {
+                if(this.bkHandler.tempPoolTx.Contains(Ts))
+                {
+                    return Decision.Accepted;
+                }
+                else
+                {
+                    this.bkHandler.tempPoolTx.Add(Ts);
+                    return Decision.Accept;
+                }
+            }
+            else
+            {
+                return Decision.Reject;
+            }
+                    
+        }
 
+        private string NewBlockCallBack(Block block)
+        {
+
+            if(this.bkHandler.bIsValidBlock(block))
+            {
+                this.bkHandler.AddBlock2DB(block);
+                return Decision.Accept;
             }
             else
             {
                 return Decision.Reject;
             }
             
-            return "reject";
-        }
-
-        private string NewBlockCallBack(Block Ts)
-        {
-            return "reject";
         }
     }
 }
