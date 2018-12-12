@@ -30,7 +30,6 @@ namespace VTMC.Utils
         /// Sockets通讯监控模块
         /// </summary>
         private TcpListener server;
-        private TcpClient mClient;
         private NetworkStream mStream;
         #endregion 
         #endregion
@@ -229,7 +228,7 @@ namespace VTMC.Utils
             try
             {
                 this.XXPfileClient = new TcpClient(ip, port);
-                this.XXPfileStream = this.mClient.GetStream();
+                this.XXPfileStream = this.XXPfileClient.GetStream();
                 return true;
             }
             catch (Exception ex)

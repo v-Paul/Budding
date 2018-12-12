@@ -131,6 +131,7 @@ namespace BaseSturct
             {
 
                 string tempzip = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
+                if (File.Exists(tempzip)) FileIOHelper.DeleteFile(tempzip);
                 ZipHelper.Zip(AppSettings.XXPDBFolder, tempzip);
                 FileInfo tempzipInfo = new FileInfo(tempzip);
 
