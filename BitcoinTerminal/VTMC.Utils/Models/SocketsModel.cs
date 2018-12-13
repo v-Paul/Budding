@@ -166,6 +166,7 @@ namespace VTMC.Utils
     {
         public const string DBfile = "DBfile";
         public const string Handshake = "Handshake";
+        public const string SyncBlocks = "SyncBlocks";
         public const string NewBlock = "NewBlock";
         public const string Newtransactions = "Newtransactions";
         public const string NewAddresses = "NewAddresses";

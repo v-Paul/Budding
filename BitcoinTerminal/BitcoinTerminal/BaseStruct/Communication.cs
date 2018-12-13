@@ -9,15 +9,25 @@ using System.Data;
 using VTMC.Utils;
 using System.Text.RegularExpressions;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace BaseSturct
 {
+
     [Serializable]
-    class DBFileInfo
+    class LastBlockInfo
     {
-        public long DBFileSize { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LastBlockHash { get; set; }
         public int LastBlockHeight { get; set; }
         public string IP { get; set; }
+
+    }
+
+    [Serializable]
+    class DBFileInfo: LastBlockInfo
+    {
+        public long DBFileSize { get; set; }
         public DBFileInfo(long size, int Height)
         {
             this.DBFileSize = size;
@@ -36,6 +46,33 @@ namespace BaseSturct
         public const string Accept = "Accept";
         public const string Reject = "Reject";
         public const string Accepted = "Accepted";
+    }
+
+    [Serializable]
+    class RequestBlock:LastBlockInfo
+    {
+        public string RequestType { get; set; }
+    }
+
+    [Serializable]
+    class ResponseBlock : LastBlockInfo
+    {
+        /// <summary>
+        /// others opinions of your lastblock
+        /// </summary>
+        public string BlockResult { get; set; }
+    }
+    class BlockRequestType
+    {
+        public const string RequestBlockInfo = "RequestBlockInfo";
+        public const string GetNewBlocks = "GetNewBlocks";
+    }
+    class BlockResultType
+    {
+        public const string OrphanBlock = "OrphanBlock";
+        public const string HigherThanMine = "HigherThanMine";
+        public const string LowerThanMine = "LowerThanMine";
+        public const string Sameheight = "Sameheight";
     }
 
     class Communication
@@ -100,6 +137,10 @@ namespace BaseSturct
                 case XXPCoinMsgType.NewAddresses:
                     refMod.Type = XXPCoinMsgType.NewAddresses;
                     refMod.Value = handleNewAddress(mod);
+                    break;
+                case XXPCoinMsgType.SyncBlocks:
+                    refMod.Type = XXPCoinMsgType.SyncBlocks;
+                    refMod.Value = handleSyncBlocks(mod);
                     break;
                 case XXPCoinMsgType.Newtransactions:
                     refMod.Type = XXPCoinMsgType.Newtransactions;
@@ -394,6 +435,180 @@ namespace BaseSturct
             }
             return sRet;
         }
+        #endregion
+
+        #region SyncBlocks
+        public string RequestNewBlockInfo( Block lastBlock)
+        {
+            RequestBlock ReqBkInfo = new RequestBlock();
+            ReqBkInfo.RequestType = BlockRequestType.RequestBlockInfo;
+            ReqBkInfo.LastBlockHash = lastBlock.Hash;
+            ReqBkInfo.LastBlockHeight = lastBlock.Header.Height;
+            string strValue = JsonHelper.Serializer<LastBlockInfo>(ReqBkInfo);
+
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.SyncBlocks;
+            sendMod.Value = strValue;
+
+
+            List<ResponseBlock> lstResponse = new List<ResponseBlock>();
+            foreach (var item in this.dicAddressesPool)
+            {
+
+                XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(item.Key, sendMod, AppSettings.XXPCommport);
+                if(RetMod.Type == XXPCoinMsgType.Exception)
+                {
+                    int lostCount = item.Value;
+                    this.dicAddressesPool[item.Key] = lostCount++;
+                }
+                else if (!string.IsNullOrEmpty(RetMod.Value))
+                {
+                    ResponseBlock bkInfo = JsonHelper.Deserialize<ResponseBlock>(RetMod.Value);
+                    bkInfo.IP = RetMod.IpAddress;
+                    lstResponse.Add(bkInfo);
+                }
+            }
+
+            ResponseBlock ResponseBkInfo = new ResponseBlock();
+
+            int OrphanCount = lstResponse.Count(x=> x.BlockResult == BlockResultType.OrphanBlock);
+
+            if(OrphanCount> lstResponse.Count/2)
+            {
+                ResponseBkInfo.BlockResult = BlockResultType.OrphanBlock;
+                
+            }
+            else
+            {
+                int iHighest = lstResponse.Max(x => x.LastBlockHeight);
+                ResponseBkInfo = lstResponse.FirstOrDefault(x => x.LastBlockHeight == iHighest);
+            }
+
+            
+            return JsonHelper.Serializer<ResponseBlock>(ResponseBkInfo);
+
+
+        }
+
+        public string GetNewBlocks(string ip, LastBlockInfo lastBlockInfo)
+        {
+            RequestBlock ReqBkInfo = new RequestBlock();
+            ReqBkInfo.RequestType = BlockRequestType.GetNewBlocks;
+            ReqBkInfo.LastBlockHash = lastBlockInfo.LastBlockHash;
+            ReqBkInfo.LastBlockHeight = lastBlockInfo.LastBlockHeight;
+
+
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.SyncBlocks;
+            sendMod.Value = JsonHelper.Serializer<RequestBlock>(ReqBkInfo);
+
+            XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(ip, sendMod, AppSettings.XXPCommport);
+            return RetMod.Value;
+
+        }
+
+        private string handleSyncBlocks(XXPSocketsModel socketMod)
+        {
+
+            RequestBlock ReqBkInfo = JsonHelper.Deserialize<RequestBlock>(socketMod.Value);
+            ReqBkInfo.IP = socketMod.IpAddress;
+            string strRet = string.Empty;
+            switch (ReqBkInfo.RequestType)
+            {
+                case BlockRequestType.RequestBlockInfo:
+                    strRet = CheckBlock(ReqBkInfo);
+                    break;
+                case BlockRequestType.GetNewBlocks:
+                    strRet = StartSendBlocks(ReqBkInfo);
+                    break;
+                default:
+                    break;
+            }
+
+            return strRet;
+        }
+
+
+        private string CheckBlock(RequestBlock ReqBkInfo)
+        {
+            LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+            string strLastblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
+            Block block = JsonHelper.Deserialize<Block>(strLastblock);
+           
+
+            ResponseBlock RetBkInfo = new ResponseBlock();
+            RetBkInfo.LastBlockHash = block.Hash;
+            RetBkInfo.LastBlockHeight = block.Header.Height;
+
+            if (ReqBkInfo.LastBlockHeight > block.Header.Height)
+            {
+                RetBkInfo.BlockResult = BlockResultType.HigherThanMine;
+                // request new block todo 181213 
+            }
+            else
+            {
+                string strBlock = LeveldbOperator.GetValue(ReqBkInfo.LastBlockHash);
+                if(string.IsNullOrEmpty(strBlock))
+                {
+                    RetBkInfo.BlockResult = BlockResultType.OrphanBlock;
+                }
+                else
+                {
+                    if(ReqBkInfo.LastBlockHeight == block.Header.Height)
+                    {
+                        RetBkInfo.BlockResult = BlockResultType.Sameheight;
+                    }
+                    else
+                    {
+                        RetBkInfo.BlockResult = BlockResultType.LowerThanMine;
+                    }
+                }
+
+            }
+
+            LeveldbOperator.CloseDB();
+
+            return JsonHelper.Serializer<ResponseBlock>(RetBkInfo);
+  
+        }
+
+        public string StartSendBlocks( RequestBlock ReqBkInfo)
+        {
+            try
+            {
+                List<Block> tobeSendBlocks = new List<Block>();
+                LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+                string strReqBlock = LeveldbOperator.GetValue(ReqBkInfo.LastBlockHash);
+                if(!string.IsNullOrEmpty(strReqBlock))
+                {
+                    string strblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
+                    Block block = JsonHelper.Deserialize<Block>(strblock);
+                    tobeSendBlocks.Add(block);
+                    while (block.Hash != ReqBkInfo.LastBlockHash)
+                    {
+                        strblock = LeveldbOperator.GetValue(block.Header.PreHash);
+                        block = JsonHelper.Deserialize<Block>(strblock);
+                        tobeSendBlocks.Add(block);
+                    }
+                }
+               
+                Task.Run(() => {
+                    foreach (var item in tobeSendBlocks)
+                    {
+                        SendNewBlock(ReqBkInfo.IP, item);
+                    }
+
+                });
+
+                return ConstHelper.BC_OK;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteErrorLog(ex.Message);
+                return "exception";
+            }
+        }
+
         #endregion
 
         #region NewBlock
