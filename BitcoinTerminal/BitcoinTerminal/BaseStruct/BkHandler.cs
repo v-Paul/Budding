@@ -52,6 +52,16 @@ namespace BaseSturct
             return mLastBlock;
         }
 
+        public void RefreshLastBlock(Block newLastBlock)
+        {
+            if(newLastBlock != null)
+            {
+                this.mLastBlock = newLastBlock;
+                this.strPuzzle = this.mLastBlock.Header.PuzzToStr();
+            }
+            
+        }
+
 
         public bool CreatBaseCoinBlock(string strAddress)
         {
@@ -129,14 +139,8 @@ namespace BaseSturct
 
                 string jsonblock = JsonHelper.Serializer<Block>(block);
                 LogHelper.WriteInfoLog(jsonblock);
-                string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
-                if(strRet!= ConstHelper.BC_OK)
-                {
-                    return "Open DB fail";
-                }
-                strRet = LeveldbOperator.PutKeyValue(block.Hash, jsonblock);
-                strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
-                LeveldbOperator.CloseDB();
+                string strRet = this.WriteLastblock(block);
+
                 if (strRet != ConstHelper.BC_OK)
                 {
                     return "Write KeyValue fail";
@@ -208,7 +212,7 @@ namespace BaseSturct
             }
         }
 
-        public string AddBlock2DB(Block block)
+        public string WriteLastblock(Block block)
         {
             if(block == null)
             {
@@ -246,6 +250,8 @@ namespace BaseSturct
             else
                 return false;
         } 
+
+
 
 
     }

@@ -22,6 +22,22 @@ namespace BaseSturct
         public string PriKeyNmae { get; set; }
     }
 
+    public class PubKeyValue
+    {
+        public string PubKeyNmae { get; set; }
+        public double Value { get; set; }
+
+        public PubKeyValue()
+        {
+
+        }
+        public PubKeyValue(string name, double value)
+        {
+            PubKeyNmae = name;
+            Value = value;
+        }
+    }
+
     class KeyHandler
     {
         private Dictionary<string, double> dickeyValue;
@@ -48,13 +64,13 @@ namespace BaseSturct
             return PubKeyname;
         }
 
-        public void RefreshKeyvalFromUtxopool(UTXOPool utxopool)
+        public void RefKVFromUtxopool(UTXOPool utxopool)
         {
             DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
             FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
 
             if(this.dickeyValue.Count == 0)
-            {
+            {// 初始化
                 foreach (FileInfo fi in files)
                 {
                     this.dickeyValue.Add(fi.Name, 0);
@@ -63,7 +79,7 @@ namespace BaseSturct
                 }
             }
             else
-            {
+            {//先清空，赋零，
                 this.dickeysUtxoList.Clear();
                 foreach (FileInfo fi in files)
                 {
@@ -72,8 +88,8 @@ namespace BaseSturct
                     this.dickeysUtxoList.Add(fi.Name, lstKeyUtxo);
                 }
             }
-            
 
+            // 再根据utxopool重新计算每个key对应的value
             foreach (UTXO utxo in utxopool.getAllUTXO())
             {
                 Output output =  utxopool.getTxOutput(utxo);
@@ -104,6 +120,44 @@ namespace BaseSturct
             }
         }
 
+        public List<PubKeyValue> RefKVFromSigUTxpool(UTXOPool utxoSinglePool)
+        {
+            DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
+            FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
+            List<PubKeyValue> lstPubKeyValue = new List<PubKeyValue>();
+            foreach (UTXO utxo in utxoSinglePool.getAllUTXO())
+            {
+                Output output = utxoSinglePool.getTxOutput(utxo);
+
+                foreach (FileInfo fi in files)
+                {
+                    string pukhash = pubkey2Hash(fi.FullName);
+                    if (output.scriptPubKey.IndexOf(pukhash) >= 0)
+                    {
+                        PubKeyValue KV = new PubKeyValue(fi.Name, output.value);
+                        lstPubKeyValue.Add(KV);
+                        if (this.dickeyValue.ContainsKey(fi.Name))
+                        {
+                            double dvalue = 0;
+                            this.dickeyValue.TryGetValue(fi.Name, out dvalue);
+                            this.dickeyValue[fi.Name] = dvalue + output.value;
+                        }
+                        else
+                        {
+                            this.dickeyValue[fi.Name] = output.value;
+                        }
+                        List<UTXO> lstTemp = new List<UTXO>();
+                        this.dickeysUtxoList.TryGetValue(fi.Name, out lstTemp);
+                        lstTemp.Add(utxo);
+                        this.dickeysUtxoList[fi.Name] = lstTemp;
+
+                        break;
+                    }
+                }
+            }
+
+            return lstPubKeyValue;
+        }
 
         public string pubkey2Hash(string pubKeyPath)
         {
