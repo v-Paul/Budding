@@ -635,7 +635,7 @@ namespace BaseSturct
         private string handleNewBlock(XXPSocketsModel socketMod)
         {
             Block block = new Block();
-            if (string.IsNullOrEmpty(socketMod.Value))
+            if (!string.IsNullOrEmpty(socketMod.Value))
             {
                 block = JsonHelper.Deserialize<Block>(socketMod.Value);
             }

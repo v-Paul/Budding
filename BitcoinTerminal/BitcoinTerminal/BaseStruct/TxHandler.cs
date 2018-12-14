@@ -104,23 +104,14 @@ namespace BaseSturct
         }
 
 
-        //UTXO 这个定义少了transaction的index，找不到是block中的那个index，先暂时传一个
-        //public Output UTXOGetOutput(UTXO utxo, string strDBpath, int transIndex)
-        //{
-        //    Output tempOutput = new Output();
-
-        //    string strRet = LeveldbOperator.OpenDB(strDBpath);
-        //    if (strRet == ConstHelper.BC_OK)
-        //    {
-        //        string blockValue = LeveldbOperator.GetValue(utxo.getTxHash());
-        //        Block tempBlock = JsonHelper.Deserialize<Block>(blockValue);
-        //        tempOutput = tempBlock.listTransactions[transIndex].listOutputs[(int)utxo.getIndex()];
-        //    }
-
-        //    return tempOutput;
-        //}
-        public void BlockData2UTXOPool(Block block)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="block"></param>
+        /// <returns>just for update key corresponding value</returns>
+        public UTXOPool BlockData2UTXOPool(Block block)
         {
+            UTXOPool sigleBlockPool = new UTXOPool();
             foreach (Transaction eTransaction in block.listTransactions)
             {
                 foreach (Input eInput in eTransaction.listInputs)
@@ -129,6 +120,7 @@ namespace BaseSturct
                     if (utxoPool.contains(utxo))
                     {
                         utxoPool.removeUTXO(utxo);
+                        
                     }
                     else
                     {
@@ -143,9 +135,13 @@ namespace BaseSturct
                 {
                     // hash is transaction hash
                     UTXO utxo1 = new UTXO(eTransaction.getHash(), (uint)i);
+                   
                     this.utxoPool.addUTXO(utxo1, eTransaction.listOutputs[i]);
+                    sigleBlockPool.addUTXO(utxo1, eTransaction.listOutputs[i]);
                 }
             }
+
+            return sigleBlockPool;
         }
 
 

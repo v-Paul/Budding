@@ -106,7 +106,7 @@ namespace BitcoinTerminal
 
                 this.textBox1.Text = this.bkHandler.strPuzzle;
                 this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
-                this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
+                this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
                 this.InitKeyValues();
 
             }));
@@ -136,7 +136,7 @@ namespace BitcoinTerminal
             if (strRet == ConstHelper.BC_OK)
             {
                 this.txHandler.handleBaseCoin(basecoinTrans);
-                this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
+                this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
                 this.RefreshKeyValueBox();
                 this.bkHandler.ClearTransPool();
 
@@ -205,7 +205,7 @@ namespace BitcoinTerminal
                 return;
             }
             this.bkHandler.AddTransaction(trans);
-            this.keyHandler.RefreshKeyvalFromUtxopool(this.txHandler.GetUtxoPool());
+            this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
             this.RefreshKeyValueBox();
             this.TextBoxAmount.Text = "";
             this.textBoxPaytoHash.Text = "";
@@ -396,7 +396,13 @@ namespace BitcoinTerminal
 
             if(this.bkHandler.bIsValidBlock(block))
             {
-                this.bkHandler.AddBlock2DB(block);
+                if( this.bkHandler.WriteLastblock(block) == ConstHelper.BC_OK)
+                {
+                    Task.Run(()=> {
+                        RefreshByNewBlock(block);
+                    });
+                }
+                
                 return Decision.Accept;
             }
             else
@@ -405,5 +411,26 @@ namespace BitcoinTerminal
             }
             
         }
+
+        private void RefreshByNewBlock(Block block)
+        {
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                this.bkHandler.RefreshLastBlock(block);
+                this.textBox1.Text = this.bkHandler.strPuzzle;
+                UTXOPool sigleBlockPool = this.txHandler.BlockData2UTXOPool(block);
+                List<PubKeyValue> lstPubKeyValue = this.keyHandler.RefKVFromSigUTxpool(sigleBlockPool);
+                string str = string.Empty;
+                foreach (var item in lstPubKeyValue)
+                {
+                    str = str + string.Format("{0}Received: {1}", item.PubKeyNmae, item.Value) + Environment.NewLine;
+                }
+                MessageBox.Show(str);
+                this.InitKeyValues();
+
+            }));
+        }
+
+
     }
 }
