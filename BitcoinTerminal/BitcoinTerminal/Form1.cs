@@ -54,6 +54,7 @@ namespace BitcoinTerminal
 
             this.InitFromDB();
             this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
+
         }
 
         private void InitAppseting()
@@ -161,7 +162,11 @@ namespace BitcoinTerminal
 
         private void buttonSpent_Click(object sender, EventArgs e)
         {
-            
+            if (this.commHandler.GetAddressCount() == 0)
+            {
+                MessageBox.Show("Offline, Please search seeds first");
+                return;
+            }
             if (string.IsNullOrEmpty(this.TextBoxAmount.Text))
             {
                 MessageBox.Show("Please enter the transfer amount");
@@ -172,14 +177,8 @@ namespace BitcoinTerminal
                 MessageBox.Show("Please enter receiver publicKey hash ");
                 return;
             }
-            if( this.commHandler.GetAddressCount() == 0)
-            {
-                MessageBox.Show("Offline, Please search seeds first");
-                return;
-            }
 
             string strChoice = this.comboBox1.SelectedItem.ToString();
-
             string strPaytoHash = this.keyHandler.PubKeyHash2Script( this.textBoxPaytoHash.Text);
             double dPaytoAmount = Convert.ToDouble(this.TextBoxAmount.Text);
             string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
@@ -348,8 +347,14 @@ namespace BitcoinTerminal
                     
                 }
             }
-
             LeveldbOperator.CloseDB();
+
+            ResponseBlock BkInfo = this.commHandler.RequestNewBlockInfo(this.bkHandler.GetLastBlock());
+            if(BkInfo.BlockResult == BlockResultType.Lower)
+            {
+               string sRet =  this.commHandler.GetNewBlocks(BkInfo.IP, this.bkHandler.GetLastBlock());
+            }
+
 
         }
 

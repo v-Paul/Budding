@@ -70,8 +70,8 @@ namespace BaseSturct
     class BlockResultType
     {
         public const string OrphanBlock = "OrphanBlock";
-        public const string HigherThanMine = "HigherThanMine";
-        public const string LowerThanMine = "LowerThanMine";
+        public const string Higher = "Higher";
+        public const string Lower = "Lower";
         public const string Sameheight = "Sameheight";
     }
 
@@ -438,7 +438,7 @@ namespace BaseSturct
         #endregion
 
         #region SyncBlocks
-        public string RequestNewBlockInfo( Block lastBlock)
+        public ResponseBlock RequestNewBlockInfo( Block lastBlock)
         {
             RequestBlock ReqBkInfo = new RequestBlock();
             ReqBkInfo.RequestType = BlockRequestType.RequestBlockInfo;
@@ -450,7 +450,7 @@ namespace BaseSturct
             sendMod.Type = XXPCoinMsgType.SyncBlocks;
             sendMod.Value = strValue;
 
-
+            ResponseBlock ResponseBkInfo = new ResponseBlock();
             List<ResponseBlock> lstResponse = new List<ResponseBlock>();
             foreach (var item in this.dicAddressesPool)
             {
@@ -459,7 +459,9 @@ namespace BaseSturct
                 if(RetMod.Type == XXPCoinMsgType.Exception)
                 {
                     int lostCount = item.Value;
-                    this.dicAddressesPool[item.Key] = lostCount++;
+                    //this.dicAddressesPool[item.Key] = lostCount++;
+
+                    return ResponseBkInfo;
                 }
                 else if (!string.IsNullOrEmpty(RetMod.Value))
                 {
@@ -469,7 +471,7 @@ namespace BaseSturct
                 }
             }
 
-            ResponseBlock ResponseBkInfo = new ResponseBlock();
+           
 
             int OrphanCount = lstResponse.Count(x=> x.BlockResult == BlockResultType.OrphanBlock);
 
@@ -484,18 +486,18 @@ namespace BaseSturct
                 ResponseBkInfo = lstResponse.FirstOrDefault(x => x.LastBlockHeight == iHighest);
             }
 
-            
-            return JsonHelper.Serializer<ResponseBlock>(ResponseBkInfo);
+
+            return ResponseBkInfo;// JsonHelper.Serializer<ResponseBlock>(ResponseBkInfo);
 
 
         }
 
-        public string GetNewBlocks(string ip, LastBlockInfo lastBlockInfo)
+        public string GetNewBlocks(string ip, Block lastBlock)
         {
             RequestBlock ReqBkInfo = new RequestBlock();
             ReqBkInfo.RequestType = BlockRequestType.GetNewBlocks;
-            ReqBkInfo.LastBlockHash = lastBlockInfo.LastBlockHash;
-            ReqBkInfo.LastBlockHeight = lastBlockInfo.LastBlockHeight;
+            ReqBkInfo.LastBlockHash = lastBlock.Hash;
+            ReqBkInfo.LastBlockHeight = lastBlock.Header.Height;
 
 
             XXPSocketsModel sendMod = new XXPSocketsModel();
@@ -542,7 +544,7 @@ namespace BaseSturct
 
             if (ReqBkInfo.LastBlockHeight > block.Header.Height)
             {
-                RetBkInfo.BlockResult = BlockResultType.HigherThanMine;
+                RetBkInfo.BlockResult = BlockResultType.Higher;
                 // request new block todo 181213 
             }
             else
@@ -560,7 +562,7 @@ namespace BaseSturct
                     }
                     else
                     {
-                        RetBkInfo.BlockResult = BlockResultType.LowerThanMine;
+                        RetBkInfo.BlockResult = BlockResultType.Lower;
                     }
                 }
 
