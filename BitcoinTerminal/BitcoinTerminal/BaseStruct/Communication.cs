@@ -9,15 +9,25 @@ using System.Data;
 using VTMC.Utils;
 using System.Text.RegularExpressions;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace BaseSturct
 {
+
     [Serializable]
-    class DBFileInfo
+    class LastBlockInfo
     {
-        public long DBFileSize { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LastBlockHash { get; set; }
         public int LastBlockHeight { get; set; }
         public string IP { get; set; }
+
+    }
+
+    [Serializable]
+    class DBFileInfo: LastBlockInfo
+    {
+        public long DBFileSize { get; set; }
         public DBFileInfo(long size, int Height)
         {
             this.DBFileSize = size;
@@ -31,6 +41,40 @@ namespace BaseSturct
         public const string StratTransfer = "StratTransfer";
     }
 
+    class Decision
+    {
+        public const string Accept = "Accept";
+        public const string Reject = "Reject";
+        public const string Accepted = "Accepted";
+    }
+
+    [Serializable]
+    class RequestBlock:LastBlockInfo
+    {
+        public string RequestType { get; set; }
+    }
+
+    [Serializable]
+    class ResponseBlock : LastBlockInfo
+    {
+        /// <summary>
+        /// others opinions of your lastblock
+        /// </summary>
+        public string BlockResult { get; set; }
+    }
+    class BlockRequestType
+    {
+        public const string RequestBlockInfo = "RequestBlockInfo";
+        public const string GetNewBlocks = "GetNewBlocks";
+    }
+    class BlockResultType
+    {
+        public const string OrphanBlock = "OrphanBlock";
+        public const string HigherThanMine = "HigherThanMine";
+        public const string LowerThanMine = "LowerThanMine";
+        public const string Sameheight = "Sameheight";
+    }
+
     class Communication
     {
 
@@ -38,13 +82,14 @@ namespace BaseSturct
         /// Sockets操作类
         /// </summary>
         private SocketsHelper SocketsHelp;
-       
+        private SocketsHelper TransFileHelper;
         private Dictionary<string, int> dicAddressesPool;
-
+        public Func<Transaction, string> NewTransactionCallBack;
+        public Func<Block, string> NewBlockCallBack;
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
-            
+           
             this.dicAddressesPool = new Dictionary<string,int>();
 
             this.SocketsHelp.XXPSocketsExecuteCallBack = this.XXPSocketsExecuteCallBack;
@@ -93,10 +138,19 @@ namespace BaseSturct
                     refMod.Type = XXPCoinMsgType.NewAddresses;
                     refMod.Value = handleNewAddress(mod);
                     break;
-                case XXPCoinMsgType.NewBlock:
+                case XXPCoinMsgType.SyncBlocks:
+                    refMod.Type = XXPCoinMsgType.SyncBlocks;
+                    refMod.Value = handleSyncBlocks(mod);
                     break;
                 case XXPCoinMsgType.Newtransactions:
+                    refMod.Type = XXPCoinMsgType.Newtransactions;
+                    refMod.Value = handleNewtransactions(mod);
                     break;
+                case XXPCoinMsgType.NewBlock:
+                    refMod.Type = XXPCoinMsgType.NewBlock;
+                    refMod.Value = handleNewBlock(mod);
+                    break;
+
                 case XXPCoinMsgType.Message:
                     break;
                 default:
@@ -106,6 +160,8 @@ namespace BaseSturct
 
             return refMod;
         }
+
+        #region DBFile
         private string HandlleDBfileEvent(XXPSocketsModel socketMod)
         {
             string strRet = string.Empty;
@@ -176,35 +232,38 @@ namespace BaseSturct
             
             return hightestDBInfo;
         }
-        public bool RequestStartTransDB(string IP)
+        public string RequestStartTransDB(string IP)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.DBfile;
             sendMod.Value = DBRequestType.StratTransfer;
             
             XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(IP, sendMod, AppSettings.XXPCommport);
-            if(RetMod.Value == ConstHelper.BC_OK)
-            {
-                return true;
-            }
-            else
-            {
-                LogHelper.WriteErrorLog(RetMod.Value);
-                return false;
-            }
+            return RetMod.Value;
         }
 
-        public void StartReceiveFile(string IP)
+        public long StartReceiveFile(string IP, long size, string SavePath)
         {
-            SocketsHelper TransFileHelper = new SocketsHelper();
-            //bool bRet = TransFileHelper.OpenFileTransConnect(IP, AppSettings.XXPCommport);
-            //if (bRet)
-            //{
-                string tempPath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
-                TransFileHelper.StartReceivefile(tempPath, IP, AppSettings.XXPTransFilePort );                
-            //}
+            if(this.TransFileHelper != null)
+            {
+                return -1;
+            }
 
+            this.TransFileHelper = new SocketsHelper();
+            
+            if(File.Exists(SavePath))
+            {
+                FileIOHelper.DeleteFile(SavePath);
+            }
+            long lTotal = TransFileHelper.StartReceivefile(SavePath, IP, AppSettings.XXPTransFilePort, size);
+
+            return lTotal;
         }
+        public void DisposeTransFileHelper()
+        {
+            this.TransFileHelper?.Dispose();
+            this.TransFileHelper = null;
+        } 
 
         public string StartSendDBZip(string IP)
         {
@@ -212,7 +271,7 @@ namespace BaseSturct
             {
                 Task.Run(()=>{
                     SocketsHelper SendFileHelper = new SocketsHelper();
-                    SendFileHelper.OpenFileTransConnect(IP, AppSettings.XXPTransFilePort);
+                    bool bRet = SendFileHelper.OpenFileTransConnect(IP, AppSettings.XXPTransFilePort);
                     string tempzip = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
                     SendFileHelper.StartSendFile(tempzip);
 
@@ -225,16 +284,16 @@ namespace BaseSturct
                 return "exception";
             }
         }
+        #endregion
 
-
-
+        #region Handshake
         public bool RequestHandshake(string ip)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
-            XXPSocketsModel RcvMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.Handshake;
             sendMod.Value = ConstHelper.BC_RequestHandshake;
-            RcvMod = this.XXPSendMessage(ip, sendMod);
+
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
             if (RcvMod.Value == ConstHelper.BC_ReturnHandshake)
             {
                 this.Add2AddressPool(RcvMod.IpAddress);
@@ -257,8 +316,10 @@ namespace BaseSturct
             }
             return sRet;
         }
+        #endregion
 
-        public  List<string> RequestMoreNodes(string ip)
+        #region NewAddresses
+        public List<string> RequestMoreNodes(string ip)
         {
             XXPSocketsModel sendMod = new XXPSocketsModel();
             XXPSocketsModel RcvMod = new XXPSocketsModel();
@@ -335,8 +396,258 @@ namespace BaseSturct
                 return "ths";
             }
         }
+        #endregion
+
+        #region Newtransactions
 
 
+        public string SendNewtransactions(string ip, Transaction Tx)
+        {
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.Newtransactions;
+            sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            return RcvMod.Value;
+        }
+
+        public void SendNewTx2AddressLst(Transaction Tx)
+        {
+            foreach (var item in this.dicAddressesPool)
+            {
+                string str = SendNewtransactions(item.Key, Tx);
+            }
+
+        }
+
+        private string handleNewtransactions(XXPSocketsModel socketMod)
+        {
+            Transaction tx = new Transaction();
+            if(string.IsNullOrEmpty(socketMod.Value) )
+            {
+                tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
+            }
+            string sRet = this.NewTransactionCallBack(tx);
+            if(sRet == Decision.Accept)
+            {
+                Task.Run(()=> {
+                    this.SendNewTx2AddressLst(tx);
+                });
+            }
+            return sRet;
+        }
+        #endregion
+
+        #region SyncBlocks
+        public string RequestNewBlockInfo( Block lastBlock)
+        {
+            RequestBlock ReqBkInfo = new RequestBlock();
+            ReqBkInfo.RequestType = BlockRequestType.RequestBlockInfo;
+            ReqBkInfo.LastBlockHash = lastBlock.Hash;
+            ReqBkInfo.LastBlockHeight = lastBlock.Header.Height;
+            string strValue = JsonHelper.Serializer<LastBlockInfo>(ReqBkInfo);
+
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.SyncBlocks;
+            sendMod.Value = strValue;
+
+
+            List<ResponseBlock> lstResponse = new List<ResponseBlock>();
+            foreach (var item in this.dicAddressesPool)
+            {
+
+                XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(item.Key, sendMod, AppSettings.XXPCommport);
+                if(RetMod.Type == XXPCoinMsgType.Exception)
+                {
+                    int lostCount = item.Value;
+                    this.dicAddressesPool[item.Key] = lostCount++;
+                }
+                else if (!string.IsNullOrEmpty(RetMod.Value))
+                {
+                    ResponseBlock bkInfo = JsonHelper.Deserialize<ResponseBlock>(RetMod.Value);
+                    bkInfo.IP = RetMod.IpAddress;
+                    lstResponse.Add(bkInfo);
+                }
+            }
+
+            ResponseBlock ResponseBkInfo = new ResponseBlock();
+
+            int OrphanCount = lstResponse.Count(x=> x.BlockResult == BlockResultType.OrphanBlock);
+
+            if(OrphanCount> lstResponse.Count/2)
+            {
+                ResponseBkInfo.BlockResult = BlockResultType.OrphanBlock;
+                
+            }
+            else
+            {
+                int iHighest = lstResponse.Max(x => x.LastBlockHeight);
+                ResponseBkInfo = lstResponse.FirstOrDefault(x => x.LastBlockHeight == iHighest);
+            }
+
+            
+            return JsonHelper.Serializer<ResponseBlock>(ResponseBkInfo);
+
+
+        }
+
+        public string GetNewBlocks(string ip, LastBlockInfo lastBlockInfo)
+        {
+            RequestBlock ReqBkInfo = new RequestBlock();
+            ReqBkInfo.RequestType = BlockRequestType.GetNewBlocks;
+            ReqBkInfo.LastBlockHash = lastBlockInfo.LastBlockHash;
+            ReqBkInfo.LastBlockHeight = lastBlockInfo.LastBlockHeight;
+
+
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.SyncBlocks;
+            sendMod.Value = JsonHelper.Serializer<RequestBlock>(ReqBkInfo);
+
+            XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(ip, sendMod, AppSettings.XXPCommport);
+            return RetMod.Value;
+
+        }
+
+        private string handleSyncBlocks(XXPSocketsModel socketMod)
+        {
+
+            RequestBlock ReqBkInfo = JsonHelper.Deserialize<RequestBlock>(socketMod.Value);
+            ReqBkInfo.IP = socketMod.IpAddress;
+            string strRet = string.Empty;
+            switch (ReqBkInfo.RequestType)
+            {
+                case BlockRequestType.RequestBlockInfo:
+                    strRet = CheckBlock(ReqBkInfo);
+                    break;
+                case BlockRequestType.GetNewBlocks:
+                    strRet = StartSendBlocks(ReqBkInfo);
+                    break;
+                default:
+                    break;
+            }
+
+            return strRet;
+        }
+
+
+        private string CheckBlock(RequestBlock ReqBkInfo)
+        {
+            LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+            string strLastblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
+            Block block = JsonHelper.Deserialize<Block>(strLastblock);
+           
+
+            ResponseBlock RetBkInfo = new ResponseBlock();
+            RetBkInfo.LastBlockHash = block.Hash;
+            RetBkInfo.LastBlockHeight = block.Header.Height;
+
+            if (ReqBkInfo.LastBlockHeight > block.Header.Height)
+            {
+                RetBkInfo.BlockResult = BlockResultType.HigherThanMine;
+                // request new block todo 181213 
+            }
+            else
+            {
+                string strBlock = LeveldbOperator.GetValue(ReqBkInfo.LastBlockHash);
+                if(string.IsNullOrEmpty(strBlock))
+                {
+                    RetBkInfo.BlockResult = BlockResultType.OrphanBlock;
+                }
+                else
+                {
+                    if(ReqBkInfo.LastBlockHeight == block.Header.Height)
+                    {
+                        RetBkInfo.BlockResult = BlockResultType.Sameheight;
+                    }
+                    else
+                    {
+                        RetBkInfo.BlockResult = BlockResultType.LowerThanMine;
+                    }
+                }
+
+            }
+
+            LeveldbOperator.CloseDB();
+
+            return JsonHelper.Serializer<ResponseBlock>(RetBkInfo);
+  
+        }
+
+        public string StartSendBlocks( RequestBlock ReqBkInfo)
+        {
+            try
+            {
+                List<Block> tobeSendBlocks = new List<Block>();
+                LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+                string strReqBlock = LeveldbOperator.GetValue(ReqBkInfo.LastBlockHash);
+                if(!string.IsNullOrEmpty(strReqBlock))
+                {
+                    string strblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
+                    Block block = JsonHelper.Deserialize<Block>(strblock);
+                    tobeSendBlocks.Add(block);
+                    while (block.Hash != ReqBkInfo.LastBlockHash)
+                    {
+                        strblock = LeveldbOperator.GetValue(block.Header.PreHash);
+                        block = JsonHelper.Deserialize<Block>(strblock);
+                        tobeSendBlocks.Add(block);
+                    }
+                }
+               
+                Task.Run(() => {
+                    foreach (var item in tobeSendBlocks)
+                    {
+                        SendNewBlock(ReqBkInfo.IP, item);
+                    }
+
+                });
+
+                return ConstHelper.BC_OK;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteErrorLog(ex.Message);
+                return "exception";
+            }
+        }
+
+        #endregion
+
+        #region NewBlock
+        public string SendNewBlock(string ip,Block block)
+        {
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.NewBlock;
+            sendMod.Value = JsonHelper.Serializer<Block>(block);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            return RcvMod.Value;
+        }
+
+        public void SendNewBlock2AddressLst(Block block)
+        {
+            foreach (var item in this.dicAddressesPool)
+            {
+                string str = SendNewBlock(item.Key, block);
+            }
+
+        }
+
+        private string handleNewBlock(XXPSocketsModel socketMod)
+        {
+            Block block = new Block();
+            if (string.IsNullOrEmpty(socketMod.Value))
+            {
+                block = JsonHelper.Deserialize<Block>(socketMod.Value);
+            }
+            string sRet = this.NewBlockCallBack(block);
+            if (sRet == Decision.Accept)
+            {
+                Task.Run(() => {
+                    this.SendNewBlock2AddressLst(block);
+                });
+            }
+            return sRet;
+        }
+
+        #endregion
 
 
     }

@@ -66,3 +66,7 @@ extern "C" DLL_API int generaCSRFile(string strCSRFolder = "", int iRSALen = 102
 extern "C" DLL_API void generaCERFile(long lVersion, long lValidDays, int iSN, string strinCSRFile, string stroutCERFile, string strCACerFile, string strCaP12, string strPassword);
 
 extern "C" DLL_API void generaCERFile_1(long lVersion, long lValidDays, int iSN, string strinCSRFile, string strIssuerCer, string strSignKey, string strOutCERFile);
+
+extern "C" DLL_API int calc24(int iNum0, int iNum1, int iNum2, int iNum3);
+
+

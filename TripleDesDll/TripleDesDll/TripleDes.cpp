@@ -2254,6 +2254,95 @@ void PKCS12_SAFEBAG_print(BIO *bp, PKCS12_SAFEBAG *bag)
 
 
 
+// calculate 24
+double add(double a, double b);
+double subtract(double a, double b);
+double multiplicat(double a, double b);
+double divide(double a, double b);
+char ch[4][20] = { "+", "-", "*", "/" };
+double(*func[])(double a, double b) = { add, subtract, multiplicat, divide };
+
+
+double add(double a, double b)
+{
+	return a + b;
+}
+
+double subtract(double a, double b)
+{
+	return a - b;
+}
+
+double multiplicat(double a, double b)
+{
+	return a * b;
+}
+
+double divide(double a, double b)
+{
+	return a / b;
+}
+
+int calc24(int iNum0, int iNum1, int iNum2, int iNum3)
+{
+	int dArr[4] = {0,0,0,0};
+
+	dArr[0] = iNum0;
+	dArr[1] = iNum1;
+	dArr[2] = iNum2;
+	dArr[3] = iNum3;
+
+
+	string strResult = "";
+	double fRet = 24.0;
+	for (int iArr1 = 0; iArr1 < 4; iArr1++)
+	for (int iArr2 = 0; iArr2 < 4; iArr2++)
+	for (int iArr3 = 0; iArr3 < 4; iArr3++)
+	for (int iArr4 = 0; iArr4 < 4; iArr4++)    // 四个数字出现的情况
+	if (iArr2 != iArr1 && iArr1 != iArr3 && iArr1 != iArr4 && iArr2 != iArr3 && iArr2 != iArr4 && iArr3 != iArr4)
+	{
+		for (int j = 0; j < 4; j++)
+		for (int k = 0; k < 4; k++)
+		for (int m = 0; m < 4; m++)            // 每两个数字间出现的符号
+		if (func[m](func[k](func[j](dArr[iArr1], dArr[iArr2]), dArr[iArr3]), dArr[iArr4]) == fRet)
+		{
+			// 123  （括号指定符号的计算顺序）
+			//strResult = to_string(dArr[iArr1]) + to_string(ch[j]) +
+			
+			//cout << "((" << dArr[iArr1] << ch[j] << dArr[iArr2] << ")" << ch[k] << dArr[iArr3] << ")" << ch[m] << dArr[iArr4] << " = 24" << endl;
+			return 0;
+		}
+		else if (func[m](func[j](dArr[iArr1], dArr[iArr2]), func[k](dArr[iArr3], dArr[iArr4])) == fRet)
+		{
+			//132  （括号指定符号的计算顺序）
+			//cout << "(" << dArr[iArr1] << ch[j] << dArr[iArr2] << ")" << ch[m] << "(" << dArr[iArr3] << ch[k] << dArr[iArr4] << ") = 24" << endl;
+			return 0;
+		}
+		else if (func[m](func[k](dArr[iArr1], func[j](dArr[iArr2], dArr[iArr3])), dArr[iArr4]) == fRet)
+		{
+			//213  （括号指定符号的计算顺序）
+			//cout << "(" << dArr[iArr1] << ch[k] << "(" << dArr[iArr2] << ch[j] << dArr[iArr3] << "))" << ch[m] << dArr[iArr4] << " = 24" << endl;
+			return 0;
+		}
+		else if (func[m](dArr[iArr1], func[k](func[j](dArr[iArr2], dArr[iArr3]), dArr[iArr4])) == fRet)
+		{
+			//231  （括号指定符号的计算顺序）
+			//cout << dArr[iArr1] << ch[m] << "((" << dArr[iArr2] << ch[j] << dArr[iArr3] << ")" << ch[k] << dArr[iArr4] << ")" << " = 24" << endl;
+			return 0;
+		}
+		else if (func[m](dArr[iArr1], func[k](dArr[iArr2], func[j](dArr[iArr3], dArr[iArr4]))) == fRet)
+		{
+			//321  （括号指定符号的计算顺序）
+			//cout << dArr[iArr1] << ch[m] << "(" << dArr[iArr2] << ch[k] << "(" << dArr[iArr3] << ch[j] << dArr[iArr4] << "))" << " = 24" << endl;
+			return 0;
+		}
+	}
+
+	//cout << "cannot calculate 24 " << endl;
+	return -1;
+}
+
+
 
 
 

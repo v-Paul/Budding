@@ -15,22 +15,23 @@ namespace BaseSturct
     {
 
         private List<Transaction> poolTx;
-        //private string mLastBlockHash;
-        //private int[] lastPuzzle;
+        // 自己创建的交易 直接加进PoolTx，收到的交易，先加进tempPoolTx
+        public HashSet<Transaction> tempPoolTx;
+
         private Block mLastBlock;
-        public string strPuzzle { get; set; }
+
+        public string strPuzzle { get; set; } = string.Empty;
 
         public BkHandler()
         {
             
             this.poolTx = new List<Transaction>();
-            //this.mLastBlockHash = string.Empty;
-            //this.lastPuzzle = new int[4];
+            this.tempPoolTx = new HashSet<Transaction>();
+
             this.mLastBlock = new Block();
 
     }
 
-        //public static bool Verify24Puzzel(int[] arrPuzzle, string strExpress);
         public Block GetLastBlock()
         {
 
@@ -118,22 +119,22 @@ namespace BaseSturct
                 if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))
                     return "Verify Puzzle fail";
 
-                Block Block = new Block();
-                Block.listTransactions = this.poolTx;
-                Block.SetTransInfo();
-                Block.SetBlockHeader(this.mLastBlock.Hash, this.mLastBlock.Header.Height);
+                Block block = new Block();
+                block.listTransactions = this.poolTx;
+                block.SetTransInfo();
+                block.SetBlockHeader(this.mLastBlock.Hash, this.mLastBlock.Header.Height);
 
-                Block.SetNonce(strNounce);
-                Block.SetBlockHash();
+                block.SetNonce(strNounce);
+                block.SetBlockHash();
 
-                string jsonblock = JsonHelper.Serializer<Block>(Block);
+                string jsonblock = JsonHelper.Serializer<Block>(block);
                 LogHelper.WriteInfoLog(jsonblock);
                 string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
                 if(strRet!= ConstHelper.BC_OK)
                 {
                     return "Open DB fail";
                 }
-                strRet = LeveldbOperator.PutKeyValue(Block.Hash, jsonblock);
+                strRet = LeveldbOperator.PutKeyValue(block.Hash, jsonblock);
                 strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
                 LeveldbOperator.CloseDB();
                 if (strRet != ConstHelper.BC_OK)
@@ -207,12 +208,44 @@ namespace BaseSturct
             }
         }
 
+        public string AddBlock2DB(Block block)
+        {
+            if(block == null)
+            {
+                return "Invalid block";
+            }
+            string jsonblock = JsonHelper.Serializer<Block>(block);
+
+            string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+            if (strRet != ConstHelper.BC_OK)
+            {
+                return "Open DB fail";
+            }
+            strRet = LeveldbOperator.PutKeyValue(block.Hash, jsonblock);
+            strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
+            LeveldbOperator.CloseDB();
+            if (strRet != ConstHelper.BC_OK)
+            {
+                return "Write KeyValue fail";
+            }
+            return ConstHelper.BC_OK;
+        }
+
         public void ClearTransPool()
         {
             this.poolTx.Clear();
         }
 
-
+        public bool bIsValidBlock(Block block)
+        {
+            if (this.mLastBlock.Hash == block.Header.PreHash)
+            {
+                // check trans todo 181212
+                return true;
+            }
+            else
+                return false;
+        } 
 
 
     }

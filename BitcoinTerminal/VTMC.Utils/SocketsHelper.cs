@@ -16,127 +16,23 @@ namespace VTMC.Utils
         #endregion
 
         #region Fileds
+
+        private TcpListener server;
+
+        // for transfer file
+        private TcpClient XXPfileClient;
+        private NetworkStream XXPfileStream;
         /// <summary>
         /// 回调事件
         /// </summary>
         public Func<XXPSocketsModel,XXPSocketsModel> XXPSocketsExecuteCallBack;
-        private TcpClient XXPfileClient;
-        private NetworkStream XXPfileStream;
 
-
-        #region old fileds
-        public Func<SocketsModel, SocketsModel> SocketsExecuteCallBack;
-        /// <summary>
-        /// Sockets通讯监控模块
-        /// </summary>
-        private TcpListener server;
-        private NetworkStream mStream;
-        #endregion 
         #endregion
 
         #region Property
         #endregion
 
         #region Public Function
-
-        #region old function
-        /// <summary>
-        /// 启动Sockets端口通讯监控
-        /// </summary>
-        /// <param name="port"></param>
-        /// <returns></returns>
-        public bool StartReceive(int port)
-        {
-            this.server = new TcpListener(IPAddress.Any, port);
-            this.server.Start();
-
-            Task.Run(() => {
-                while (true)
-                {
-                    try
-                    {
-                        if (this.server == null) break;
-
-                        //2.1 收到请求
-                        TcpClient client = this.server.AcceptTcpClient(); //停在这等待连接请求
-                        NetworkStream stream = client.GetStream();
-
-                        //2.2 解析数据,长度<1024字节
-                        byte[] Request = new byte[2048];
-                        int length = stream.Read(Request, 0, Request.Length);
-
-
-                        SocketsModel reqModel = ByteHelper.BytesToObject<SocketsModel>(Request);
-                        SocketsModel resModel = new SocketsModel();
-
-                        if (this.SocketsExecuteCallBack != null)
-                        {
-                            resModel = this.SocketsExecuteCallBack(reqModel);
-                        }
-
-                        byte[] Response = ByteHelper.ObjectToBytes<SocketsModel>(resModel);
-
-                        //2.3 返回状态
-                        stream.Write(Response, 0, Response.Length);
-                        //2.4 关闭客户端
-                        stream.Close();
-                    }
-                    catch
-                    {
-                    }
-                }
-            });
-
-            return true;
-        }
-
-        /// <summary>
-        /// 通过Sockets端口发送数据
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="Request"></param>
-        /// <param name="port"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public SocketsModel SendMessage(string ip, SocketsModel Request, int port, int size = 2048)
-        {
-            try
-            {
-                //1.发送数据
-                TcpClient client = new TcpClient(ip, port);
-                NetworkStream stream = client.GetStream();
-
-                byte[] bytRequest = ByteHelper.ObjectToBytes<SocketsModel>(Request);
-                stream.Write(bytRequest, 0, bytRequest.Length);
-
-                //2.接收状态,长度<1024字节
-                byte[] bytes = new Byte[size];
-                stream.ReadTimeout = 10000;
-                stream.Read(bytes, 0, bytes.Length);
-
-                //3.关闭对象
-                stream.Close();
-                client.Close();
-
-                SocketsModel refRequest = ByteHelper.BytesToObject<SocketsModel>(bytes);
-
-                return ByteHelper.BytesToObject<SocketsModel>(bytes);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.WriteErrorCodeLog(ErrorCodes.E23_1003, ex);
-
-                SocketsModel Response = new SocketsModel();
-                Response.hResult = ConstHelper.CNT_ERROR;
-                // add by fan danpeng 20171116
-                Response.errorCode = ErrorCodes.E23_1003;
-
-                return Response;
-            }
-        }
-
-
-        #endregion
 
         #region XXP Coin        
         public XXPSocketsModel XXPSendMessage(string ip, XXPSocketsModel Request, int port, int size = 2048)
@@ -243,8 +139,8 @@ namespace VTMC.Utils
             try
             {
                 //3.关闭对象
-                this.XXPfileClient.Close();
-                this.XXPfileStream.Close();
+                this.XXPfileClient?.Close();
+                this.XXPfileStream?.Close();
                 return true;
             }
             catch (Exception ex)
@@ -271,6 +167,7 @@ namespace VTMC.Utils
                     totalBytes += bytesRead;
 
                 } while (bytesRead > 0);
+                fs.Close();
                 return totalBytes;
             }
             catch(Exception ex)
@@ -280,7 +177,7 @@ namespace VTMC.Utils
             }
         }
 
-        public int StartReceivefile(string savePath, string IP, int port )
+        public long StartReceivefile(string savePath, string IP, int port , long Size)
         {
             try
             {
@@ -298,15 +195,16 @@ namespace VTMC.Utils
 
                 //从缓存Buffer中读入到文件流中  
                 int ibytesRead;
-                int itotalBytes = 0;
-                do
+                long itotalBytes = 0;
+                while (itotalBytes != Size)
                 {
                     ibytesRead = stream.Read(fileBuffer, 0, fileBuffer.Length);
 
                     fs.Write(fileBuffer, 0, ibytesRead);
                     itotalBytes += ibytesRead;
 
-                } while (ibytesRead > 0);
+                }
+                fs.Close();
                 return itotalBytes;
             }
             catch(Exception ex)
@@ -330,6 +228,7 @@ namespace VTMC.Utils
         public void Dispose()
         {
             LogHelper.WriteMethodLog(true);
+            this.CloseFileTransConnect();
             if (this.server != null)
             {
                 this.server.Stop();
