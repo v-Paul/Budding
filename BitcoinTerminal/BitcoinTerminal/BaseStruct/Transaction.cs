@@ -79,7 +79,7 @@ namespace BaseSturct
     public class Transaction
     {
         /** hash of the transaction, its unique id */
-        public string strTransHash;
+        private string strTransHash;
 
         public string Version;
         // input tansactions list
@@ -214,6 +214,13 @@ namespace BaseSturct
             {
                 LogHelper.WriteErrorLog(ex.Message);
             }
+        }
+
+        public string CalTransHash()
+        {
+            string strTransction = getRawTx();
+            string strTransHash = Cryptor.SHA256(strTransction, strTransction.Length);
+            return strTransHash;
         }
 
         public void setHash(string h)

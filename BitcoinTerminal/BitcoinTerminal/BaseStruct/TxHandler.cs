@@ -380,13 +380,13 @@ namespace BaseSturct
 
 
 
-        public void handleBaseCoin(Transaction bctx)
+        public void AddBaseCoin2UTxoPool(Transaction basetx)
         {
             try
             {
 
-                UTXO utxo = new UTXO(bctx.getHash(), 0);
-                utxoPool.addUTXO(utxo, bctx.getOutput((int)0));
+                UTXO utxo = new UTXO(basetx.getHash(), 0);
+                utxoPool.addUTXO(utxo, basetx.getOutput((int)0));
             }
             catch (Exception ex)
             {

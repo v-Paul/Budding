@@ -14,9 +14,9 @@ namespace BaseSturct
     class BkHandler
     {
 
-        private List<Transaction> poolTx;
+        private List<Transaction> lstPoolTx;
         // 自己创建的交易 直接加进PoolTx，收到的交易，先加进tempPoolTx
-        public HashSet<Transaction> tempPoolTx;
+        private HashSet<Transaction> hashsetPoolTx;
 
         private Block mLastBlock;
 
@@ -25,8 +25,8 @@ namespace BaseSturct
         public BkHandler()
         {
             
-            this.poolTx = new List<Transaction>();
-            this.tempPoolTx = new HashSet<Transaction>();
+            this.lstPoolTx = new List<Transaction>();
+            this.hashsetPoolTx = new HashSet<Transaction>();
 
             this.mLastBlock = new Block();
 
@@ -63,43 +63,9 @@ namespace BaseSturct
         }
 
 
-        public bool CreatBaseCoinBlock(string strAddress)
-        {
-            
-            Transaction basecoinTrans = this.CoinBaseTX(strAddress);
-            this.poolTx.Add(basecoinTrans);
-            Block baseBlock = new Block();
-            //baseBlock.listTransactions.Add(FirstTrans);
-            baseBlock.listTransactions = this.poolTx;
-            baseBlock.SetTransInfo();
-            baseBlock.SetBlockHeader("0000000000000000000000000000000000000000000000000000000000000000", -1);
-            string strnounce = "";
-            baseBlock.SetNonce(strnounce);
-            baseBlock.SetBlockHash();
-
-            string jsonblock = JsonHelper.Serializer<Block>(baseBlock);
-           
-            string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
-            strRet = LeveldbOperator.PutKeyValue(baseBlock.Hash, jsonblock);
-            strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
-            bool breadOK = false;
-            string readout = LeveldbOperator.GetValue(baseBlock.Hash);
-            LogHelper.WriteInfoLog(readout);
-            LeveldbOperator.CloseDB();
-
-            if (!string.IsNullOrEmpty(readout))
-            {
-                breadOK = true;
-            }
-
-            this.GetLastBlock();
-
-            return breadOK;
 
 
-        }
-
-        public Transaction CoinBaseTX(string strAddress)
+        public Transaction CreatCoinBaseTX(string strAddress)
         {
             Transaction basecoinTrans = new Transaction();
             string basecoinPrehash = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -121,16 +87,22 @@ namespace BaseSturct
 
 
 
-        public string  CreatBlock(string strNounce)
+        public Block CreatBlock(string strNounce, string sBaseCoinScript)
         { 
 
             try
             {
-                if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))
-                    return "Verify Puzzle fail";
-
                 Block block = new Block();
-                block.listTransactions = this.poolTx;
+
+                if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))
+                    return block;
+
+                // mutex todo 181215
+                Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
+                this.AddTransaction(basecoinTrans);
+                this.HashsetPool2list();
+
+                block.listTransactions = this.GetlstPoolTx();
                 block.SetTransInfo();
                 block.SetBlockHeader(this.mLastBlock.Hash, this.mLastBlock.Header.Height);
 
@@ -139,33 +111,27 @@ namespace BaseSturct
 
                 string jsonblock = JsonHelper.Serializer<Block>(block);
                 LogHelper.WriteInfoLog(jsonblock);
-                string strRet = this.WriteLastblock(block);
-
-                if (strRet != ConstHelper.BC_OK)
-                {
-                    return "Write KeyValue fail";
-                }
-                return ConstHelper.BC_OK;
+                return block;
             }
             catch(Exception ex)
             {
                 LogHelper.WriteErrorLog(ex.Message);
-                return "CreatBlock catch an exception";
+                Block block = new Block();
+                return block;
             }
         }
 
-        public bool AddTransaction(Transaction tran)
+        // Add mutex todo
+        public string AddTransaction(Transaction tran)
         {
-            try
+            if(!this.hashsetPoolTx.Contains(tran))
             {
-                this.poolTx.Add(tran);
-
-                return true;
+                this.hashsetPoolTx.Add(tran);
+                return Decision.Accept;
             }
-            catch (Exception ex)
+            else
             {
-                LogHelper.WriteErrorLog(ex.Message);
-                return false;
+                return Decision.Accepted;
             }
 
         }
@@ -176,7 +142,7 @@ namespace BaseSturct
             {
                 foreach (Transaction tran in arrTrans )
                 {
-                    this.poolTx.Add(tran);
+                    AddTransaction(tran);
                 }
                 
                 return true;
@@ -189,28 +155,28 @@ namespace BaseSturct
             
         }
 
-        public bool InsertBasecoin(Transaction basecoinTrans)
-        {
-            try
-            {   // one block only has one basecoin 
-                if(!this.poolTx.Contains(basecoinTrans))
-                {
-                    this.poolTx.Insert(0, basecoinTrans);
-                    return true;
+        //public bool InsertBasecoin(Transaction basecoinTrans)
+        //{
+        //    try
+        //    {   // one block only has one basecoin 
+        //        if(!this.lstPoolTx.Contains(basecoinTrans))
+        //        {
+        //            this.lstPoolTx.Insert(0, basecoinTrans);
+        //            return true;
 
-                }
-                else
-                {
-                    return false;
-                }
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
                 
-            }
-            catch (Exception ex)
-            {
-                LogHelper.WriteErrorLog(ex.Message);
-                return false;
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogHelper.WriteErrorLog(ex.Message);
+        //        return false;
+        //    }
+        //}
 
         public string WriteLastblock(Block block)
         {
@@ -235,11 +201,6 @@ namespace BaseSturct
             return ConstHelper.BC_OK;
         }
 
-        public void ClearTransPool()
-        {
-            this.poolTx.Clear();
-        }
-
         public bool bIsValidBlock(Block block)
         {
             if (this.mLastBlock.Hash == block.Header.PreHash)
@@ -252,6 +213,26 @@ namespace BaseSturct
         } 
 
 
+        public void HashsetPool2list()
+        {
+            foreach (var item in this.hashsetPoolTx)
+            {
+                this.lstPoolTx.Add(item);
+            }
+            this.hashsetPoolTx.Clear();
+        }
+        public List<Transaction> GetlstPoolTx()
+        {
+            List<Transaction> lstTx = new List<Transaction>();
+            foreach (var item in this.lstPoolTx)
+            {
+                lstTx.Add(item);
+            }
+            this.lstPoolTx.Clear();
+            return lstTx;
+        }
+
+         
 
 
     }

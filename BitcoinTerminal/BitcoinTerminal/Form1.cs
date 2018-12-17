@@ -130,15 +130,27 @@ namespace BitcoinTerminal
             //this.bkHandler.CreatBaseCoinBlock(strChangePuKScript);
 
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
-            Transaction basecoinTrans = this.bkHandler.CoinBaseTX(sBaseCoinScript);
-            this.bkHandler.InsertBasecoin(basecoinTrans);
-            string strRet = this.bkHandler.CreatBlock(this.textBox2.Text);
+           
+            Block newBlock = this.bkHandler.CreatBlock(this.textBox2.Text, sBaseCoinScript);
+            if(newBlock==null)
+            {
+                MessageBox.Show("CreatBlock fail");
+                return;
+            }
+
+            string strRet = this.commHandler.SendNewBlock2AddressLst(newBlock);
+            if(strRet == Decision.Reject)
+            {
+                MessageBox.Show("Other nodes rejected this block");
+                return;
+            }
+            strRet = this.bkHandler.WriteLastblock(newBlock);
             if (strRet == ConstHelper.BC_OK)
             {
-                this.txHandler.handleBaseCoin(basecoinTrans);
+                this.txHandler.AddBaseCoin2UTxoPool(newBlock.GetBaseCoinTx());
                 this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
                 this.RefreshKeyValueBox();
-                this.bkHandler.ClearTransPool();
+
 
                 Block lastBlock = this.bkHandler.GetLastBlock();
                 this.txHandler.RefreshUTPoolByBlock(lastBlock);
@@ -374,15 +386,7 @@ namespace BitcoinTerminal
 
             if(this.txHandler.isValidTx(Ts))
             {
-                if(this.bkHandler.tempPoolTx.Contains(Ts))
-                {
-                    return Decision.Accepted;
-                }
-                else
-                {
-                    this.bkHandler.tempPoolTx.Add(Ts);
-                    return Decision.Accept;
-                }
+                return this.bkHandler.AddTransaction(Ts);
             }
             else
             {
