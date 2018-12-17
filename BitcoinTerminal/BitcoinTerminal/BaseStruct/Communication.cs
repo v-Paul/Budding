@@ -623,12 +623,25 @@ namespace BaseSturct
             return RcvMod.Value;
         }
 
-        public void SendNewBlock2AddressLst(Block block)
+        public string SendNewBlock2AddressLst(Block block)
         {
+            List<string> listResult = new List<string>();
             foreach (var item in this.dicAddressesPool)
             {
                 string str = SendNewBlock(item.Key, block);
+                listResult.Add(str);
             }
+           
+            var countAccept = listResult.Count(x=> x!= Decision.Reject);
+            if(countAccept> listResult.Count)
+            {
+                return Decision.Accept;
+            }
+            else
+            {
+                return Decision.Reject;
+            }
+            
 
         }
 

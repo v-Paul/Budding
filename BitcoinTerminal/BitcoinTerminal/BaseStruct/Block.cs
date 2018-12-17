@@ -86,10 +86,61 @@ namespace BaseSturct
         {
 
             this.TransCount = this.listTransactions.Count;
-            this.Header.HashMerkleRoot = this.listTransactions[0].strTransHash;
+            this.Header.HashMerkleRoot = this.CalMerkleRoot(GetTxsHashList());
             this.SetBlockSize();
         }
 
+        public List<string> GetTxsHashList( )
+        {
+            //step1: 对数据块做hash运算，Node0i = hash(Data0i), i = 1,2,…,9
+            //step2: 相邻两个hash块串联，然后做hash运算，Node1((i + 1) / 2) = hash(Node0i + Node0(i + 1)), 
+            //       i = 1,3,5,7; 对于i = 9, Node1((i + 1) / 2) = hash(Node0i)
+            //step3: 重复step2
+            //step4: 重复step2
+            //step5: 重复step2，生成Merkle Tree Root
+            List<string> lstTxsHash = new List<string>();
+            foreach (var item in this.listTransactions)
+            {
+                lstTxsHash.Add(item.CalTransHash());
+            }
+            return lstTxsHash;
+        }
+
+        public string CalMerkleRoot(List<string> lstHash) 
+        {
+
+            //step2: 相邻两个hash块串联，然后做hash运算，Node1((i + 1) / 2) = hash(Node0i + Node0(i + 1)), 
+            //       i = 1,3,5,7; 对于i = 9, Node1((i + 1) / 2) = hash(Node0i)
+            //step3: 重复step2
+            //step4: 重复step2
+            //step5: 重复step2，生成Merkle Tree Root
+            List<string> lstTemp = new List<string>();
+
+            int index = 0;
+            while (index < lstHash.Count())
+            {
+                // left
+                String left = lstHash[index];
+                index++;
+                // right
+                String right = left;
+                if (index != lstHash.Count())
+                {
+                    right = lstHash[index];
+                }
+                // sha2 hex value
+                string LeftAndRight = left + right;
+                String sha2HexValue = Cryptor.SHA256(LeftAndRight, LeftAndRight.Length);
+                lstTemp.Add(sha2HexValue);
+                index++;
+            }
+            if(lstTemp.Count>1)
+            {
+                CalMerkleRoot(lstTemp);
+            }
+
+            return lstTemp[0];
+        }
         public void SetBlockHeader(string strPreHash, int iPrebkheight)
         {
             this.Header.Version = AppSettings.ProductVersion;
@@ -123,7 +174,11 @@ namespace BaseSturct
             this.Size = this.listTransactions.Count * 100;//* Marshal.SizeOf(new Transaction());
         }
 
-
+        public Transaction GetBaseCoinTx()
+        {           
+            var Basetx = this.listTransactions.FirstOrDefault(x=>x.listInputs[0].strpreTxHash == ConstHelper.BC_BaseCoinInputTxHash);
+            return Basetx;
+        }
 
 
 
