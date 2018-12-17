@@ -254,7 +254,7 @@ namespace BaseSturct
          */
         public bool isValidTx(Transaction tx)
         {
-            if(tx==null)
+            if(tx.listInputs.Count==0 || tx.listOutputs.Count == 0)
             {
                 return false;
             }
