@@ -422,7 +422,7 @@ namespace BaseSturct
         private string handleNewtransactions(XXPSocketsModel socketMod)
         {
             Transaction tx = new Transaction();
-            if(string.IsNullOrEmpty(socketMod.Value) )
+            if(!string.IsNullOrEmpty(socketMod.Value) )
             {
                 tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
             }
