@@ -126,20 +126,20 @@ namespace BitcoinTerminal
         /// <param name="e"></param>
         private void Digcoin_Click(object sender, EventArgs e)
         {
-            //string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
-            //this.bkHandler.CreatBaseCoinBlock(strChangePuKScript);
 
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
-           
+            //this.bkHandler.CreatBaseCoin(sBaseCoinScript);
+
+
             Block newBlock = this.bkHandler.CreatBlock(this.textBox2.Text, sBaseCoinScript);
-            if(newBlock==null)
+            if (newBlock == null)
             {
                 MessageBox.Show("CreatBlock fail");
                 return;
             }
 
             string strRet = this.commHandler.SendNewBlock2AddressLst(newBlock);
-            if(strRet == Decision.Reject)
+            if (strRet == Decision.Reject)
             {
                 MessageBox.Show("Other nodes rejected this block");
                 return;
@@ -206,24 +206,24 @@ namespace BitcoinTerminal
                                                         this.txHandler.GetUtxoPool(), ref dInputTatolAmount );
 
 
-            Transaction trans = this.txHandler.CreatTransaction( dicInputUtxo, dInputTatolAmount, dPaytoAmount, 
+            Transaction Tx = this.txHandler.CreatTransaction( dicInputUtxo, dInputTatolAmount, dPaytoAmount, 
                                                                  strPaytoHash, strChangePuKScript );
-
-            strRet = this.txHandler.handleTxs(trans);
+            LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
+            strRet = this.txHandler.handleTxs(Tx);
 
             if(strRet != ConstHelper.BC_OK)
             {
                 MessageBox.Show(strRet);
                 return;
             }
-            this.bkHandler.AddTransaction(trans);
+            this.bkHandler.AddTransaction(Tx);
             this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
             this.RefreshKeyValueBox();
             this.TextBoxAmount.Text = "";
             this.textBoxPaytoHash.Text = "";
 
             Task.Run(()=> {
-                this.commHandler.SendNewTx2AddressLst(trans);
+                this.commHandler.SendNewTx2AddressLst(Tx);
 
             });
         }
@@ -237,9 +237,6 @@ namespace BitcoinTerminal
         {
             string nePubKeyName = this.keyHandler.GernerateKeypairs();
             this.comboBox1.Items.Add(nePubKeyName);
-
-
-            //LeveldbOperator.PrintAlldb();
 
         }
 
@@ -440,6 +437,9 @@ namespace BitcoinTerminal
             }));
         }
 
-
+        private void button_printAlldb_Click(object sender, EventArgs e)
+        {
+            LeveldbOperator.PrintAlldb();
+        }
     }
 }

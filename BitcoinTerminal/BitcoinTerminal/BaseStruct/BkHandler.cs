@@ -62,6 +62,41 @@ namespace BaseSturct
             
         }
 
+        public bool CreatBaseCoin(string sBaseCoinScript)
+        {
+
+            Block block = new Block();
+
+            // mutex todo 181215
+            Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
+            this.AddTransaction(basecoinTrans);
+            this.HashsetPool2list();
+            block.listTransactions = this.GetlstPoolTx();
+            block.SetTransInfo();
+
+            block.SetBlockHeader("0000000000000000000000000000000000000000000000000000000000000000", -1);
+
+            block.SetNonce("");
+            block.SetBlockHash();
+
+            string jsonblock = JsonHelper.Serializer<Block>(block);
+            LogHelper.WriteInfoLog(jsonblock);
+
+            string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
+            strRet = LeveldbOperator.PutKeyValue(block.Hash, jsonblock);
+            strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
+            bool breadOK = false;
+            string readout = LeveldbOperator.GetValue(block.Hash);
+            LogHelper.WriteInfoLog(readout);
+            LeveldbOperator.CloseDB();
+
+            if (!string.IsNullOrEmpty(readout))
+            {
+                breadOK = true;
+            }
+            return breadOK;
+        }
+
 
 
 
@@ -69,7 +104,6 @@ namespace BaseSturct
         {
             Transaction basecoinTrans = new Transaction();
             string basecoinPrehash = "0000000000000000000000000000000000000000000000000000000000000000";
-
             int basecoinIndex = -1;
             Input basecoinInput = new Input(basecoinPrehash, basecoinIndex);
             scriptSig bassecoinSS = new scriptSig();
