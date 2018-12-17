@@ -43,8 +43,17 @@ namespace VTMC.Utils
                 TcpClient client = new TcpClient(ip, port);
                 NetworkStream stream = client.GetStream();
 
+
                 byte[] bytRequest = ByteHelper.ObjectToBytes<XXPSocketsModel>(Request);
-                stream.Write(bytRequest, 0, bytRequest.Length);
+                
+                byte[] bylength = BitConverter.GetBytes(bytRequest.Length);
+
+                byte[] tmp = new byte[bylength.Length + bytRequest.Length];
+                System.Buffer.BlockCopy(bylength, 0, tmp, 0, bylength.Length);
+                System.Buffer.BlockCopy(bytRequest, 0, tmp, bylength.Length, bytRequest.Length);
+
+
+                stream.Write(tmp, 0, tmp.Length);
 
                 //2.接收状态,长度<1024字节
                 byte[] bytes = new Byte[size];
@@ -88,8 +97,13 @@ namespace VTMC.Utils
                         TcpClient client = this.server.AcceptTcpClient(); //停在这等待连接请求
                         NetworkStream stream = client.GetStream();
 
-                        //2.2 解析数据,长度<1024字节
-                        byte[] Request = new byte[2048];
+                        byte[] byLength = new byte[4];
+                        int retLength = stream.Read(byLength, 0, byLength.Length);
+
+
+                        int iReqLength = BitConverter.ToInt32(byLength, 0);
+
+                        byte[] Request = new byte[iReqLength];
                         int length = stream.Read(Request, 0, Request.Length);
 
 
