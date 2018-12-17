@@ -367,7 +367,7 @@ namespace BaseSturct
                 {
                     sRet = "invalid transaction";
                 }
-
+                LogHelper.WriteInfoLog("handleTxs result:" + sRet);
                 return sRet;
             }
             catch(Exception ex)

@@ -79,7 +79,7 @@ namespace BaseSturct
     public class Transaction
     {
         /** hash of the transaction, its unique id */
-        private string strTransHash;
+        public string strTransHash;
 
         public string Version;
         // input tansactions list

@@ -43,6 +43,7 @@
             this.textBoxConnectedNodes = new System.Windows.Forms.TextBox();
             this.textBoxSeedIP = new System.Windows.Forms.TextBox();
             this.ResearchNodes = new System.Windows.Forms.Button();
+            this.button_printAlldb = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Digcoin
@@ -170,11 +171,22 @@
             this.ResearchNodes.UseVisualStyleBackColor = true;
             this.ResearchNodes.Click += new System.EventHandler(this.ResearchNodes_Click);
             // 
+            // button_printAlldb
+            // 
+            this.button_printAlldb.Location = new System.Drawing.Point(37, 334);
+            this.button_printAlldb.Name = "button_printAlldb";
+            this.button_printAlldb.Size = new System.Drawing.Size(75, 23);
+            this.button_printAlldb.TabIndex = 15;
+            this.button_printAlldb.Text = "PrintAlldb";
+            this.button_printAlldb.UseVisualStyleBackColor = true;
+            this.button_printAlldb.Click += new System.EventHandler(this.button_printAlldb_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 375);
+            this.Controls.Add(this.button_printAlldb);
             this.Controls.Add(this.ResearchNodes);
             this.Controls.Add(this.textBoxSeedIP);
             this.Controls.Add(this.textBoxConnectedNodes);
@@ -217,6 +229,7 @@
         private System.Windows.Forms.TextBox textBoxConnectedNodes;
         private System.Windows.Forms.TextBox textBoxSeedIP;
         private System.Windows.Forms.Button ResearchNodes;
+        private System.Windows.Forms.Button button_printAlldb;
     }
 }
 
