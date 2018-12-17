@@ -424,13 +424,18 @@ namespace BitcoinTerminal
                 this.textBox1.Text = this.bkHandler.strPuzzle;
                 UTXOPool sigleBlockPool = this.txHandler.BlockData2UTXOPool(block);
                 List<PubKeyValue> lstPubKeyValue = this.keyHandler.RefKVFromSigUTxpool(sigleBlockPool);
-                string str = string.Empty;
-                foreach (var item in lstPubKeyValue)
+                if(lstPubKeyValue.Count > 0)
                 {
-                    str = str + string.Format("{0}Received: {1}", item.PubKeyNmae, item.Value) + Environment.NewLine;
+                    string str = string.Empty;
+                    foreach (var item in lstPubKeyValue)
+                    {
+                        str = str + string.Format("{0}Received: {1}", item.PubKeyNmae, item.Value) + Environment.NewLine;
+                    }
+
+                    MessageBox.Show(str);
+                    this.InitKeyValues();
                 }
-                MessageBox.Show(str);
-                this.InitKeyValues();
+                
 
             }));
         }
