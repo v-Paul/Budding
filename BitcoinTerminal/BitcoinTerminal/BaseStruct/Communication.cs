@@ -633,7 +633,7 @@ namespace BaseSturct
             }
            
             var countAccept = listResult.Count(x=> x!= Decision.Reject);
-            if(countAccept> listResult.Count)
+            if(countAccept> listResult.Count/2)
             {
                 return Decision.Accept;
             }
