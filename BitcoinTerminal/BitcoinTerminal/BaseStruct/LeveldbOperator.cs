@@ -40,11 +40,12 @@ namespace BaseSturct
         [DllImport(@"LevelDBdll.dll", EntryPoint = "GetNextKey", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         private extern static IntPtr getNextKey();
 
-
+        public static Mutex mutex = new Mutex();
 
         #region Public fuction
         public static string OpenDB(string strDbPath)
         {
+            mutex.WaitOne();
             IntPtr IntRes = openDB(strDbPath);
             string str = Marshal.PtrToStringAnsi(IntRes);
             return str;
@@ -55,10 +56,11 @@ namespace BaseSturct
             try
             {
                 IntPtr IntRes = closeDB();
+                mutex.ReleaseMutex();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                LogHelper.WriteErrorLog(ex.Message);
             }
             
         }
