@@ -150,7 +150,8 @@ namespace BitcoinTerminal
             strRet = this.bkHandler.WriteLastblock(newBlock);
             if (strRet == ConstHelper.BC_OK)
             {
-                //Block lastBlock = this.bkHandler.GetLastBlock();
+                this.bkHandler.RefreshLastBlock(newBlock);
+
                 this.txHandler.RefreshUTPoolByBlock(newBlock);
 
                 //this.txHandler.AddBaseCoin2UTxoPool(newBlock.GetBaseCoinTx());

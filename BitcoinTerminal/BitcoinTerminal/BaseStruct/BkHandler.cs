@@ -44,8 +44,7 @@ namespace BaseSturct
                 if (!string.IsNullOrEmpty(strlastBlock))
                 {
                     this.mLastBlock = JsonHelper.Deserialize<Block>(strlastBlock);  
-                    this.strPuzzle = this.mLastBlock.Header.PuzzToStr();
-                    //this.mLastBlockHash = this.mLastBlock.Hash;
+                    this.strPuzzle = this.mLastBlock.Header.PuzzToStr();                   
                 }
             }
             LeveldbOperator.CloseDB();
