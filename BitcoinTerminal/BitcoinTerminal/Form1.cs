@@ -22,7 +22,7 @@ namespace BitcoinTerminal
         private TxHandler txHandler;
         private KeyHandler keyHandler;
         private Communication commHandler;
-
+        private string CurrentBkHash;
         //private string MyAddressScript;
 
         public Form1()
@@ -50,6 +50,8 @@ namespace BitcoinTerminal
             this.commHandler = new Communication();
             this.commHandler.NewTransactionCallBack = this.NewTransactionCallBack;
             this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
+
+            this.CurrentBkHash = string.Empty;
 
 
             this.InitFromDB();
@@ -137,6 +139,7 @@ namespace BitcoinTerminal
                 MessageBox.Show("CreatBlock fail");
                 return;
             }
+            this.CurrentBkHash = newBlock.Hash;
 
             string strRet = this.commHandler.SendNewBlock2AddressLst(newBlock);
             if (strRet == Decision.Reject)
@@ -147,13 +150,15 @@ namespace BitcoinTerminal
             strRet = this.bkHandler.WriteLastblock(newBlock);
             if (strRet == ConstHelper.BC_OK)
             {
-                this.txHandler.AddBaseCoin2UTxoPool(newBlock.GetBaseCoinTx());
+                //Block lastBlock = this.bkHandler.GetLastBlock();
+                this.txHandler.RefreshUTPoolByBlock(newBlock);
+
+                //this.txHandler.AddBaseCoin2UTxoPool(newBlock.GetBaseCoinTx());
                 this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
                 this.RefreshKeyValueBox();
 
 
-                Block lastBlock = this.bkHandler.GetLastBlock();
-                this.txHandler.RefreshUTPoolByBlock(lastBlock);
+
                 this.textBox1.Text = this.bkHandler.strPuzzle;
                 this.textBox2.Text = "";
             }
@@ -394,6 +399,10 @@ namespace BitcoinTerminal
 
         private string NewBlockCallBack(Block block)
         {
+            if(this.CurrentBkHash == block.Hash)
+            {
+                return Decision.Accepted;
+            }
 
             if(this.bkHandler.bIsValidBlock(block))
             {

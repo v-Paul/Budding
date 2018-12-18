@@ -120,6 +120,11 @@ namespace BaseSturct
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="utxoSinglePool"></param>
+        /// <returns></returns>
         public List<PubKeyValue> RefKVFromSigUTxpool(UTXOPool utxoSinglePool)
         {
             DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);

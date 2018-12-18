@@ -105,7 +105,7 @@ namespace BaseSturct
 
 
         /// <summary>
-        /// 
+        /// 根据block信息更新UTXO pool，同时返回该block生成的utxo list，用来提示该block收到了多少钱
         /// </summary>
         /// <param name="block"></param>
         /// <returns>just for update key corresponding value</returns>

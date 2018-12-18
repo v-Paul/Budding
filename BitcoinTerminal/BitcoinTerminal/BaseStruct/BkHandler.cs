@@ -185,8 +185,7 @@ namespace BaseSturct
             {
                 LogHelper.WriteErrorLog(ex.Message);
                 return false;
-            }
-            
+            }            
         }
 
         //public bool InsertBasecoin(Transaction basecoinTrans)
