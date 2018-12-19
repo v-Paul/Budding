@@ -625,7 +625,7 @@ namespace BaseSturct
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.NewBlock;
             sendMod.Value = JsonHelper.Serializer<Block>(block);
-            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod,20000);
             return RcvMod.Value;
         }
 
