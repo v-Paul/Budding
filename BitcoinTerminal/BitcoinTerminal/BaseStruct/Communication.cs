@@ -315,8 +315,13 @@ namespace BaseSturct
                 sRet = ConstHelper.BC_ReturnHandshake;
                 if( !this.dicAddressesPool.ContainsKey(socketMod.IpAddress))
                 {
-                    this.dicAddressesPool.Add(socketMod.IpAddress, 0);
-                    // send this to others todo... 181210
+                    this.Add2AddressPool(socketMod.IpAddress);
+                    // send this to others ... 181210
+                    List<string> lstTemp = new List<string>();
+                    lstTemp.Add(socketMod.IpAddress);
+                    Task.Run(()=> {
+                        this.SendNewAddress2Others(lstTemp);
+                    });
                 }
 
             }
