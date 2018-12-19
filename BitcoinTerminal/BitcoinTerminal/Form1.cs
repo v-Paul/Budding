@@ -389,39 +389,43 @@ namespace BitcoinTerminal
 
         }
 
-        private void ReqSyncBlock()
+        private void ReqSyncBlock(bool bCheckemptyDB=true)
         {
-            if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
+            if(bCheckemptyDB)
             {
-                DBFileInfo df = this.commHandler.RequestHightestDBInfo();
-                string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
-                MessageBox.Show(str);
-                Task.Run(() => {
-
-                    string SavePath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
-                    long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
-                    if (lRet == -1)
-                    {
-                        MessageBox.Show("try later, there is a file transfering now");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Received: " + lRet.ToString());
-                        FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
-                        Directory.CreateDirectory(AppSettings.XXPDBFolder);
-                        ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
-                        this.InitFromDB();
-                    }
-                    this.commHandler.DisposeTransFileHelper();
-
-                });
-                
-                if (this.commHandler.RequestStartTransDB(df.IP) != ConstHelper.BC_OK)
+                if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
                 {
+                    DBFileInfo df = this.commHandler.RequestHightestDBInfo();
+                    string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
+                    MessageBox.Show(str);
+                    Task.Run(() => {
 
+                        string SavePath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
+                        long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
+                        if (lRet == -1)
+                        {
+                            MessageBox.Show("try later, there is a file transfering now");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Received: " + lRet.ToString());
+                            FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
+                            Directory.CreateDirectory(AppSettings.XXPDBFolder);
+                            ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
+                            this.InitFromDB();
+                        }
+                        this.commHandler.DisposeTransFileHelper();
+
+                    });
+
+                    if (this.commHandler.RequestStartTransDB(df.IP) != ConstHelper.BC_OK)
+                    {
+
+                    }
                 }
+                LeveldbOperator.CloseDB();
             }
-            LeveldbOperator.CloseDB();
+           
 
             ResponseBlock BkInfo = this.commHandler.RequestNewBlockInfo(this.bkHandler.GetLastBlock());
             if (BkInfo.BlockResult == BlockResultType.Lower)
@@ -461,8 +465,8 @@ namespace BitcoinTerminal
             {
                 return Decision.Accepted;
             }
-
-            if(this.bkHandler.bIsValidBlock(block))
+            int iRet = this.bkHandler.IsValidBlock(block);
+            if (iRet==0)
             {
                 if( this.bkHandler.WriteLastblock(block) == ConstHelper.BC_OK)
                 {
@@ -475,6 +479,12 @@ namespace BitcoinTerminal
             }
             else
             {
+                if(iRet==1)
+                {
+                    Task.Run(() => {
+                        this.ReqSyncBlock(false);
+                    });
+                }
                 return Decision.Reject;
             }
             

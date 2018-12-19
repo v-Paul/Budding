@@ -156,16 +156,18 @@ namespace BaseSturct
 
         public void SetBlockHash()
         {
-            //version prev_block mrkl_root time bits nonce
-            //string strTemp = string.Format("{0}{1}{2}{3}{4}{5}", this.Header.Version,this.Header.PreHash,
-            //                                this.Header.HashMerkleRoot,this.Header.TimeStamp,
-            //                                this.Header.PuzzToStr(),this.Header.nonce );
+            this.Hash = CalBlockHash();
+
+
+        }
+
+        public string CalBlockHash()
+        {
             string strHeader = this.Header.HeaderToStr();
             // 计算两遍sha
             string strhash = Cryptor.SHA256(strHeader, strHeader.Length);
-            this.Hash = Cryptor.SHA256(strhash, strhash.Length);
-
-
+            strhash = Cryptor.SHA256(strhash, strhash.Length);
+            return strhash;
         }
 
         private void SetBlockSize()
