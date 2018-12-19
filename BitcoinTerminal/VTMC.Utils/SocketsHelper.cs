@@ -35,7 +35,7 @@ namespace VTMC.Utils
         #region Public Function
 
         #region XXP Coin        
-        public XXPSocketsModel XXPSendMessage(string ip, XXPSocketsModel Request, int port, int size = 2048)
+        public XXPSocketsModel XXPSendMessage(string ip, XXPSocketsModel Request, int port, int iTimeout = 10000,int size = 2048)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace VTMC.Utils
 
                 //2.接收状态,长度<1024字节
                 byte[] bytes = new Byte[size];
-                stream.ReadTimeout = 10000;
+                stream.ReadTimeout = iTimeout;
                 stream.Read(bytes, 0, bytes.Length);
 
                 //3.关闭对象

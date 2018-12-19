@@ -625,7 +625,7 @@ namespace BaseSturct
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.NewBlock;
             sendMod.Value = JsonHelper.Serializer<Block>(block);
-            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod,20000);
             return RcvMod.Value;
         }
 
@@ -676,7 +676,8 @@ namespace BaseSturct
                               select x).ToList();
             foreach (var item in lstSeeds)
             {
-                this.RequestHandshake(item);
+                if(item != OSHelper.GetLocalIP() && item !="127.0.0.1")
+                    this.RequestHandshake(item);
             }
             if(this.dicAddressesPool.Count ==0 )
             {

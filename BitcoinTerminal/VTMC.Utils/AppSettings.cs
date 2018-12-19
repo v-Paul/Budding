@@ -216,6 +216,8 @@ namespace VTMC.Utils
         public static string XXPTempFolder { get; set; }
         public static int XXPCommport { get; set; }
         public static int XXPTransFilePort { get; set; }
+        public static string SeedNodes { get; set; }
+
         //
         #endregion
 

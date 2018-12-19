@@ -236,35 +236,64 @@ namespace BaseSturct
             return ConstHelper.BC_OK;
         }
 
-        public bool bIsValidBlock(Block block)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="block"></param>
+        /// <returns>0:ok; -1:Tx Hash not right; -2: Mercle tree root not right; -3:Block hash not right;-4:orphan chain </returns>
+        public int IsValidBlock(Block block)
         {
             if (this.mLastBlock.Hash == block.Header.PreHash)
             {
-                // check trans todo 181212
+                // check trans  181212
                 List<string> lstTxHash = new List<string>();
                 foreach (var item in block.listTransactions)
                 {
+
                     if (item.TxHash != item.CalTransHash())
                     {
+                        
                         LogHelper.WriteErrorLog(item.TxHash + ",Tx Hash not right");
-                        return false;
+                        return -1;
                     }
                         
                     lstTxHash.Add(item.TxHash);
 
                 }
-
-                if( block.Hash != block.CalMerkleRoot(lstTxHash))
+                string MercleTreeRoot = block.CalMerkleRoot(lstTxHash);
+                if ( block.Header.HashMerkleRoot != MercleTreeRoot)
                 {
-                    LogHelper.WriteErrorLog(JsonHelper.Serializer<Block>(block));
-                    LogHelper.WriteErrorLog(block.Hash + ",block Hash not right");
-                    return false;
+                    
+                    LogHelper.WriteErrorLog(MercleTreeRoot + ",Mercle tree root not right");
+                    return -2;
                 }
 
-                return true;
+                string CalBlockHash = block.CalBlockHash();
+                if(block.Hash != CalBlockHash)
+                {
+                   
+                    LogHelper.WriteErrorLog(CalBlockHash + ",Block hash not right");
+                    return -3;
+                }
+
+                return 0;
             }
             else
-                return false;
+            {
+                if(block.Header.Height > this.mLastBlock.Header.Height+1)
+                {
+                    LogHelper.WriteErrorLog("New block Higher than mine");
+                    return 1;
+                }
+                else
+                {
+                    LogHelper.WriteErrorLog(string.Format("myLastBlockHeight:{0},NewBlockHeight:{1}", this.mLastBlock.Header.Height, block.Header.Height));
+                    return -4;
+                }
+
+                
+            }
+               
         } 
 
 
