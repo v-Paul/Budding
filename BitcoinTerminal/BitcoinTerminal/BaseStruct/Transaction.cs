@@ -79,7 +79,7 @@ namespace BaseSturct
     public class Transaction
     {
         /** hash of the transaction, its unique id */
-        public string strTransHash;
+        public string TxHash;
 
         public string Version;
         // input tansactions list
@@ -97,7 +97,7 @@ namespace BaseSturct
 
         public Transaction(Transaction tx)
         {
-            strTransHash = tx.strTransHash;
+            TxHash = tx.TxHash;
             listInputs = new List<Input>(tx.listInputs);
             listOutputs = new List<Output>(tx.listOutputs);
         }
@@ -208,7 +208,7 @@ namespace BaseSturct
             try
             {
                 string strTransction = getRawTx();
-                this.strTransHash = Cryptor.SHA256(strTransction, strTransction.Length);
+                this.TxHash = Cryptor.SHA256(strTransction, strTransction.Length);
             }
             catch (Exception ex)
             {
@@ -225,12 +225,12 @@ namespace BaseSturct
 
         public void setHash(string h)
         {
-            this.strTransHash = h;
+            this.TxHash = h;
         }
 
         public string getHash()
         {
-            return this.strTransHash;
+            return this.TxHash;
         }
 
         public List<Input> getInputs()
