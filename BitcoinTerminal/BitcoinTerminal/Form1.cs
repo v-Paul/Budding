@@ -50,12 +50,24 @@ namespace BitcoinTerminal
             this.commHandler = new Communication();
             this.commHandler.NewTransactionCallBack = this.NewTransactionCallBack;
             this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
+            this.commHandler.RefresfNodeCountCallBack = this.RefresfNodeCountCallBack;
 
             this.CurrentBkHash = string.Empty;
 
+            // modify by fdp 加快form显示速度
+            Task.Run(() =>
+            {
+                this.InitFromDB();
+                if(this.ReserchNodes() != 0)
+                {
+                    this.ReqSyncBlock();
+                }
 
-            this.InitFromDB();
-            this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
+
+            });
+            //this.InitFromDB();
+            ////this.textBoxConnectedNodes.Text = this.commHandler.GetAddressCount().ToString();
+            //this.commHandler.ReserchNodes();
 
         }
 
@@ -67,6 +79,8 @@ namespace BitcoinTerminal
             AppSettings.ProductVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             AppSettings.XXPCommonFolder = string.Format(AppConfigHelper.GetConfigValByKey("XXPCommonFolder"), Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             AppSettings.XXPCommport = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPCommPort"));
+            AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
+
 
             AppSettings.XXPTransFilePort = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPTransFilePort"));
             if (!System.IO.Directory.Exists(AppSettings.XXPCommonFolder))
@@ -102,24 +116,26 @@ namespace BitcoinTerminal
 
         private void InitFromDB()
         {
-            this.BeginInvoke(new MethodInvoker(() =>
-            {
+            //this.BeginInvoke(new MethodInvoker(() =>
+            //{
                 this.bkHandler.GetLastBlock();
-
-                this.textBox1.Text = this.bkHandler.strPuzzle;
+                //this.textBox1.Text = this.bkHandler.strPuzzle;
                 this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
                 this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                this.textBox1.Text = this.bkHandler.strPuzzle;
                 this.InitKeyValues();
 
             }));
         }
 
+        private int ReserchNodes()
+        {
+            this.commHandler.ReserchNodes();
+            return this.commHandler.GetAddressCount();  
+        }
 
-        //protected override void OnClosing(CancelEventArgs e)
-        //{
-        //    LeveldbOperator.CloseDB();
-            
-        //}
 
         /// <summary>
         /// Creat Block
@@ -373,6 +389,47 @@ namespace BitcoinTerminal
 
         }
 
+        private void ReqSyncBlock()
+        {
+            if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
+            {
+                DBFileInfo df = this.commHandler.RequestHightestDBInfo();
+                string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
+                MessageBox.Show(str);
+                Task.Run(() => {
+
+                    string SavePath = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
+                    long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
+                    if (lRet == -1)
+                    {
+                        MessageBox.Show("try later, there is a file transfering now");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Received: " + lRet.ToString());
+                        FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
+                        Directory.CreateDirectory(AppSettings.XXPDBFolder);
+                        ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
+                        this.InitFromDB();
+                    }
+                    this.commHandler.DisposeTransFileHelper();
+
+                });
+                
+                if (this.commHandler.RequestStartTransDB(df.IP) != ConstHelper.BC_OK)
+                {
+
+                }
+            }
+            LeveldbOperator.CloseDB();
+
+            ResponseBlock BkInfo = this.commHandler.RequestNewBlockInfo(this.bkHandler.GetLastBlock());
+            if (BkInfo.BlockResult == BlockResultType.Lower)
+            {
+                string sRet = this.commHandler.GetNewBlocks(BkInfo.IP, this.bkHandler.GetLastBlock());
+            }
+        }
+
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             //LeveldbOperator.CloseDB();
@@ -421,6 +478,17 @@ namespace BitcoinTerminal
                 return Decision.Reject;
             }
             
+        }
+
+        void RefresfNodeCountCallBack(int iNodesCount)
+        {
+            //this.textBoxConnectedNodes.Text = iNodesCount.ToString();
+
+            this.textBoxConnectedNodes.Invoke(new MethodInvoker(() =>
+            {
+                this.textBoxConnectedNodes.Text = iNodesCount.ToString();
+
+            }));
         }
 
         private void RefreshByNewBlock(Block block)

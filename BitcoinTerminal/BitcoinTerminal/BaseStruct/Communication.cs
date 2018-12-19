@@ -86,6 +86,7 @@ namespace BaseSturct
         private Dictionary<string, int> dicAddressesPool;
         public Func<Transaction, string> NewTransactionCallBack;
         public Func<Block, string> NewBlockCallBack;
+        public Action<int> RefresfNodeCountCallBack;
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
@@ -109,12 +110,17 @@ namespace BaseSturct
         {
             return this.SocketsHelp.XXPSendMessage(ip, Request,AppSettings.XXPCommport);
         }
-
+        public XXPSocketsModel XXPSendMessage(string ip, XXPSocketsModel Request,int iTimeout)
+        {
+            return this.SocketsHelp.XXPSendMessage(ip, Request, AppSettings.XXPCommport, iTimeout);
+        }
         public void Add2AddressPool(string Ip)
         {
             if(!this.dicAddressesPool.ContainsKey(Ip))
             {
+                LogHelper.WriteInfoLog("Add new IP:" + Ip);
                 this.dicAddressesPool.Add(Ip, 0);
+                this.RefresfNodeCountCallBack(this.GetAddressCount());
             }
         }
 
@@ -216,7 +222,7 @@ namespace BaseSturct
             foreach (var item in this.dicAddressesPool)
             {
                 
-                XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(item.Key, sendMod, AppSettings.XXPCommport);
+                XXPSocketsModel RetMod = this.XXPSendMessage(item.Key, sendMod);
                 if(!string.IsNullOrEmpty(RetMod.Value ))
                 {
                     DBFileInfo dbInfo = JsonHelper.Deserialize<DBFileInfo>(RetMod.Value);
@@ -238,7 +244,7 @@ namespace BaseSturct
             sendMod.Type = XXPCoinMsgType.DBfile;
             sendMod.Value = DBRequestType.StratTransfer;
             
-            XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(IP, sendMod, AppSettings.XXPCommport);
+            XXPSocketsModel RetMod = this.XXPSendMessage(IP, sendMod);
             return RetMod.Value;
         }
 
@@ -293,7 +299,7 @@ namespace BaseSturct
             sendMod.Type = XXPCoinMsgType.Handshake;
             sendMod.Value = ConstHelper.BC_RequestHandshake;
 
-            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod,5000);
             if (RcvMod.Value == ConstHelper.BC_ReturnHandshake)
             {
                 this.Add2AddressPool(RcvMod.IpAddress);
@@ -660,6 +666,51 @@ namespace BaseSturct
                 });
             }
             return sRet;
+        }
+
+        public string ReserchNodes()
+        {
+            AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
+            var lstSeeds = (from x in AppSettings.SeedNodes.Split('|')
+                              where x != ""
+                              select x).ToList();
+            foreach (var item in lstSeeds)
+            {
+                this.RequestHandshake(item);
+            }
+            if(this.dicAddressesPool.Count ==0 )
+            {
+                return "Connect to XXPCoin Net failed";
+            }
+
+            HashSet<string> hsNew = new HashSet<string>();
+            foreach (var item in this.dicAddressesPool)
+            {
+                List<string> lstAddress = this.RequestMoreNodes(item.Key);
+                
+              
+                foreach (var Adds in lstAddress)
+                {
+                    if (Adds != OSHelper.GetLocalIP()&&!this.dicAddressesPool.ContainsKey(Adds))
+                    {
+                        if(!hsNew.Contains(Adds))
+                        {
+                            hsNew.Add(Adds);
+                        }
+                        
+                    }
+                }                   
+            }
+            foreach (var item in hsNew)
+            {
+                if(this.RequestHandshake(item))
+                {
+                    this.Add2AddressPool(item);
+                }
+            }
+
+            return ConstHelper.BC_OK;
+
         }
 
         #endregion

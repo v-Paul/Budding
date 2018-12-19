@@ -217,11 +217,12 @@ namespace BaseSturct
                 return "Invalid block";
             }
             string jsonblock = JsonHelper.Serializer<Block>(block);
-
+            LogHelper.WriteInfoLog(jsonblock);
             string strRet = LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
             if (strRet != ConstHelper.BC_OK)
             {
                 return "Open DB fail";
+                LogHelper.WriteInfoLog("Open DB fail");
             }
             strRet = LeveldbOperator.PutKeyValue(block.Hash, jsonblock);
             strRet = LeveldbOperator.PutKeyValue(ConstHelper.BC_LastKey, jsonblock);
@@ -229,7 +230,9 @@ namespace BaseSturct
             if (strRet != ConstHelper.BC_OK)
             {
                 return "Write KeyValue fail";
+                LogHelper.WriteInfoLog("Write KeyValue fail");
             }
+            
             return ConstHelper.BC_OK;
         }
 
@@ -238,6 +241,26 @@ namespace BaseSturct
             if (this.mLastBlock.Hash == block.Header.PreHash)
             {
                 // check trans todo 181212
+                List<string> lstTxHash = new List<string>();
+                foreach (var item in block.listTransactions)
+                {
+                    if (item.TxHash != item.CalTransHash())
+                    {
+                        LogHelper.WriteErrorLog(item.TxHash + ",Tx Hash not right");
+                        return false;
+                    }
+                        
+                    lstTxHash.Add(item.TxHash);
+
+                }
+
+                if( block.Hash != block.CalMerkleRoot(lstTxHash))
+                {
+                    LogHelper.WriteErrorLog(JsonHelper.Serializer<Block>(block));
+                    LogHelper.WriteErrorLog(block.Hash + ",block Hash not right");
+                    return false;
+                }
+
                 return true;
             }
             else
