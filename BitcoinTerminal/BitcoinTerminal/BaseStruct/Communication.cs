@@ -94,7 +94,8 @@ namespace BaseSturct
             this.dicAddressesPool = new Dictionary<string,int>();
 
             this.SocketsHelp.XXPSocketsExecuteCallBack = this.XXPSocketsExecuteCallBack;
-            if (!this.SocketsHelp.XXPStartReceiveMsg(AppSettings.XXPCommport));
+
+            if (!this.SocketsHelp.XXPStartReceiveMsg(AppSettings.XXPCommport))
             {
                 LogHelper.WriteErrorLog("SocketsHelp.StartReceive fail");
             }
@@ -116,16 +117,19 @@ namespace BaseSturct
         }
         public void Add2AddressPool(string Ip)
         {
-            if(!this.dicAddressesPool.ContainsKey(Ip))
+            LogHelper.WriteMethodLog(true);
+            if (!this.dicAddressesPool.ContainsKey(Ip))
             {
                 LogHelper.WriteInfoLog("Add new IP:" + Ip);
                 this.dicAddressesPool.Add(Ip, 0);
                 this.RefresfNodeCountCallBack(this.GetAddressCount());
             }
+            LogHelper.WriteMethodLog(false);
         }
 
         private XXPSocketsModel XXPSocketsExecuteCallBack(XXPSocketsModel mod)
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel refMod = new XXPSocketsModel();
             refMod.IpAddress = OSHelper.GetLocalIP();
             refMod.Type = string.Empty;
@@ -163,13 +167,14 @@ namespace BaseSturct
                     
                     break;
             }
-
+            LogHelper.WriteMethodLog(false);
             return refMod;
         }
 
         #region DBFile
         private string HandlleDBfileEvent(XXPSocketsModel socketMod)
         {
+            LogHelper.WriteMethodLog(true);
             string strRet = string.Empty;
             switch (socketMod.Value)
             {
@@ -177,12 +182,12 @@ namespace BaseSturct
                     strRet = GetDBfileInfo();
                     break;
                 case DBRequestType.StratTransfer:
-                    strRet = StartSendDBZip(socketMod.IpAddress); // start file transfer, todo 181211
+                    strRet = StartSendDBZip(socketMod.IpAddress); // start file transfer,  181211
                     break;
                 default:
                     break;
             }
-
+            LogHelper.WriteMethodLog(true);
             return strRet;
         }
 
@@ -191,7 +196,7 @@ namespace BaseSturct
         {
             try
             {
-
+                LogHelper.WriteMethodLog(true);
                 string tempzip = Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
                 if (File.Exists(tempzip)) FileIOHelper.DeleteFile(tempzip);
                 ZipHelper.Zip(AppSettings.XXPDBFolder, tempzip);
@@ -210,10 +215,15 @@ namespace BaseSturct
                 LogHelper.WriteErrorLog(ex.Message);
                 return string.Empty;
             }
+            finally
+            {
+                LogHelper.WriteMethodLog(false);
+            }
 
         }
         public DBFileInfo RequestHightestDBInfo()
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel sendMod = new XXPSocketsModel();         
             sendMod.Type = XXPCoinMsgType.DBfile;
             sendMod.Value = DBRequestType.RequestDBInfo;
@@ -235,22 +245,25 @@ namespace BaseSturct
             var ss = lstDBInfo.Max(x => x.LastBlockHeight);
             DBFileInfo hightestDBInfo = lstDBInfo.FirstOrDefault(x => x.LastBlockHeight == ss);
 
-            
+            LogHelper.WriteInfoLog("HightestDBInfo: " + JsonHelper.Serializer<DBFileInfo>(hightestDBInfo));
             return hightestDBInfo;
         }
         public string RequestStartTransDB(string IP)
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.DBfile;
             sendMod.Value = DBRequestType.StratTransfer;
             
             XXPSocketsModel RetMod = this.XXPSendMessage(IP, sendMod);
+            LogHelper.WriteInfoLog("RequestStartTransDB ret: " + RetMod.Value);
             return RetMod.Value;
         }
 
         public long StartReceiveFile(string IP, long size, string SavePath)
         {
-            if(this.TransFileHelper != null)
+            LogHelper.WriteMethodLog(true);
+            if (this.TransFileHelper != null)
             {
                 return -1;
             }
@@ -262,19 +275,22 @@ namespace BaseSturct
                 FileIOHelper.DeleteFile(SavePath);
             }
             long lTotal = TransFileHelper.StartReceivefile(SavePath, IP, AppSettings.XXPTransFilePort, size);
-
+            LogHelper.WriteInfoLog(string.Format("Receive File size:{0}", lTotal));
             return lTotal;
         }
         public void DisposeTransFileHelper()
         {
+            LogHelper.WriteMethodLog(true);
             this.TransFileHelper?.Dispose();
             this.TransFileHelper = null;
+            LogHelper.WriteMethodLog(false);
         } 
 
         public string StartSendDBZip(string IP)
         {
             try
             {
+                LogHelper.WriteMethodLog(true);
                 Task.Run(()=>{
                     SocketsHelper SendFileHelper = new SocketsHelper();
                     bool bRet = SendFileHelper.OpenFileTransConnect(IP, AppSettings.XXPTransFilePort);
@@ -282,6 +298,7 @@ namespace BaseSturct
                     SendFileHelper.StartSendFile(tempzip);
 
                 });
+                
                 return ConstHelper.BC_OK;
             }
             catch(Exception ex )
@@ -289,12 +306,17 @@ namespace BaseSturct
                 LogHelper.WriteErrorLog(ex.Message);
                 return "exception";
             }
+            finally
+            {
+                LogHelper.WriteMethodLog(false);
+            }
         }
         #endregion
 
         #region Handshake
         public bool RequestHandshake(string ip)
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.Handshake;
             sendMod.Value = ConstHelper.BC_RequestHandshake;
@@ -303,12 +325,15 @@ namespace BaseSturct
             if (RcvMod.Value == ConstHelper.BC_ReturnHandshake)
             {
                 this.Add2AddressPool(RcvMod.IpAddress);
+                LogHelper.WriteInfoLog("RequestHandshake succ" );
                 return true;
             }
+            LogHelper.WriteInfoLog("RequestHandshake failed");
             return false;
         }
         private string  HandlleHandshakeEvent(XXPSocketsModel socketMod)
         {
+            LogHelper.WriteMethodLog(true);
             string sRet = string.Empty;
             if(socketMod.Value == ConstHelper.BC_RequestHandshake)
             {
@@ -325,6 +350,7 @@ namespace BaseSturct
                 }
 
             }
+            LogHelper.WriteMethodLog(false);
             return sRet;
         }
         #endregion
@@ -332,6 +358,7 @@ namespace BaseSturct
         #region NewAddresses
         public List<string> RequestMoreNodes(string ip)
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel sendMod = new XXPSocketsModel();
             XXPSocketsModel RcvMod = new XXPSocketsModel();
 
@@ -344,15 +371,17 @@ namespace BaseSturct
                                   where x != ""
                                   select x).ToList();              
             }
-
+            LogHelper.WriteMethodLog(false);
             return lstIpAddress;
 
         }
 
         public void SendNewAddress2Others(List<string> lstNewAddress)
         {
-            if(lstNewAddress.Count == 0)
+            LogHelper.WriteMethodLog(true);
+            if (lstNewAddress.Count == 0)
             {
+                LogHelper.WriteMethodLog(false);
                 return;
             }
 
@@ -368,11 +397,13 @@ namespace BaseSturct
             {
                 this.XXPSendMessage(item.Key, sendMod);
             }
+            LogHelper.WriteMethodLog(false);
 
         }
 
         private string handleNewAddress(XXPSocketsModel socketMod)
         {
+            LogHelper.WriteMethodLog(true);
             string strRet = string.Empty;
             if(string.IsNullOrEmpty(socketMod.Value))// give my addresspool to sender
             {
@@ -404,6 +435,7 @@ namespace BaseSturct
                         this.RequestHandshake(item);
                     }
                 }
+                LogHelper.WriteMethodLog(true);
                 return "ths";
             }
         }
@@ -414,24 +446,29 @@ namespace BaseSturct
 
         public string SendNewtransactions(string ip, Transaction Tx)
         {
+            LogHelper.WriteMethodLog(true);
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.Newtransactions;
             sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
             XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            LogHelper.WriteInfoLog("SendNewtransactions ret: " + RcvMod.Value);
             return RcvMod.Value;
         }
 
         public void SendNewTx2AddressLst(Transaction Tx)
         {
+            LogHelper.WriteMethodLog(true);
             foreach (var item in this.dicAddressesPool)
             {
                 string str = SendNewtransactions(item.Key, Tx);
             }
+            LogHelper.WriteMethodLog(false);
 
         }
 
         private string handleNewtransactions(XXPSocketsModel socketMod)
         {
+            LogHelper.WriteMethodLog(true);
             Transaction tx = new Transaction();
             if(!string.IsNullOrEmpty(socketMod.Value) )
             {
@@ -444,6 +481,7 @@ namespace BaseSturct
                     this.SendNewTx2AddressLst(tx);
                 });
             }
+            LogHelper.WriteInfoLog("handleNewtransactions ret: " + sRet);
             return sRet;
         }
         #endregion
@@ -451,6 +489,7 @@ namespace BaseSturct
         #region SyncBlocks
         public ResponseBlock RequestNewBlockInfo( Block lastBlock)
         {
+            LogHelper.WriteMethodLog(true);
             RequestBlock ReqBkInfo = new RequestBlock();
             ReqBkInfo.RequestType = BlockRequestType.RequestBlockInfo;
             ReqBkInfo.LastBlockHash = lastBlock.Hash;
@@ -497,14 +536,15 @@ namespace BaseSturct
                 ResponseBkInfo = lstResponse.FirstOrDefault(x => x.LastBlockHeight == iHighest);
             }
 
-
-            return ResponseBkInfo;// JsonHelper.Serializer<ResponseBlock>(ResponseBkInfo);
+            LogHelper.WriteInfoLog("RequestNewBlockInfo ret: " + ResponseBkInfo.BlockResult);
+            return ResponseBkInfo;
 
 
         }
 
         public string GetNewBlocks(string ip, Block lastBlock)
         {
+            LogHelper.WriteMethodLog(true);
             RequestBlock ReqBkInfo = new RequestBlock();
             ReqBkInfo.RequestType = BlockRequestType.GetNewBlocks;
             ReqBkInfo.LastBlockHash = lastBlock.Hash;
@@ -516,13 +556,14 @@ namespace BaseSturct
             sendMod.Value = JsonHelper.Serializer<RequestBlock>(ReqBkInfo);
 
             XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(ip, sendMod, AppSettings.XXPCommport);
+            LogHelper.WriteInfoLog("GetNewBlocks return: " + RetMod.Value);
             return RetMod.Value;
 
         }
 
         private string handleSyncBlocks(XXPSocketsModel socketMod)
         {
-
+            LogHelper.WriteMethodLog(true);
             RequestBlock ReqBkInfo = JsonHelper.Deserialize<RequestBlock>(socketMod.Value);
             ReqBkInfo.IP = socketMod.IpAddress;
             string strRet = string.Empty;
@@ -537,13 +578,14 @@ namespace BaseSturct
                 default:
                     break;
             }
-
+            LogHelper.WriteInfoLog("handleSyncBlocks ret: " + strRet);
             return strRet;
         }
 
 
         private string CheckBlock(RequestBlock ReqBkInfo)
         {
+            LogHelper.WriteMethodLog(true);
             LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
             string strLastblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
             Block block = JsonHelper.Deserialize<Block>(strLastblock);
@@ -580,7 +622,7 @@ namespace BaseSturct
             }
 
             LeveldbOperator.CloseDB();
-
+            LogHelper.WriteMethodLog(false);
             return JsonHelper.Serializer<ResponseBlock>(RetBkInfo);
   
         }
@@ -589,30 +631,34 @@ namespace BaseSturct
         {
             try
             {
-                List<Block> tobeSendBlocks = new List<Block>();
+                LogHelper.WriteMethodLog(true);
+                List<Block> lstTobeSendBlocks = new List<Block>();
                 LeveldbOperator.OpenDB(AppSettings.XXPDBFolder);
                 string strReqBlock = LeveldbOperator.GetValue(ReqBkInfo.LastBlockHash);
                 if(!string.IsNullOrEmpty(strReqBlock))
                 {
                     string strblock = LeveldbOperator.GetValue(ConstHelper.BC_LastKey);
                     Block block = JsonHelper.Deserialize<Block>(strblock);
-                    tobeSendBlocks.Add(block);
+                    
                     while (block.Hash != ReqBkInfo.LastBlockHash)
                     {
+                        lstTobeSendBlocks.Add(block);
                         strblock = LeveldbOperator.GetValue(block.Header.PreHash);
-                        block = JsonHelper.Deserialize<Block>(strblock);
-                        tobeSendBlocks.Add(block);
+                        block = JsonHelper.Deserialize<Block>(strblock);                        
                     }
                 }
+                LeveldbOperator.CloseDB();
                
                 Task.Run(() => {
-                    foreach (var item in tobeSendBlocks)
+                    //foreach (var item in tobeSendBlocks)
+                    for(int i= lstTobeSendBlocks.Count; i>0; i--)
                     {
-                        SendNewBlock(ReqBkInfo.IP, item);
+                        string str = SendNewBlock(ReqBkInfo.IP, lstTobeSendBlocks[i-1]);
+                        LogHelper.WriteInfoLog(str);
                     }
 
                 });
-
+                LogHelper.WriteMethodLog(false);
                 return ConstHelper.BC_OK;
             }
             catch (Exception ex)
@@ -627,15 +673,19 @@ namespace BaseSturct
         #region NewBlock
         public string SendNewBlock(string ip,Block block)
         {
+            LogHelper.WriteMethodInfoLog(ip, block.Hash);
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.NewBlock;
             sendMod.Value = JsonHelper.Serializer<Block>(block);
             XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod,20000);
+            LogHelper.WriteInfoLog(string.Format("SendNewBlock to {0} return: {1}",ip, RcvMod.Value));
             return RcvMod.Value;
         }
 
         public string SendNewBlock2AddressLst(Block block)
         {
+            LogHelper.WriteMethodLog(true);
+            string strRet = string.Empty;
             List<string> listResult = new List<string>();
             foreach (var item in this.dicAddressesPool)
             {
@@ -646,18 +696,20 @@ namespace BaseSturct
             var countAccept = listResult.Count(x=> x!= Decision.Reject);
             if(countAccept> listResult.Count/2)
             {
-                return Decision.Accept;
+                strRet = Decision.Accept;
             }
             else
             {
-                return Decision.Reject;
+                strRet = Decision.Reject;
             }
             
-
+            LogHelper.WriteInfoLog("SendNewBlock2AddressLst result: " + strRet);
+            return strRet;
         }
 
         private string handleNewBlock(XXPSocketsModel socketMod)
         {
+            LogHelper.WriteMethodLog(true);
             Block block = new Block();
             if (!string.IsNullOrEmpty(socketMod.Value))
             {
@@ -670,11 +722,13 @@ namespace BaseSturct
                     this.SendNewBlock2AddressLst(block);
                 });
             }
+            LogHelper.WriteInfoLog("handleNewBlock retrun: " + sRet);
             return sRet;
         }
 
         public string ReserchNodes()
         {
+            LogHelper.WriteMethodLog(true);
             AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
             var lstSeeds = (from x in AppSettings.SeedNodes.Split('|')
                               where x != ""
@@ -714,7 +768,7 @@ namespace BaseSturct
                     this.Add2AddressPool(item);
                 }
             }
-
+            LogHelper.WriteMethodLog(false);
             return ConstHelper.BC_OK;
 
         }

@@ -87,7 +87,9 @@ namespace BaseSturct
 
         public void RefreshUTPoolByBlock(Block block)
         {
-            this.BlockData2UTXOPool(block);       
+            LogHelper.WriteMethodInfoLog(true);
+            this.BlockData2UTXOPool(block);
+            LogHelper.WriteMethodInfoLog(false);
         }
 
 
@@ -99,7 +101,7 @@ namespace BaseSturct
 
         public UTXO input2UTXO(Input einput)
         {
-            UTXO utxo = new UTXO(einput.strpreTxHash, (uint)einput.outputIndex);
+            UTXO utxo = new UTXO(einput.PreTxHash, (uint)einput.OutputIndex);
             return utxo;
         }
 
@@ -111,6 +113,7 @@ namespace BaseSturct
         /// <returns>just for update key corresponding value</returns>
         public UTXOPool BlockData2UTXOPool(Block block)
         {
+            LogHelper.WriteMethodLog(true);
             UTXOPool sigleBlockPool = new UTXOPool();
             foreach (Transaction eTransaction in block.listTransactions)
             {
@@ -124,11 +127,13 @@ namespace BaseSturct
                     }
                     else
                     {
+                        // 初始化时由于leveldb 树形结构第一个可能创世块，所以先记下来在后面再remove
                         if(utxo.getTxHash() != ConstHelper.BC_BaseCoinInputTxHash)
                         {
                             tempUTXOList.Add(utxo);
                         }                       
                     }
+
                 }
                 
                 for (int i = 0; i < eTransaction.listOutputs.Count; i++)
@@ -140,7 +145,7 @@ namespace BaseSturct
                     sigleBlockPool.addUTXO(utxo1, eTransaction.listOutputs[i]);
                 }
             }
-
+            LogHelper.WriteMethodLog(false);
             return sigleBlockPool;
         }
 
@@ -269,13 +274,13 @@ namespace BaseSturct
             {
                 Input input = tx.getInput(i);
 
-                UTXO utxo = new UTXO(input.strpreTxHash, (uint)input.outputIndex);
+                UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
                 if (!utxoPool.contains(utxo)) return false; //check (1),utox 包含该交易返回false
 
                 Output PreOutput = utxoPool.getTxOutput(utxo);// the consume coin correspond prev output coin;
                 sumIn += PreOutput.value;//(5) 计算input 指向的pre output 的value，最后保证输入的value等于该笔交易输出的
                 string strOriginalTxt = tx.getRawDataToSign(i);
-                if (! Cryptor.VerifySignature(input.scriptSig, PreOutput.scriptPubKey, strOriginalTxt) )
+                if (! Cryptor.VerifySignature(input.ScriptSig, PreOutput.scriptPubKey, strOriginalTxt) )
                     return false;//check(2) 
                 bool bIsContain = dicUsed.ContainsKey(utxo.getTxHash());
                 if(!bIsContain) // UTXO不会被重复添加
@@ -327,7 +332,7 @@ namespace BaseSturct
                         for (int i = 0; i < tx.numInputs(); ++i)
                         {
                             Input input = tx.getInput(i);
-                            UTXO utxo = new UTXO(input.strpreTxHash, (uint)input.outputIndex);
+                            UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
                             utxoPool.removeUTXO(utxo);
                         }
                     }
@@ -359,7 +364,7 @@ namespace BaseSturct
                     for (int i = 0; i < tx.numInputs(); ++i)
                     {
                         Input input = tx.getInput(i);
-                        UTXO utxo = new UTXO(input.strpreTxHash, (uint)input.outputIndex);
+                        UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
                         utxoPool.removeUTXO(utxo);
                     }
                 }

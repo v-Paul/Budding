@@ -178,7 +178,7 @@ namespace BaseSturct
 
         public Transaction GetBaseCoinTx()
         {           
-            var Basetx = this.listTransactions.FirstOrDefault(x=>x.listInputs[0].strpreTxHash == ConstHelper.BC_BaseCoinInputTxHash);
+            var Basetx = this.listTransactions.FirstOrDefault(x=>x.listInputs[0].PreTxHash == ConstHelper.BC_BaseCoinInputTxHash);
             return Basetx;
         }
 
