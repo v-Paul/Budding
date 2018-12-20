@@ -64,6 +64,7 @@ namespace BaseSturct
             string priPath = Path.Combine(AppSettings.XXPKeysFolder, PriKeyname);
        
             Cryptor.generateRSAKey2File(pubPath, priPath);
+            this.dicKey2Hash.Add(PubKeyname, pubkey2Hash(pubPath));
             LogHelper.WriteInfoLog("GernerateKeypairs Create:" + PubKeyname);
             return PubKeyname;
         }
