@@ -129,8 +129,8 @@ namespace BaseSturct
             {
                 Block block = new Block();
 
-                //if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))
-                //    return block;
+                if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))
+                    return block;
 
                 // mutex todo 181215
                 Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
