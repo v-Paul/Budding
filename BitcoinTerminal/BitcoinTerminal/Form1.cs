@@ -152,8 +152,12 @@ namespace BitcoinTerminal
         {
             LogHelper.WriteMethodLog(true);
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
-            //this.bkHandler.CreatBaseCoin(sBaseCoinScript);
-
+            
+            if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastblockPuzzle(), this.textBox2.Text))
+            {
+                MessageBox.Show("Verify24Puzzel fail");
+                return;
+            }
 
             Block newBlock = this.bkHandler.CreatBlock(this.textBox2.Text, sBaseCoinScript);
             if (newBlock == null)
