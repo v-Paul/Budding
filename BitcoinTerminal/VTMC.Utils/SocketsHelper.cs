@@ -99,14 +99,14 @@ namespace VTMC.Utils
 
                         byte[] byLength = new byte[4];
                         int retLength = stream.Read(byLength, 0, byLength.Length);
-
+                       
 
                         int iReqLength = BitConverter.ToInt32(byLength, 0);
-
+                        LogHelper.WriteInfoLog("Data length: " + iReqLength);
                         byte[] Request = new byte[iReqLength];
                         int length = stream.Read(Request, 0, Request.Length);
 
-
+                        LogHelper.WriteInfoLog("Received Data length: " + length);
                         XXPSocketsModel reqModel = ByteHelper.BytesToObject<XXPSocketsModel>(Request);
                         //XXPSocketsModel resModel = new XXPSocketsModel();
                         string strTemp = client.Client.RemoteEndPoint.ToString();
