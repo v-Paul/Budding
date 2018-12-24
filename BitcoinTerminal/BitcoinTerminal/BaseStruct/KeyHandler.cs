@@ -40,13 +40,15 @@ namespace BaseSturct
 
     class KeyHandler
     {
-        private Dictionary<string, double> dickeyValue;
-        private Dictionary<string, List<UTXO>> dickeysUtxoList;
+        //private Dictionary<string, double> dickeyValue;
+        private Dictionary<string, List<UTXO>> dicComitkeysUtxoList;
+        private Dictionary<string, List<UTXO>> dicUnComitkeysUtxoList;
         private Dictionary<string, string> dicKey2Hash;
         public KeyHandler()
         {
-            this.dickeyValue = new Dictionary<string, double>();
-            this.dickeysUtxoList = new Dictionary<string, List<UTXO>>();
+            //this.dickeyValue = new Dictionary<string, double>();
+            this.dicComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
+            this.dicUnComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicKey2Hash = new Dictionary<string, string>();
         }
 
@@ -68,114 +70,6 @@ namespace BaseSturct
             LogHelper.WriteInfoLog("GernerateKeypairs Create:" + PubKeyname);
             return PubKeyname;
         }
-
-        public void RefKVFromUtxopool(UTXOPool utxopool)
-        {
-            LogHelper.WriteMethodLog(true);
-            DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
-            FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
-
-            if(this.dickeyValue.Count == 0)
-            {// 初始化
-                foreach (FileInfo fi in files)
-                {
-                    this.dickeyValue.Add(fi.Name, 0);
-                    this.dicKey2Hash.Add(fi.Name, this.pubkey2Hash(fi.FullName));
-                    List<UTXO> lstKeyUtxo = new List<UTXO>();
-                    this.dickeysUtxoList.Add(fi.Name, lstKeyUtxo);
-                }
-            }
-            else
-            {//先清空，赋零，
-                this.dickeysUtxoList.Clear();
-                foreach (FileInfo fi in files)
-                {
-                    this.dickeyValue[fi.Name] = 0;                   
-                    List<UTXO> lstKeyUtxo = new List<UTXO>();
-                    this.dickeysUtxoList.Add(fi.Name, lstKeyUtxo);
-                }
-            }
-
-            // 再根据utxopool重新计算每个key对应的value
-            foreach (UTXO utxo in utxopool.getAllUTXO())
-            {
-                Output output =  utxopool.getTxOutput(utxo);
-
-                foreach (FileInfo fi in files)
-                {
-                    string pukhash = string.Empty;
-                    this.dicKey2Hash.TryGetValue(fi.Name, out pukhash);
-                    if (output.scriptPubKey.IndexOf(pukhash) >= 0)
-                    {
-                        if(this.dickeyValue.ContainsKey(fi.Name))
-                        {
-                            double dvalue = 0;
-                            this.dickeyValue.TryGetValue(fi.Name, out dvalue);
-                            this.dickeyValue[fi.Name] = dvalue + output.value;
-                        }
-                        else
-                        {
-                            this.dickeyValue[fi.Name] = output.value;
-                        }
-                        List<UTXO> lstTemp = new List<UTXO>();
-                        this.dickeysUtxoList.TryGetValue(fi.Name, out lstTemp);
-                        lstTemp.Add(utxo);
-                        this.dickeysUtxoList[fi.Name] = lstTemp;
-
-                        break;
-                    }
-                }
-            }
-            LogHelper.WriteMethodLog(false);
-        }
-
-        /// <summary>
-        /// 仅用来提示那个key在这个block里收到多少钱
-        /// </summary>
-        /// <param name="utxoSinglePool"></param>
-        /// <returns></returns>
-        public List<PubKeyValue> RefKVFromSigUTxpool(UTXOPool utxoSinglePool)
-        {
-            LogHelper.WriteMethodLog(true);
-            DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
-            FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
-            List<PubKeyValue> lstPubKeyValue = new List<PubKeyValue>();
-            foreach (UTXO utxo in utxoSinglePool.getAllUTXO())
-            {
-                Output output = utxoSinglePool.getTxOutput(utxo);
-
-                foreach (FileInfo fi in files)
-                {
-                    string pukhash = string.Empty;
-                    this.dicKey2Hash.TryGetValue(fi.Name, out pukhash);
-                    if (output.scriptPubKey.IndexOf(pukhash) >= 0)
-                    {
-                        PubKeyValue KV = new PubKeyValue(fi.Name, output.value);
-                        lstPubKeyValue.Add(KV);
-                        if (this.dickeyValue.ContainsKey(fi.Name))
-                        {
-                            double dvalue = 0;
-                            this.dickeyValue.TryGetValue(fi.Name, out dvalue);
-                            this.dickeyValue[fi.Name] = dvalue + output.value;
-                        }
-                        else
-                        {
-                            this.dickeyValue[fi.Name] = output.value;
-                        }
-                        // deleted by fdp 这样会导致key对应的utxo list 只增没减，导致金额显示不平
-                        //List<UTXO> lstTemp = new List<UTXO>();
-                        //this.dickeysUtxoList.TryGetValue(fi.Name, out lstTemp);
-                        //lstTemp.Add(utxo);
-                        //this.dickeysUtxoList[fi.Name] = lstTemp;
-
-                        break;
-                    }
-                }
-            }
-            LogHelper.WriteMethodLog(false);
-            return lstPubKeyValue;
-        }
-
         public string pubkey2Hash(string pubKeyPath)
         {
             LogHelper.WriteMethodLog(true);
@@ -203,32 +97,6 @@ namespace BaseSturct
             return strPubScript;
         }
 
-        public Dictionary<string, double> GetDicKeyValue()
-        {
-            LogHelper.WriteMethodLog(true);
-            return this.dickeyValue;
-        }
-
-        public double GetValue(string key)
-        {
-            LogHelper.WriteMethodLog(true);
-            double dVal = 0;
-            if (key == ConstHelper.BC_All)
-            {
-                foreach (var dicItem in this.dickeyValue)
-                {
-
-                    dVal += dicItem.Value;
-                }
-            }
-            else
-            {
-                 this.dickeyValue.TryGetValue(key, out dVal);
-            }
-            LogHelper.WriteMethodLog(false);
-            return dVal;
-        }
-
         public string PkName2PriKeyName(string pubKeyName)
         {
             LogHelper.WriteMethodLog(true);
@@ -237,6 +105,193 @@ namespace BaseSturct
             return strPrikeyName;
 
         }
+        public void RefKUtxoList(bool bCommited, UTXOPool utxopool)
+        {
+            LogHelper.WriteMethodLog(true);
+            Dictionary<string, List<UTXO>> keysUtxoList = new Dictionary<string, List<UTXO>>();
+            if(bCommited)
+            { keysUtxoList = this.dicComitkeysUtxoList; }
+            else
+            { keysUtxoList = this.dicUnComitkeysUtxoList; }
+
+
+
+            DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
+            FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
+
+            if(keysUtxoList.Count == 0)
+            {// 初始化
+                foreach (FileInfo fi in files)
+                {
+                    //this.dickeyValue.Add(fi.Name, 0);
+                    if(!this.dicKey2Hash.ContainsKey(fi.Name))
+                    {
+                        this.dicKey2Hash.Add(fi.Name, this.pubkey2Hash(fi.FullName));
+                    }
+                   
+                    List<UTXO> lstKeyUtxo = new List<UTXO>();
+                    keysUtxoList.Add(fi.Name, lstKeyUtxo);
+                }
+            }
+            else
+            {//先清空，赋零，
+                keysUtxoList.Clear();
+                foreach (FileInfo fi in files)
+                {
+                    //this.dickeyValue[fi.Name] = 0;                   
+                    List<UTXO> lstKeyUtxo = new List<UTXO>();
+                    keysUtxoList.Add(fi.Name, lstKeyUtxo);
+                }
+            }
+
+            // 再根据utxopool重新计算每个key对应的value
+            foreach (UTXO utxo in utxopool.getAllUTXO())
+            {
+                Output output =  utxopool.getTxOutput(utxo);
+
+                foreach (FileInfo fi in files)
+                {
+                    string pukhash = string.Empty;
+                    this.dicKey2Hash.TryGetValue(fi.Name, out pukhash);
+                    if (output.scriptPubKey.IndexOf(pukhash) >= 0)
+                    {
+                        //deleted by fdp 181224 key corresponding value calculate from utxo list
+                        //if(this.dickeyValue.ContainsKey(fi.Name))
+                        //{
+                        //    double dvalue = 0;
+                        //    this.dickeyValue.TryGetValue(fi.Name, out dvalue);
+                        //    this.dickeyValue[fi.Name] = dvalue + output.value;
+                        //}
+                        //else
+                        //{
+                        //    this.dickeyValue[fi.Name] = output.value;
+                        //}
+                        List<UTXO> lstTemp = new List<UTXO>();
+                        keysUtxoList.TryGetValue(fi.Name, out lstTemp);
+                        lstTemp.Add(utxo);
+                        keysUtxoList[fi.Name] = lstTemp;
+
+                        break;
+                    }
+                }
+            }
+
+
+
+            LogHelper.WriteMethodLog(false);
+        }
+
+        /// <summary>
+        /// 仅用来提示哪个key在这个block里收到多少钱
+        /// </summary>
+        /// <param name="utxoSinglePool"></param>
+        /// <returns></returns>
+        //public List<PubKeyValue> RefKVFromSigUTxpool(UTXOPool utxoSinglePool)
+        //{
+        //    LogHelper.WriteMethodLog(true);
+        //    DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
+        //    FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
+        //    List<PubKeyValue> lstPubKeyValue = new List<PubKeyValue>();
+        //    foreach (UTXO utxo in utxoSinglePool.getAllUTXO())
+        //    {
+        //        Output output = utxoSinglePool.getTxOutput(utxo);
+
+        //        foreach (FileInfo fi in files)
+        //        {
+        //            string pukhash = string.Empty;
+        //            this.dicKey2Hash.TryGetValue(fi.Name, out pukhash);
+        //            if (output.scriptPubKey.IndexOf(pukhash) >= 0)
+        //            {
+        //                PubKeyValue KV = new PubKeyValue(fi.Name, output.value);
+        //                lstPubKeyValue.Add(KV);
+        //                if (this.dickeyValue.ContainsKey(fi.Name))
+        //                {
+        //                    double dvalue = 0;
+        //                    this.dickeyValue.TryGetValue(fi.Name, out dvalue);
+        //                    this.dickeyValue[fi.Name] = dvalue + output.value;
+        //                }
+        //                else
+        //                {
+        //                    this.dickeyValue[fi.Name] = output.value;
+        //                }
+        //                // deleted by fdp 这样会导致key对应的utxo list 只增没减，导致金额显示不平
+        //                //List<UTXO> lstTemp = new List<UTXO>();
+        //                //this.dickeysUtxoList.TryGetValue(fi.Name, out lstTemp);
+        //                //lstTemp.Add(utxo);
+        //                //this.dickeysUtxoList[fi.Name] = lstTemp;
+
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    LogHelper.WriteMethodLog(false);
+        //    return lstPubKeyValue;
+        //}
+
+        public Dictionary<string, double> GetDicKeyValue(bool bCommited, UTXOPool utxopool)
+        {
+            LogHelper.WriteMethodLog(true);
+            Dictionary<string, double> dickeyValue = new Dictionary<string, double>();
+            Dictionary<string, List<UTXO>> keysUtxoList = new Dictionary<string, List<UTXO>>();
+            if (bCommited)
+            { keysUtxoList = this.dicComitkeysUtxoList; }
+            else
+            { keysUtxoList = this.dicUnComitkeysUtxoList; }
+            foreach (var item in keysUtxoList)
+            {
+                double dValue = 0;
+                foreach (var utxo in item.Value)
+                {
+                    Output output = utxopool.getTxOutput(utxo);
+                    dValue += output.value;
+                }
+                dickeyValue.Add(item.Key, dValue);
+            }
+
+            string logKeyValue = string.Empty;
+            foreach (var item in dickeyValue)
+            {
+                logKeyValue += string.Format("{0}:{1}", item.Key, item.Value.ToString("0.0000")) + Environment.NewLine;
+            }
+            LogHelper.WriteInfoLog(logKeyValue);
+
+            return dickeyValue;
+        }
+
+        public double GetValue(bool bCommited, string key, UTXOPool utxopool)
+        {
+            LogHelper.WriteMethodLog(true);
+            double dVal = 0;
+            if (key == ConstHelper.BC_All)
+            {
+                
+                Dictionary<string, double> dickeyValue = GetDicKeyValue(bCommited, utxopool);
+                foreach (var dicItem in dickeyValue)
+                {
+                    dVal += dicItem.Value;
+                }
+            }
+            else
+            {
+                List<UTXO> UtxoList = new List<UTXO>();
+                if (bCommited)
+                { this.dicComitkeysUtxoList.TryGetValue(key, out UtxoList); }
+                else
+                { this.dicUnComitkeysUtxoList.TryGetValue(key, out UtxoList); }
+
+                foreach (var item in UtxoList)
+                {
+                    Output output = utxopool.getTxOutput(item);
+                    dVal += output.value;
+                }
+
+            }
+
+            LogHelper.WriteInfoLog(string.Format("IsCommited{0} {1}:{2} ", bCommited, key, dVal));
+            return dVal;
+        }
+
+
         public Dictionary<UTXO, keyPair> GetUtxoDic(string key)
         {
             LogHelper.WriteMethodLog(true);
@@ -244,7 +299,7 @@ namespace BaseSturct
 
             if (key == ConstHelper.BC_All)
             {
-                foreach(var item in this.dickeysUtxoList)
+                foreach(var item in this.dicComitkeysUtxoList)
                 {
                     keyPair kpair = new keyPair();
                     kpair.PubKeyNmae = item.Key;
@@ -258,7 +313,7 @@ namespace BaseSturct
             else
             {
                 List<UTXO> listUtxo = new List<UTXO>();
-                this.dickeysUtxoList.TryGetValue(key, out listUtxo);
+                this.dicComitkeysUtxoList.TryGetValue(key, out listUtxo);
 
                 keyPair kpair = new keyPair();
                 kpair.PubKeyNmae = key;
@@ -273,17 +328,17 @@ namespace BaseSturct
             return dicUtxoPrikey;
         }
 
-        public string CheckBalance(string strKey, double dPaytoAmount)
+        public string CheckBalance(string strKey, double dPaytoAmount, UTXOPool utxopool)
         {
             LogHelper.WriteMethodLog(true);
             string strRet = ConstHelper.BC_OK;
             if (strKey != ConstHelper.BC_All)
             {
-                double dMyval = this.GetValue(strKey);
+                double dMyval = this.GetValue(true, strKey, utxopool);
                 if (dMyval < dPaytoAmount)
                 {
                     // check all 
-                    dMyval = this.GetValue(ConstHelper.BC_All);
+                    dMyval = this.GetValue(true, ConstHelper.BC_All, utxopool);
                     if (dMyval < dPaytoAmount)
                     {
                         strRet = "not sufficient funds";  
@@ -296,7 +351,7 @@ namespace BaseSturct
             }
             else
             {
-                double dMyval = this.GetValue(strKey);
+                double dMyval = this.GetValue(true, strKey, utxopool);
                 if (dMyval < dPaytoAmount)
                 {
                     strRet = "not sufficient funds";
@@ -330,5 +385,26 @@ namespace BaseSturct
 
         }
 
+        public Dictionary<string, string > GetDicKeyHash()
+        {
+            return this.dicKey2Hash;
+        }
+
+        public string GetKeyHash(string keyname)
+        {
+            LogHelper.WriteMethodInfoLog(keyname);
+            string hash = string.Empty;
+            if (keyname == ConstHelper.BC_All)
+            {
+                KeyValuePair<string, string> firstKV = this.dicKey2Hash.First();
+                hash= firstKV.Value;
+            }
+            else
+            {
+                this.dicKey2Hash.TryGetValue(keyname, out hash);
+            }
+            LogHelper.WriteInfoLog(hash);
+            return hash;
+        }
     }
 }

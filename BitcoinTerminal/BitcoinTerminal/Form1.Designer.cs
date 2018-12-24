@@ -44,11 +44,14 @@
             this.textBoxSeedIP = new System.Windows.Forms.TextBox();
             this.ResearchNodes = new System.Windows.Forms.Button();
             this.button_printAlldb = new System.Windows.Forms.Button();
+            this.textBox_height = new System.Windows.Forms.TextBox();
+            this.textBoxTxCount = new System.Windows.Forms.TextBox();
+            this.textBox_UncomitValue = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // Digcoin
             // 
-            this.Digcoin.Location = new System.Drawing.Point(47, 155);
+            this.Digcoin.Location = new System.Drawing.Point(47, 129);
             this.Digcoin.Name = "Digcoin";
             this.Digcoin.Size = new System.Drawing.Size(100, 29);
             this.Digcoin.TabIndex = 0;
@@ -58,7 +61,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(163, 160);
+            this.textBox1.Location = new System.Drawing.Point(163, 134);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 1;
@@ -66,7 +69,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(291, 160);
+            this.textBox2.Location = new System.Drawing.Point(291, 134);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(153, 20);
             this.textBox2.TabIndex = 2;
@@ -95,7 +98,7 @@
             // 
             this.textBoxValue.Location = new System.Drawing.Point(291, 40);
             this.textBoxValue.Name = "textBoxValue";
-            this.textBoxValue.Size = new System.Drawing.Size(100, 20);
+            this.textBoxValue.Size = new System.Drawing.Size(63, 20);
             this.textBoxValue.TabIndex = 5;
             // 
             // label1
@@ -181,11 +184,35 @@
             this.button_printAlldb.UseVisualStyleBackColor = true;
             this.button_printAlldb.Click += new System.EventHandler(this.button_printAlldb_Click);
             // 
+            // textBox_height
+            // 
+            this.textBox_height.Location = new System.Drawing.Point(163, 161);
+            this.textBox_height.Name = "textBox_height";
+            this.textBox_height.Size = new System.Drawing.Size(44, 20);
+            this.textBox_height.TabIndex = 16;
+            // 
+            // textBoxTxCount
+            // 
+            this.textBoxTxCount.Location = new System.Drawing.Point(213, 160);
+            this.textBoxTxCount.Name = "textBoxTxCount";
+            this.textBoxTxCount.Size = new System.Drawing.Size(50, 20);
+            this.textBoxTxCount.TabIndex = 17;
+            // 
+            // textBox_UncomitValue
+            // 
+            this.textBox_UncomitValue.Location = new System.Drawing.Point(360, 40);
+            this.textBox_UncomitValue.Name = "textBox_UncomitValue";
+            this.textBox_UncomitValue.Size = new System.Drawing.Size(69, 20);
+            this.textBox_UncomitValue.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 375);
+            this.Controls.Add(this.textBox_UncomitValue);
+            this.Controls.Add(this.textBoxTxCount);
+            this.Controls.Add(this.textBox_height);
             this.Controls.Add(this.button_printAlldb);
             this.Controls.Add(this.ResearchNodes);
             this.Controls.Add(this.textBoxSeedIP);
@@ -204,8 +231,6 @@
             this.Controls.Add(this.Digcoin);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -230,6 +255,9 @@
         private System.Windows.Forms.TextBox textBoxSeedIP;
         private System.Windows.Forms.Button ResearchNodes;
         private System.Windows.Forms.Button button_printAlldb;
+        private System.Windows.Forms.TextBox textBox_height;
+        private System.Windows.Forms.TextBox textBoxTxCount;
+        private System.Windows.Forms.TextBox textBox_UncomitValue;
     }
 }
 

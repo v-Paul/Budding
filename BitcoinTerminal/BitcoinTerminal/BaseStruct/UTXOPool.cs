@@ -95,5 +95,10 @@ namespace BaseSturct
         {
             return this.dicUtxoPool.Count;
         }
+
+        public void clearUtxoPool()
+        {
+            this.dicUtxoPool.Clear();
+        }
     }
 }

@@ -39,6 +39,11 @@ namespace BaseSturct
             this.ScriptSig = Sig;
         }
 
+        public string getrawdata()
+        {
+            return PreTxHash + OutputIndex.ToString();
+        }
+       
 
     }
 
@@ -304,23 +309,28 @@ namespace BaseSturct
 
         }
 
-        //public override bool Equals(Object other)
-        //{
-        //    if (other == null)
-        //    {
-        //        return false;
-        //    }
-        //    Transaction otherTx = (Transaction)other;
-        //    // 直接对比hash是否一致
-        //    if (this.getHash() != otherTx.getHash())
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-        //}
+        public override bool Equals(Object other)
+        {
+            if(other.GetType().Name != typeof(Transaction).Name)
+            {
+                return false;
+            }
+
+            if (other == null)
+            {
+                return false;
+            }
+            Transaction otherTx = (Transaction)other;
+            // 直接对比hash是否一致
+            if (this.getHash() != otherTx.getHash())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public override int GetHashCode()
         {

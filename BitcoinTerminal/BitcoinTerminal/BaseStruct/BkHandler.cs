@@ -20,7 +20,7 @@ namespace BaseSturct
 
         private Block mLastBlock;
 
-        public string strPuzzle { get; set; } = string.Empty;
+        //public string strPuzzle { get; set; } = string.Empty;
 
         public BkHandler()
         {
@@ -44,20 +44,32 @@ namespace BaseSturct
                 if (!string.IsNullOrEmpty(strlastBlock))
                 {
                     this.mLastBlock = JsonHelper.Deserialize<Block>(strlastBlock);  
-                    this.strPuzzle = this.mLastBlock.Header.PuzzToStr();                   
+                                       
                 }
             }
             LeveldbOperator.CloseDB();
             return mLastBlock;
         }
 
+        public int[] GetlastBkPuzzleArr()
+        {
+            return this.mLastBlock.Header.Puzzle;
+        }
+        public string GetLastPuzzleStr()
+        {
+            return this.mLastBlock.Header.PuzzToStr();
+        }
+        public int GetLastBkHeight()
+        {
+            return this.mLastBlock.Header.Height;
+        }
         public void RefreshLastBlock(Block newLastBlock)
         {
             LogHelper.WriteMethodInfoLog(true);
             if(newLastBlock != null)
             {
                 this.mLastBlock = newLastBlock;
-                this.strPuzzle = this.mLastBlock.Header.PuzzToStr();
+                
                 LogHelper.WriteInfoLog("Update last block Info");
             }
             LogHelper.WriteMethodInfoLog(false);
@@ -70,7 +82,7 @@ namespace BaseSturct
 
             // mutex todo 181215
             Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
-            this.AddTransaction(basecoinTrans);
+            this.AddTx2hsPool(basecoinTrans);
             this.HashsetPool2list();
             block.listTransactions = this.GetlstPoolTx();
             block.SetTransInfo();
@@ -134,7 +146,7 @@ namespace BaseSturct
 
                 // mutex todo 181215
                 Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
-                this.AddTransaction(basecoinTrans);
+                this.AddTx2hsPool(basecoinTrans);
                 this.HashsetPool2list();
 
                 block.listTransactions = this.GetlstPoolTx();
@@ -156,12 +168,42 @@ namespace BaseSturct
             }
         }
 
-        // Add mutex todo
-        public string AddTransaction(Transaction tran)
+
+
+        public bool hsTxPoolContains(Transaction tran)
+        {
+            //return this.hashsetPoolTx.Contains(tran);
+            foreach (var item in this.hashsetPoolTx)
+            {
+                if(tran.TxHash == item.TxHash)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+        public bool hsTxPoolRemove(Transaction tran)
+        {
+            LogHelper.WriteMethodInfoLog("remove:" + tran.TxHash);
+            return this.hashsetPoolTx.Remove(tran);
+        }
+
+        public int GetHsTxPoolCount()
+        {
+            int icount =  this.hashsetPoolTx.Count;
+            LogHelper.WriteMethodInfoLog("TxPoolCount:" + icount);
+            return icount;
+           
+        }
+
+
+        public string AddTx2hsPool(Transaction tran)
         {
             LogHelper.WriteMethodInfoLog(tran.TxHash);
 
-            if(!this.hashsetPoolTx.Contains(tran))
+            if (!this.hsTxPoolContains(tran))
             {
                 this.hashsetPoolTx.Add(tran);
                 LogHelper.WriteInfoLog("AddTransaction: Accept");
@@ -174,14 +216,13 @@ namespace BaseSturct
             }
 
         }
-
-        public bool AddTransaction(Transaction[] arrTrans)
+        public bool AddTxs2hsPool(Transaction[] arrTrans)
         {
             try
             {
                 foreach (Transaction tran in arrTrans )
                 {
-                    AddTransaction(tran);
+                    AddTx2hsPool(tran);
                 }
                 
                 return true;
@@ -322,10 +363,6 @@ namespace BaseSturct
             return lstTx;
         }
 
-         public int[] GetlastblockPuzzle()
-        {
-            return this.mLastBlock.Header.Puzzle;
-        }
 
 
     }

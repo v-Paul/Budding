@@ -18,12 +18,14 @@ namespace BaseSturct
          * {@code utxoPool}. This should make a copy of utxoPool by using the UTXOPool(UTXOPool uPool)
          * constructor.
          */
-        private UTXOPool utxoPool;
+        private UTXOPool CommitedUtxoPool;
+        private UTXOPool UnCommitedUtxoPool;
         private List<UTXO> tempUTXOList;
         public TxHandler()
         {
             // IMPLEMENT THIS
-            this.utxoPool = new UTXOPool();
+            this.CommitedUtxoPool = new UTXOPool();
+            this.UnCommitedUtxoPool = new UTXOPool();
             this.tempUTXOList = new List<UTXO>();
         }
 
@@ -45,7 +47,7 @@ namespace BaseSturct
                 }
                 string blockValue = LeveldbOperator.GetValue(strRet);
                 Block tempBlock = JsonHelper.Deserialize<Block>(blockValue);
-                this.BlockData2UTXOPool(tempBlock);
+                this.BlockData2UTXOPool(true, tempBlock);
 
                 while (true)
                 {
@@ -56,16 +58,16 @@ namespace BaseSturct
                     }
                     blockValue = LeveldbOperator.GetValue(strRet);
                     tempBlock = JsonHelper.Deserialize<Block>(blockValue);
-                    this.BlockData2UTXOPool(tempBlock);
+                    this.BlockData2UTXOPool(true, tempBlock);
                 }
 
                 if (this.tempUTXOList.Count != 0)
                 {
                     foreach (UTXO utxo in this.tempUTXOList)
                     {
-                        if (this.utxoPool.contains(utxo))
+                        if (this.CommitedUtxoPool.contains(utxo))
                         {
-                            this.utxoPool.removeUTXO(utxo);
+                            this.CommitedUtxoPool.removeUTXO(utxo);
                         }
                     }
                 }
@@ -88,14 +90,22 @@ namespace BaseSturct
         public void RefreshUTPoolByBlock(Block block)
         {
             LogHelper.WriteMethodInfoLog(true);
-            this.BlockData2UTXOPool(block);
+            this.BlockData2UTXOPool(true, block);
             LogHelper.WriteMethodInfoLog(false);
         }
 
 
-        public UTXOPool GetUtxoPool()
+        public UTXOPool GetUtxoPool(bool Iscommited)
         {
-            return this.utxoPool;
+            if(Iscommited)
+            {
+                return this.CommitedUtxoPool;
+            }
+            else
+            {
+                return this.UnCommitedUtxoPool;
+            }
+           
         }
 
 
@@ -111,18 +121,26 @@ namespace BaseSturct
         /// </summary>
         /// <param name="block"></param>
         /// <returns>just for update key corresponding value</returns>
-        public UTXOPool BlockData2UTXOPool(Block block)
+        public UTXOPool BlockData2UTXOPool(bool bCommitedPool, Block block)
         {
-            LogHelper.WriteMethodLog(true);
+            LogHelper.WriteMethodInfoLog(bCommitedPool);
+            UTXOPool utxopoll = new UTXOPool();
+            if (bCommitedPool)
+            { utxopoll = this.CommitedUtxoPool; }
+            else
+            { utxopoll = this.UnCommitedUtxoPool; }
+
+
+
             UTXOPool sigleBlockPool = new UTXOPool();
             foreach (Transaction eTransaction in block.listTransactions)
             {
                 foreach (Input eInput in eTransaction.listInputs)
                 {
                     UTXO utxo = this.input2UTXO(eInput);
-                    if (utxoPool.contains(utxo))
+                    if (utxopoll.contains(utxo))
                     {
-                        utxoPool.removeUTXO(utxo);
+                        utxopoll.removeUTXO(utxo);
                         
                     }
                     else
@@ -140,8 +158,8 @@ namespace BaseSturct
                 {
                     // hash is transaction hash
                     UTXO utxo1 = new UTXO(eTransaction.getHash(), (uint)i);
-                   
-                    this.utxoPool.addUTXO(utxo1, eTransaction.listOutputs[i]);
+
+                    utxopoll.addUTXO(utxo1, eTransaction.listOutputs[i]);
                     sigleBlockPool.addUTXO(utxo1, eTransaction.listOutputs[i]);
                 }
             }
@@ -157,7 +175,7 @@ namespace BaseSturct
         public Transaction CreatTransaction(string strPreHash, uint iIndex, double dValue, 
                                             string strPaytoPKHash,string myPriKeyPath,string myPubkeyPath)
         {
-
+            LogHelper.WriteMethodLog(true);
             
             string strPubKeyValuem = FileIOHelper.ReadFromText(myPubkeyPath);
             string strKeyHash = Cryptor.SHA256(strPubKeyValuem, strPubKeyValuem.Length);
@@ -165,7 +183,7 @@ namespace BaseSturct
 
 
             UTXO utxo = new UTXO(strPreHash, iIndex);
-            if (!this.utxoPool.contains(utxo))
+            if (!this.CommitedUtxoPool.contains(utxo))
             {
                 LogHelper.WriteErrorLog("not in utxo");
                 return null;
@@ -175,7 +193,7 @@ namespace BaseSturct
             spendTrans.addInput(strPreHash, (int)iIndex);
             spendTrans.addOutput(dValue, strPaytoPKHash);
 
-            Output preOutput = this.utxoPool.getTxOutput(utxo);
+            Output preOutput = this.CommitedUtxoPool.getTxOutput(utxo);
             if (dValue < preOutput.value)
             {
                 Output ctOutput = new Output();
@@ -185,7 +203,8 @@ namespace BaseSturct
             }
             spendTrans.signTrans(myPriKeyPath, strPubKeyValuem);
             spendTrans.FinalSetTrans();
-           
+
+            LogHelper.WriteInfoLog("CreatTransaction: " + spendTrans.TxHash);
             return spendTrans;
         }
 
@@ -193,7 +212,7 @@ namespace BaseSturct
         public Transaction CreatTransaction(Dictionary<UTXO, keyPair> dicUTXO, double dInputAmount, double dPayToValue,
                                             string strPaytoPKHash, string changePubScript)
         {
-
+            LogHelper.WriteMethodLog(true);
 
             //string strPubKeyValuem = FileIOHelper.ReadFromText(myPubkeyPath);
             //string strKeyHash = Cryptor.SHA256(strPubKeyValuem, strPubKeyValuem.Length);
@@ -216,7 +235,7 @@ namespace BaseSturct
             //List<string> lstPrikeysPath = new List<string>();
             foreach (var item in dicUTXO)
             {
-                if (!this.utxoPool.contains(item.Key))
+                if (!this.CommitedUtxoPool.contains(item.Key))
                 {
                     LogHelper.WriteErrorLog("not in utxo");
                     LogHelper.WriteErrorLog(JsonHelper.Serializer<UTXO>(item.Key));
@@ -241,7 +260,7 @@ namespace BaseSturct
             //}
             
             spendTrans.FinalSetTrans();
-
+            LogHelper.WriteInfoLog("CreatTransaction: " + spendTrans.TxHash);
             return spendTrans;
         }
 
@@ -259,8 +278,10 @@ namespace BaseSturct
          */
         public bool isValidTx(Transaction tx)
         {
+            LogHelper.WriteMethodLog(true);
             if(tx.listInputs.Count==0 || tx.listOutputs.Count == 0)
             {
+                LogHelper.WriteInfoLog("empty input|output");
                 return false;
             }
 
@@ -275,27 +296,48 @@ namespace BaseSturct
                 Input input = tx.getInput(i);
 
                 UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
-                if (!utxoPool.contains(utxo)) return false; //check (1),utox 包含该交易返回false
+                if (!CommitedUtxoPool.contains(utxo))
+                {
+                    LogHelper.WriteInfoLog(" utxoPool not contain utxo:");
+                    return false; //check (1),utox 包含该交易返回false
+                }
 
-                Output PreOutput = utxoPool.getTxOutput(utxo);// the consume coin correspond prev output coin;
+                Output PreOutput = CommitedUtxoPool.getTxOutput(utxo);// the consume coin correspond prev output coin;
                 sumIn += PreOutput.value;//(5) 计算input 指向的pre output 的value，最后保证输入的value等于该笔交易输出的
                 string strOriginalTxt = tx.getRawDataToSign(i);
                 if (! Cryptor.VerifySignature(input.ScriptSig, PreOutput.scriptPubKey, strOriginalTxt) )
+                {
+                    LogHelper.WriteInfoLog(" VerifySignature fail");
                     return false;//check(2) 
-                bool bIsContain = dicUsed.ContainsKey(utxo.getTxHash());
+                }
+
+                    
+                bool bIsContain = dicUsed.ContainsKey(utxo.utoxHashCode());
                 if(!bIsContain) // UTXO不会被重复添加
                 {
-                    dicUsed.Add(utxo.getTxHash(), utxo);
+                    dicUsed.Add(utxo.utoxHashCode(), utxo);
                 }
                 else
-                { return false; }   
+                {
+                    LogHelper.WriteInfoLog(" double spend :" + utxo.utoxHashCode());
+                    return false;
+                }   
             }
             foreach (Output output in tx.getOutputs())
             {
-                if (output.value < 0) return false;//check(5)
+                if (output.value < 0)
+                {
+                    LogHelper.WriteInfoLog(" output.value < 0 ");
+                    return false;//check(5)
+                }
                 sumOut += output.value;
             }
-            if (sumIn < sumOut) return false;//check(5);
+            if (sumIn < sumOut)
+            {
+                LogHelper.WriteInfoLog(" sumIn < sumOut ");
+                return false;//check(5);
+            }
+            LogHelper.WriteInfoLog("Valid Tx");
             return true;
         }
 
@@ -326,14 +368,14 @@ namespace BaseSturct
                         for (uint i = 0; i < tx.numOutputs(); ++i)
                         {
                             UTXO utxo = new UTXO(tx.getHash(), i);
-                            utxoPool.addUTXO(utxo, tx.getOutput((int)i));
+                            CommitedUtxoPool.addUTXO(utxo, tx.getOutput((int)i));
                         }
                         //delete spent coin
                         for (int i = 0; i < tx.numInputs(); ++i)
                         {
                             Input input = tx.getInput(i);
                             UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
-                            utxoPool.removeUTXO(utxo);
+                            CommitedUtxoPool.removeUTXO(utxo);
                         }
                     }
                 }
@@ -358,14 +400,16 @@ namespace BaseSturct
                     for (uint i = 0; i < tx.numOutputs(); ++i)
                     {
                         UTXO utxo = new UTXO(tx.getHash(), i);
-                        utxoPool.addUTXO(utxo, tx.getOutput((int)i));
+                        UnCommitedUtxoPool.addUTXO(utxo, tx.getOutput((int)i));
+                        LogHelper.WriteInfoLog(string.Format("Add utxo to uncommited pool, utxoHash:{0}", utxo.utoxHashCode() ));
                     }
                     //delete spent coin
                     for (int i = 0; i < tx.numInputs(); ++i)
                     {
                         Input input = tx.getInput(i);
                         UTXO utxo = new UTXO(input.PreTxHash, (uint)input.OutputIndex);
-                        utxoPool.removeUTXO(utxo);
+                        CommitedUtxoPool.removeUTXO(utxo);
+                        LogHelper.WriteInfoLog(string.Format("Remove utxo from commited pool, utxoHash:{0}",  utxo.utoxHashCode()));
                     }
                 }
                 else
@@ -391,7 +435,7 @@ namespace BaseSturct
             {
 
                 UTXO utxo = new UTXO(basetx.getHash(), 0);
-                utxoPool.addUTXO(utxo, basetx.getOutput((int)0));
+                CommitedUtxoPool.addUTXO(utxo, basetx.getOutput((int)0));
             }
             catch (Exception ex)
             {
@@ -400,7 +444,10 @@ namespace BaseSturct
 
         }
 
-
+        public void ClearUnCommitUtxoPool()
+        {
+            this.UnCommitedUtxoPool.clearUtxoPool();
+        }
 
 
     }

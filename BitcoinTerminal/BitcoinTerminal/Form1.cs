@@ -31,8 +31,6 @@ namespace BitcoinTerminal
             LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
 
             InitializeComponent();
-            
-
 
             //this.InitFromDB(false);
 
@@ -118,18 +116,15 @@ namespace BitcoinTerminal
         private void InitFromDB()
         {
             LogHelper.WriteMethodLog(true);
-            //this.BeginInvoke(new MethodInvoker(() =>
-            //{
+
             this.bkHandler.GetLastBlock();
                 //this.textBox1.Text = this.bkHandler.strPuzzle;
-                this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
-                this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
-            this.BeginInvoke(new MethodInvoker(() =>
-            {
-                this.textBox1.Text = this.bkHandler.strPuzzle;
-                this.InitKeyValues();
+            this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
 
-            }));
+
+            this.RefreshInterfaceItem();
             LogHelper.WriteMethodLog(false);
             
         }
@@ -153,7 +148,7 @@ namespace BitcoinTerminal
             LogHelper.WriteMethodLog(true);
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
             
-            if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastblockPuzzle(), this.textBox2.Text))
+            if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastBkPuzzleArr(), this.textBox2.Text))
             {
                 MessageBox.Show("Verify24Puzzel fail");
                 return;
@@ -176,18 +171,7 @@ namespace BitcoinTerminal
             strRet = this.bkHandler.WriteLastblock(newBlock);
             if (strRet == ConstHelper.BC_OK)
             {
-                this.bkHandler.RefreshLastBlock(newBlock);
-
-                this.txHandler.RefreshUTPoolByBlock(newBlock);
-
-                //this.txHandler.AddBaseCoin2UTxoPool(newBlock.GetBaseCoinTx());
-                this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
-                this.RefreshKeyValueBox();
-
-
-
-                this.textBox1.Text = this.bkHandler.strPuzzle;
-                this.textBox2.Text = "";
+                this.RefreshByNewBlock(newBlock);
             }
             else
             {
@@ -223,13 +207,18 @@ namespace BitcoinTerminal
                 MessageBox.Show("Please enter receiver publicKey hash ");
                 return;
             }
-
+            double dPaytoAmount = Convert.ToDouble(this.TextBoxAmount.Text);
+            if (dPaytoAmount == 0)
+            {
+                MessageBox.Show("Please enter the transfer amount");
+                return;
+            }
             string strChoice = this.comboBox1.SelectedItem.ToString();
             string strPaytoHash = this.keyHandler.PubKeyHash2Script( this.textBoxPaytoHash.Text);
-            double dPaytoAmount = Convert.ToDouble(this.TextBoxAmount.Text);
+            
             string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
 
-            string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount);
+            string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
             if(strRet != ConstHelper.BC_OK)
             {
                 MessageBox.Show(strRet);
@@ -237,7 +226,7 @@ namespace BitcoinTerminal
             }
             double dInputTatolAmount = 0;
             Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo( strChoice, dPaytoAmount, 
-                                                        this.txHandler.GetUtxoPool(), ref dInputTatolAmount );
+                                                        this.txHandler.GetUtxoPool(true), ref dInputTatolAmount );
 
 
             Transaction Tx = this.txHandler.CreatTransaction( dicInputUtxo, dInputTatolAmount, dPaytoAmount, 
@@ -250,11 +239,14 @@ namespace BitcoinTerminal
                 MessageBox.Show(strRet);
                 return;
             }
-            this.bkHandler.AddTransaction(Tx);
-            this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
+            this.bkHandler.AddTx2hsPool(Tx);
+      
+            this.RefreshInterfaceTxCount();
+
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
             this.RefreshKeyValueBox();
-            this.TextBoxAmount.Text = "";
-            this.textBoxPaytoHash.Text = "";
+            this.ResetInterfacePayItem();
 
             Task.Run(()=> {
                 this.commHandler.SendNewTx2AddressLst(Tx);
@@ -283,7 +275,8 @@ namespace BitcoinTerminal
             LogHelper.WriteMethodLog(true);
             this.comboBox1.Items.Clear();
             this.comboBox1.Items.Add("All");
-            Dictionary<string, double> dickeyValue = this.keyHandler.GetDicKeyValue();
+
+            Dictionary<string, string> dickeyValue = this.keyHandler.GetDicKeyHash();
             foreach(var dicItem in dickeyValue)
             {
                 this.comboBox1.Items.Add(dicItem.Key);
@@ -304,43 +297,53 @@ namespace BitcoinTerminal
         private void RefreshKeyValueBox()
         {
             LogHelper.WriteMethodLog(true);
-            string strChoice = this.comboBox1.SelectedItem.ToString();
-            string strPubKeyName = string.Empty;
 
-            Dictionary<string, double> dickeyValue = this.keyHandler.GetDicKeyValue();
-            double dVal = 0;
-            if(dickeyValue.Count == 0)
+            this.BeginInvoke(new MethodInvoker(() =>
             {
-                this.textBoxValue.Text = dVal.ToString("0.0000");
-                return;
-            }
+                string strChoice = this.comboBox1.SelectedItem.ToString();
+            
+                double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
+                double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
-            if (strChoice == ConstHelper.BC_All)
-            {
-                KeyValuePair<string, double> firstKV = dickeyValue.First();
-                strPubKeyName = firstKV.Key;
-                foreach (var dicItem in dickeyValue)
-                {
+                #region deleted
+                //Dictionary<string, double> dickeyValue = this.keyHandler.GetDicKeyValue();
+                //double dVal = 0;
+                //if(dickeyValue.Count == 0)
+                //{
+                //    this.textBoxValue.Text = dVal.ToString("0.0000");
+                //    return;
+                //}
 
-                    dVal += dicItem.Value;
-                }
-            }
-            else
-            {
-                strPubKeyName = Path.Combine(AppSettings.XXPKeysFolder, strChoice);
-                dickeyValue.TryGetValue(strChoice, out dVal);
-            }
+                //if (strChoice == ConstHelper.BC_All)
+                //{
+                //    KeyValuePair<string, double> firstKV = dickeyValue.First();
+                //    strPubKeyName = firstKV.Key;
+                //    foreach (var dicItem in dickeyValue)
+                //    {
 
-            string logKeyValue = string.Empty;
-            foreach (var item in dickeyValue)
-            {
-                logKeyValue += string.Format("{0}:{1}", item.Key,item.Value.ToString("0.0000")) + Environment.NewLine;
-            }
-            LogHelper.WriteInfoLog(logKeyValue);
+                //        dVal += dicItem.Value;
+                //    }
+                //}
+                //else
+                //{
+                //    strPubKeyName = Path.Combine(AppSettings.XXPKeysFolder, strChoice);
+                //    dickeyValue.TryGetValue(strChoice, out dVal);
+                //}
 
-            string strPath = Path.Combine(AppSettings.XXPKeysFolder, strPubKeyName);          
-            this.textBoxKeyHash.Text = this.keyHandler.pubkey2Hash(strPath);
-            this.textBoxValue.Text = dVal.ToString("0.0000");
+                //string logKeyValue = string.Empty;
+                //foreach (var item in dickeyValue)
+                //{
+                //    logKeyValue += string.Format("{0}:{1}", item.Key,item.Value.ToString("0.0000")) + Environment.NewLine;
+                //}
+                //LogHelper.WriteInfoLog(logKeyValue);
+                #endregion
+
+
+                this.textBoxKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
+                this.textBoxValue.Text = dCommitedValue.ToString("0.0000");
+                this.textBox_UncomitValue.Text = dUnCommitedValue.ToString("0.0000");
+            }));
+
             LogHelper.WriteMethodLog(false);
         }
 
@@ -466,37 +469,44 @@ namespace BitcoinTerminal
             LogHelper.WriteMethodLog(false);
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //LeveldbOperator.CloseDB();
-        }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-           // LeveldbOperator.CloseDB();
-        }
 
 
         private string NewTransactionCallBack(Transaction Ts)
         {
             LogHelper.WriteMethodLog(true);
-            if (this.txHandler.isValidTx(Ts))
+            string sRet = string.Empty;
+            if (this.txHandler.handleTxs(Ts) == ConstHelper.BC_OK)
             {
-                return this.bkHandler.AddTransaction(Ts);
+                sRet = this.bkHandler.AddTx2hsPool(Ts);
+                //Task.Run(()=> {
+
+                    this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+                    this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+                    this.RefreshKeyValueBox();
+                    
+                    this.RefreshInterfaceTxCount();
+
+                //});
+               
             }
             else
             {
-                return Decision.Reject;
+                sRet = Decision.Reject;
             }
-            LogHelper.WriteMethodLog(false);
+            LogHelper.WriteInfoLog("NewTransactionCallBack ret: " + sRet);
+            return sRet;
+           
 
         }
 
         private string NewBlockCallBack(Block block)
         {
             LogHelper.WriteMethodLog(true);
+            string sRet = string.Empty;
             if (this.CurrentBkHash == block.Hash)
             {
+                LogHelper.WriteInfoLog("Accepted");
                 return Decision.Accepted;
             }
             int iRet = this.bkHandler.IsValidBlock(block);
@@ -505,10 +515,11 @@ namespace BitcoinTerminal
                 if( this.bkHandler.WriteLastblock(block) == ConstHelper.BC_OK)
                 {
                     Task.Run(()=> {
+
                         RefreshByNewBlock(block);
                     });
                 }
-                
+                LogHelper.WriteInfoLog("Accept");
                 return Decision.Accept;
             }
             else
@@ -519,6 +530,7 @@ namespace BitcoinTerminal
                         this.ReqSyncBlock(false);
                     });
                 }
+                LogHelper.WriteInfoLog("Reject");
                 return Decision.Reject;
             }
             LogHelper.WriteMethodLog(false);
@@ -537,36 +549,99 @@ namespace BitcoinTerminal
             LogHelper.WriteMethodLog(false);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="block"></param>
         private void RefreshByNewBlock(Block block)
+        {
+            LogHelper.WriteMethodLog(true);
+            
+            this.RemoveComitedTx(block.listTransactions);
+
+            this.bkHandler.RefreshLastBlock(block);
+            this.txHandler.RefreshUTPoolByBlock(block);
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+
+            this.txHandler.ClearUnCommitUtxoPool();
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+
+            this.RefreshKeyValueBox();
+            this.RefreshInterfaceItem();
+
+            LogHelper.WriteMethodLog(false);
+        }
+
+        private void RefreshInterfaceItem()
         {
             LogHelper.WriteMethodLog(true);
             this.BeginInvoke(new MethodInvoker(() =>
             {
-                this.bkHandler.RefreshLastBlock(block);
-                this.textBox1.Text = this.bkHandler.strPuzzle;
-                UTXOPool sigleBlockPool = this.txHandler.BlockData2UTXOPool(block);
-                List<PubKeyValue> lstPubKeyValue = this.keyHandler.RefKVFromSigUTxpool(sigleBlockPool);
-                if(lstPubKeyValue.Count > 0)
-                {
-                    string str = string.Empty;
-                    foreach (var item in lstPubKeyValue)
-                    {
-                        str = str + string.Format("{0}Received: {1}", item.PubKeyNmae, item.Value) + Environment.NewLine;
-                    }
-
-                    MessageBox.Show(str);
-                    this.InitKeyValues();
-                }                
+                this.textBox1.Text = this.bkHandler.GetLastPuzzleStr();
+                this.textBox_height.Text = this.bkHandler.GetLastBkHeight().ToString();
+                this.textBox2.Text = "";//express
+                this.textBoxTxCount.Text = this.bkHandler.GetHsTxPoolCount().ToString();
+                this.InitKeyValues();
             }));
+            LogHelper.WriteMethodLog(false);
+        }
 
+        private void RefreshInterfaceTxCount()
+        {
+            LogHelper.WriteMethodLog(true);
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                this.textBoxTxCount.Text = this.bkHandler.GetHsTxPoolCount().ToString();
+            }));
+            LogHelper.WriteMethodLog(false);
+        }
+
+        private void ResetInterfacePayItem()
+        {
+            LogHelper.WriteMethodLog(true);
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                this.TextBoxAmount.Text = "";
+                this.textBoxPaytoHash.Text = "";
+            }));
+            LogHelper.WriteMethodLog(false);
+        }
+
+        private void RemoveComitedTx(List<Transaction> lstTX)
+        {
+            LogHelper.WriteMethodLog(true);
+            List<Transaction> lstTem = new List<Transaction>();
+
+            foreach (var item in lstTX)
+            {
+                if(this.bkHandler.hsTxPoolContains(item))
+                {
+                    lstTem.Add(item);
+                }
+            }
+            foreach (var item in lstTem)
+            {
+                this.bkHandler.hsTxPoolRemove(item);
+            }
             LogHelper.WriteMethodLog(false);
         }
 
         private void button_printAlldb_Click(object sender, EventArgs e)
         {
-            LogHelper.WriteMethodLog(true);
-            LeveldbOperator.PrintAlldb();
-            LogHelper.WriteMethodLog(false);
+            //LogHelper.WriteMethodLog(true);
+            //LeveldbOperator.PrintAlldb();
+            //LogHelper.WriteMethodLog(false);
+            Transaction Tx = new Transaction();
+            Tx.TxHash = "123456";
+            string sRet = this.bkHandler.AddTx2hsPool(Tx);
+            string sRet1 = this.bkHandler.AddTx2hsPool(Tx);
+            int iCount = this.bkHandler.GetHsTxPoolCount();
+            bool bRet = this.bkHandler.hsTxPoolRemove(Tx);
+            iCount = this.bkHandler.GetHsTxPoolCount();
+            string json = JsonHelper.Serializer<Transaction>(Tx);
+
+
+
         }
     }
 }
