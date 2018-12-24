@@ -53,12 +53,14 @@ namespace BaseSturct
 
         public void RefreshLastBlock(Block newLastBlock)
         {
+            LogHelper.WriteMethodInfoLog(true);
             if(newLastBlock != null)
             {
                 this.mLastBlock = newLastBlock;
                 this.strPuzzle = this.mLastBlock.Header.PuzzToStr();
+                LogHelper.WriteInfoLog("Update last block Info");
             }
-            
+            LogHelper.WriteMethodInfoLog(false);
         }
 
         public bool CreatBaseCoin(string sBaseCoinScript)
@@ -157,13 +159,17 @@ namespace BaseSturct
         // Add mutex todo
         public string AddTransaction(Transaction tran)
         {
+            LogHelper.WriteMethodInfoLog(tran.TxHash);
+
             if(!this.hashsetPoolTx.Contains(tran))
             {
                 this.hashsetPoolTx.Add(tran);
+                LogHelper.WriteInfoLog("AddTransaction: Accept");
                 return Decision.Accept;
             }
             else
             {
+                LogHelper.WriteInfoLog("AddTransaction: Accepted");
                 return Decision.Accepted;
             }
 
@@ -316,7 +322,10 @@ namespace BaseSturct
             return lstTx;
         }
 
-         
+         public int[] GetlastblockPuzzle()
+        {
+            return this.mLastBlock.Header.Puzzle;
+        }
 
 
     }

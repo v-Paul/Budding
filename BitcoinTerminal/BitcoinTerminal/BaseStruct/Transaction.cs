@@ -15,29 +15,31 @@ namespace BaseSturct
     public class Input
     {
         //hash of the Transaction whose output is being used 
-        public string  strpreTxHash;
+        public string  PreTxHash;
         //used output's index in the previous transaction 
-        public int outputIndex;
+        public int OutputIndex;
         // the signature produced to check validity
-        public scriptSig scriptSig;
+        public scriptSig ScriptSig;
 
         
         public Input(string strHash, int index)
         {
 
             if (string.IsNullOrEmpty(strHash))
-                strpreTxHash = string.Empty;
+                PreTxHash = string.Empty;
             else
-                strpreTxHash = strHash;
-            outputIndex = index;
+                PreTxHash = strHash;
+            OutputIndex = index;
 
-            scriptSig = new scriptSig();
+            ScriptSig = new scriptSig();
         }
 
         public void addSignature(scriptSig Sig)
         {
-            this.scriptSig = Sig;
+            this.ScriptSig = Sig;
         }
+
+
     }
 
     [Serializable]
@@ -68,6 +70,8 @@ namespace BaseSturct
             value = 0;
             scriptPubKey = string.Empty;
         }
+
+
 
     }
 
@@ -138,7 +142,7 @@ namespace BaseSturct
             for (int i = 0; i < listInputs.Count(); i++)
             {
                 Input inEnty = listInputs[i];
-                UTXO u = new UTXO(inEnty.strpreTxHash, (uint)inEnty.outputIndex);
+                UTXO u = new UTXO(inEnty.PreTxHash, (uint)inEnty.OutputIndex);
                 if (u.Equals(ut))
                 {
                     listInputs.RemoveAt(i);            
@@ -160,7 +164,7 @@ namespace BaseSturct
             if (index > listInputs.Count())
                 return null;
             Input inEnty = listInputs[index];
-            strSigData = inEnty.strpreTxHash + inEnty.outputIndex;
+            strSigData = inEnty.PreTxHash + inEnty.OutputIndex;
 
             string strAllOutput=string.Empty;
             foreach (Output opEnty in listOutputs)
@@ -188,7 +192,7 @@ namespace BaseSturct
             string strAllInput = string.Empty;
             foreach (Input inEnty in listInputs)
             {
-                strAllInput += inEnty.strpreTxHash + inEnty.outputIndex + inEnty.scriptSig.Signature + inEnty.scriptSig.PubKey;
+                strAllInput += inEnty.PreTxHash + inEnty.OutputIndex + inEnty.ScriptSig.Signature + inEnty.ScriptSig.PubKey;
             }
 
             string strAllOutput = string.Empty;
@@ -276,8 +280,8 @@ namespace BaseSturct
         public void signTrans(string strmyPriKeyPath, string strmyPubkeyValue, int InputIndex)
         {
             string strRawdata = this.getRawDataToSign(InputIndex);
-            listInputs[InputIndex].scriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
-            listInputs[InputIndex].scriptSig.PubKey = strmyPubkeyValue;
+            listInputs[InputIndex].ScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
+            listInputs[InputIndex].ScriptSig.PubKey = strmyPubkeyValue;
 
         }
 
@@ -286,8 +290,8 @@ namespace BaseSturct
             for (int i = 0; i < this.listInputs.Count; i++)
             {
                 string strRawdata = this.getRawDataToSign(i);
-                listInputs[i].scriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
-                listInputs[i].scriptSig.PubKey = strmyPubkeyValue;
+                listInputs[i].ScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
+                listInputs[i].ScriptSig.PubKey = strmyPubkeyValue;
             }
 
         }
@@ -300,6 +304,29 @@ namespace BaseSturct
 
         }
 
-       
+        //public override bool Equals(Object other)
+        //{
+        //    if (other == null)
+        //    {
+        //        return false;
+        //    }
+        //    Transaction otherTx = (Transaction)other;
+        //    // 直接对比hash是否一致
+        //    if (this.getHash() != otherTx.getHash())
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
+
+        public override int GetHashCode()
+        {
+            return (TxHash).GetHashCode();
+        }
+
+
     }
 }

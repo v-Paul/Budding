@@ -59,7 +59,7 @@ namespace VTMC.Utils
         /// <returns>文件内容</returns>
         public static string ReadFromText(string path)
         {
-            LogHelper.WriteMethodLog(true);
+           
             try
             {
                 string result = string.Empty;

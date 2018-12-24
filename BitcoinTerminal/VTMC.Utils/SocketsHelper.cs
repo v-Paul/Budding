@@ -47,13 +47,32 @@ namespace VTMC.Utils
                 byte[] bytRequest = ByteHelper.ObjectToBytes<XXPSocketsModel>(Request);
                 
                 byte[] bylength = BitConverter.GetBytes(bytRequest.Length);
+                stream.Write(bylength, 0, bylength.Length);
 
-                byte[] tmp = new byte[bylength.Length + bytRequest.Length];
-                System.Buffer.BlockCopy(bylength, 0, tmp, 0, bylength.Length);
-                System.Buffer.BlockCopy(bytRequest, 0, tmp, bylength.Length, bytRequest.Length);
+                //byte[] tmp = new byte[bylength.Length + bytRequest.Length];
+                //System.Buffer.BlockCopy(bylength, 0, tmp, 0, bylength.Length);
+                //System.Buffer.BlockCopy(bytRequest, 0, tmp, bylength.Length, bytRequest.Length);
+                if(bytRequest.Length>2048)
+                {
+                    int iTimes = bytRequest.Length / 2048;
+                    int iLast = bytRequest.Length % 2048;
+                    for (int i = 0; i < iTimes; i++)
+                    {
+                        stream.Write(bytRequest, i * 2048, 2048);
+                        Thread.Sleep(10);
+                    }
+                    if (iLast != 0)
+                    {
+                        stream.Write(bytRequest, iTimes * 2048, iLast);
+                    }
+                }
+                else
+                {
+                    stream.Write(bytRequest, 0, bytRequest.Length);
+                }
 
 
-                stream.Write(tmp, 0, tmp.Length);
+
 
                 //2.接收状态,长度<1024字节
                 byte[] bytes = new Byte[size];
@@ -99,16 +118,27 @@ namespace VTMC.Utils
 
                         byte[] byLength = new byte[4];
                         int retLength = stream.Read(byLength, 0, byLength.Length);
-                       
+
 
                         int iReqLength = BitConverter.ToInt32(byLength, 0);
-                        LogHelper.WriteInfoLog("Data length: " + iReqLength);
                         byte[] Request = new byte[iReqLength];
-                        int length = stream.Read(Request, 0, Request.Length);
+                        if (iReqLength>2048)
+                        {
+                            int itotalLength = 0;
+                            while (itotalLength != iReqLength)
+                            {
+                                int length = stream.Read(Request, itotalLength, 2048);
+                                itotalLength += length;
 
-                        LogHelper.WriteInfoLog("Received Data length: " + length);
+                            }
+                        }
+                        else
+                        {
+                        int length = stream.Read(Request, 0, Request.Length);
+                        }
+
                         XXPSocketsModel reqModel = ByteHelper.BytesToObject<XXPSocketsModel>(Request);
-                        //XXPSocketsModel resModel = new XXPSocketsModel();
+                       
                         string strTemp = client.Client.RemoteEndPoint.ToString();
                         reqModel.IpAddress = strTemp.Substring(0, strTemp.IndexOf(":"));
                         if (this.XXPSocketsExecuteCallBack != null)
@@ -175,7 +205,7 @@ namespace VTMC.Utils
                 int totalBytes = 0;
                 do
                 {
-                    Thread.Sleep(10);//模拟远程传输视觉效果,暂停10秒  
+                    Thread.Sleep(10);
                     bytesRead = fs.Read(fileBuffer, 0, fileBuffer.Length);
                     this.XXPfileStream.Write(fileBuffer, 0, bytesRead);
                     totalBytes += bytesRead;

@@ -45,18 +45,21 @@ namespace BaseSturct
         #region Public fuction
         public static string OpenDB(string strDbPath)
         {
+           
             mutex.WaitOne();
             IntPtr IntRes = openDB(strDbPath);
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog("OpenDB:"+str);
             return str;
         }
 
         public static void CloseDB( )
         {
             try
-            {
+            {   
                 IntPtr IntRes = closeDB();
                 mutex.ReleaseMutex();
+                LogHelper.WriteMethodLog(false);
             }
             catch (Exception ex)
             {
@@ -66,12 +69,13 @@ namespace BaseSturct
         }
         public static string GetValue(string strkey)
         {
+            LogHelper.WriteMethodInfoLog(strkey);
             if (string.IsNullOrEmpty(strkey))
                 return string.Empty;
 
             IntPtr IntRes = getValue(strkey);          
             string strValue = Marshal.PtrToStringAnsi(IntRes);
-            
+           
             return strValue;
         }
 
@@ -79,6 +83,7 @@ namespace BaseSturct
         {
             IntPtr IntRes = putKeyValue(strkey, strValue);
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog("PutKeyValue:"+str);
             return str;
         }
 
@@ -86,14 +91,17 @@ namespace BaseSturct
         {
             IntPtr IntRes = delItm(strkey);
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog("DelItm" + str);
             return str;
         }
 
 
         public static string GetKey(int iPos)
         {
+            LogHelper.WriteMethodInfoLog(iPos);
             IntPtr IntRes = getKey(iPos);
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog(str);
             return str;
         }
 
@@ -101,18 +109,21 @@ namespace BaseSturct
         {
             IntPtr IntRes = getfirstKey();
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog(str);
             return str;
         }
         public static string GetlastKey()
         {
             IntPtr IntRes = getlastKey();
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog(str);
             return str;
         }
         public static string GetNextKey()
         {
             IntPtr IntRes = getNextKey();
             string str = Marshal.PtrToStringAnsi(IntRes);
+            LogHelper.WriteInfoLog(str);
             return str;
         }
 

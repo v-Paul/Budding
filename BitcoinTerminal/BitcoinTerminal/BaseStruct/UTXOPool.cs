@@ -34,7 +34,11 @@ namespace BaseSturct
         {
             try
             {
-                dicUtxoPool.Add(utxo, txOut);
+                if(!dicUtxoPool.ContainsKey(utxo))
+                {
+                    dicUtxoPool.Add(utxo, txOut);
+                }
+                
             }
             catch(Exception ex)
             {

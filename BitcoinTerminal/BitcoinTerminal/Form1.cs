@@ -73,7 +73,7 @@ namespace BitcoinTerminal
 
         private void InitAppseting()
         {
-
+            LogHelper.WriteMethodLog(true);
             #region init peizhi
             //应用程序版本号
             AppSettings.ProductVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -112,13 +112,15 @@ namespace BitcoinTerminal
                 Directory.CreateDirectory(AppSettings.XXPTempFolder);
             }
             #endregion
+            LogHelper.WriteMethodLog(false);
         }
 
         private void InitFromDB()
         {
+            LogHelper.WriteMethodLog(true);
             //this.BeginInvoke(new MethodInvoker(() =>
             //{
-                this.bkHandler.GetLastBlock();
+            this.bkHandler.GetLastBlock();
                 //this.textBox1.Text = this.bkHandler.strPuzzle;
                 this.txHandler.CreatUTPoolFromDB(AppSettings.XXPDBFolder);
                 this.keyHandler.RefKVFromUtxopool(this.txHandler.GetUtxoPool());
@@ -128,12 +130,16 @@ namespace BitcoinTerminal
                 this.InitKeyValues();
 
             }));
+            LogHelper.WriteMethodLog(false);
+            
         }
 
         private int ReserchNodes()
         {
+            LogHelper.WriteMethodLog(true);
             this.commHandler.ReserchNodes();
-            return this.commHandler.GetAddressCount();  
+            return this.commHandler.GetAddressCount();
+            LogHelper.WriteMethodLog(false);
         }
 
 
@@ -144,10 +150,14 @@ namespace BitcoinTerminal
         /// <param name="e"></param>
         private void Digcoin_Click(object sender, EventArgs e)
         {
-
+            LogHelper.WriteMethodLog(true);
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.textBoxKeyHash.Text);
-            //this.bkHandler.CreatBaseCoin(sBaseCoinScript);
-
+            
+            if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastblockPuzzle(), this.textBox2.Text))
+            {
+                MessageBox.Show("Verify24Puzzel fail");
+                return;
+            }
 
             Block newBlock = this.bkHandler.CreatBlock(this.textBox2.Text, sBaseCoinScript);
             if (newBlock == null)
@@ -183,6 +193,7 @@ namespace BitcoinTerminal
             {
                 MessageBox.Show(strRet);
             }
+            LogHelper.WriteMethodLog(false);
         }
 
 
@@ -196,6 +207,7 @@ namespace BitcoinTerminal
 
         private void buttonSpent_Click(object sender, EventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
             if (this.commHandler.GetAddressCount() == 0)
             {
                 MessageBox.Show("Offline, Please search seeds first");
@@ -248,6 +260,8 @@ namespace BitcoinTerminal
                 this.commHandler.SendNewTx2AddressLst(Tx);
 
             });
+
+            LogHelper.WriteMethodLog(false);
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -257,13 +271,16 @@ namespace BitcoinTerminal
 
         private void GenerateKeypair_Click(object sender, EventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
             string nePubKeyName = this.keyHandler.GernerateKeypairs();
             this.comboBox1.Items.Add(nePubKeyName);
+            LogHelper.WriteMethodLog(false);
 
         }
 
         private void InitKeyValues()
         {
+            LogHelper.WriteMethodLog(true);
             this.comboBox1.Items.Clear();
             this.comboBox1.Items.Add("All");
             Dictionary<string, double> dickeyValue = this.keyHandler.GetDicKeyValue();
@@ -273,16 +290,20 @@ namespace BitcoinTerminal
                
             }
             this.comboBox1.SelectedIndex = 0;
+            LogHelper.WriteMethodLog(false);
         }
 
         //选择key
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
             this.RefreshKeyValueBox();
+            LogHelper.WriteMethodLog(false);
         }
 
         private void RefreshKeyValueBox()
         {
+            LogHelper.WriteMethodLog(true);
             string strChoice = this.comboBox1.SelectedItem.ToString();
             string strPubKeyName = string.Empty;
 
@@ -310,14 +331,22 @@ namespace BitcoinTerminal
                 dickeyValue.TryGetValue(strChoice, out dVal);
             }
 
-            string strPath = Path.Combine(AppSettings.XXPKeysFolder, strPubKeyName);
-            //this.MyAddressScript = this.keyHandler.pubkey2Script(strPath);
+            string logKeyValue = string.Empty;
+            foreach (var item in dickeyValue)
+            {
+                logKeyValue += string.Format("{0}:{1}", item.Key,item.Value.ToString("0.0000")) + Environment.NewLine;
+            }
+            LogHelper.WriteInfoLog(logKeyValue);
+
+            string strPath = Path.Combine(AppSettings.XXPKeysFolder, strPubKeyName);          
             this.textBoxKeyHash.Text = this.keyHandler.pubkey2Hash(strPath);
             this.textBoxValue.Text = dVal.ToString("0.0000");
+            LogHelper.WriteMethodLog(false);
         }
 
         private void ResearchNodes_Click(object sender, EventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
             string Ip = this.textBoxSeedIP.Text;
             //step1 handshake
             bool bRet = this.commHandler.RequestHandshake(Ip);
@@ -386,12 +415,13 @@ namespace BitcoinTerminal
                string sRet =  this.commHandler.GetNewBlocks(BkInfo.IP, this.bkHandler.GetLastBlock());
             }
 
-
+            LogHelper.WriteMethodLog(false);
         }
 
         private void ReqSyncBlock(bool bCheckemptyDB=true)
         {
-            if(bCheckemptyDB)
+            LogHelper.WriteMethodLog(true);
+            if (bCheckemptyDB)
             {
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
                 {
@@ -424,6 +454,7 @@ namespace BitcoinTerminal
                     }
                 }
                 LeveldbOperator.CloseDB();
+                
             }
            
 
@@ -432,6 +463,7 @@ namespace BitcoinTerminal
             {
                 string sRet = this.commHandler.GetNewBlocks(BkInfo.IP, this.bkHandler.GetLastBlock());
             }
+            LogHelper.WriteMethodLog(false);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -447,8 +479,8 @@ namespace BitcoinTerminal
 
         private string NewTransactionCallBack(Transaction Ts)
         {
-
-            if(this.txHandler.isValidTx(Ts))
+            LogHelper.WriteMethodLog(true);
+            if (this.txHandler.isValidTx(Ts))
             {
                 return this.bkHandler.AddTransaction(Ts);
             }
@@ -456,12 +488,14 @@ namespace BitcoinTerminal
             {
                 return Decision.Reject;
             }
-                    
+            LogHelper.WriteMethodLog(false);
+
         }
 
         private string NewBlockCallBack(Block block)
         {
-            if(this.CurrentBkHash == block.Hash)
+            LogHelper.WriteMethodLog(true);
+            if (this.CurrentBkHash == block.Hash)
             {
                 return Decision.Accepted;
             }
@@ -487,11 +521,12 @@ namespace BitcoinTerminal
                 }
                 return Decision.Reject;
             }
-            
+            LogHelper.WriteMethodLog(false);
         }
 
         void RefresfNodeCountCallBack(int iNodesCount)
         {
+            LogHelper.WriteMethodLog(true);
             //this.textBoxConnectedNodes.Text = iNodesCount.ToString();
 
             this.textBoxConnectedNodes.Invoke(new MethodInvoker(() =>
@@ -499,10 +534,12 @@ namespace BitcoinTerminal
                 this.textBoxConnectedNodes.Text = iNodesCount.ToString();
 
             }));
+            LogHelper.WriteMethodLog(false);
         }
 
         private void RefreshByNewBlock(Block block)
         {
+            LogHelper.WriteMethodLog(true);
             this.BeginInvoke(new MethodInvoker(() =>
             {
                 this.bkHandler.RefreshLastBlock(block);
@@ -519,15 +556,17 @@ namespace BitcoinTerminal
 
                     MessageBox.Show(str);
                     this.InitKeyValues();
-                }
-                
-
+                }                
             }));
+
+            LogHelper.WriteMethodLog(false);
         }
 
         private void button_printAlldb_Click(object sender, EventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
             LeveldbOperator.PrintAlldb();
+            LogHelper.WriteMethodLog(false);
         }
     }
 }
