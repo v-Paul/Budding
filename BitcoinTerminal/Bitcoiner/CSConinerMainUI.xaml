@@ -6,14 +6,16 @@
         xmlns:local="clr-namespace:Bitcoiner"
         WindowStyle="None"
         AllowsTransparency="True"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
+        Icon="Resources/CSharpCoin.png"
         FontFamily="Microsoft YaHei"
-        Title="CSConinerMainUI" Height="550" Width="700">
+        Title="CSConinerMainUI" Height="550" Width="760">
     <Window.Resources>
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Grid Height="25">
                 <Border Grid.Column="1" Background="White" Opacity="0"   Cursor="Hand"/>
-                <Path x:Name="Arrow" Grid.Column="1" Margin="5,0"  Data="M 0 0  6 6 12 0 Z"  VerticalAlignment="Center" HorizontalAlignment="Right" Stretch="None" Fill="#a29c9e" />
+                <Path x:Name="Arrow" Grid.Column="1" Margin="5,0"  Data="M 0 0  6 6 12 0 Z"  VerticalAlignment="Center" HorizontalAlignment="Right" Stretch="None" Fill="Black" />
             </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsChecked" Value="true">
@@ -28,9 +30,9 @@
         </ControlTemplate>
         <!--ComboBox-->
         <!--ComBoBox项选中背景色-->
-        <SolidColorBrush x:Key="ComboBoxSelectdBackground" Color="#5EB26C"/>
+        <SolidColorBrush x:Key="ComboBoxSelectdBackground" Color="Black"/>
         <!--ComBoBox项鼠标经过背景色-->
-        <SolidColorBrush x:Key="ComboBoxMouseOverBackground" Color="#5EB26C"/>
+        <SolidColorBrush x:Key="ComboBoxMouseOverBackground" Color="Black"/>
         <!--ComBoBox项选中前景色-->
         <SolidColorBrush x:Key="ComboBoxSelectedForeground" Color="White"/>
         <!--ComBoBox项鼠标经过前景色-->
@@ -79,7 +81,7 @@
                                 <ColumnDefinition Width="0.7*"/>
                                 <ColumnDefinition Width="0.3*" MaxWidth="30"/>
                             </Grid.ColumnDefinitions>
-                            <Border  Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1" Background="#FFFCF5" BorderBrush="#a29c9e" CornerRadius="5"/>
+                            <Border  Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0" Background="White" BorderBrush="#a29c9e" CornerRadius="5"/>
                             <ContentPresenter  Margin="5,0" HorizontalAlignment="Left" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False"/>
 
                             <!--ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen-->
@@ -117,13 +119,13 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" CornerRadius="5">
                             <TextBlock x:Name="txtinput" Margin="{TemplateBinding Padding}" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="White"/>
-                                <Setter TargetName="txtinput" Property="TextBlock.Foreground" Value="#5EB26C"/>
+                                <Setter TargetName="txtinput" Property="TextBlock.Foreground" Value="Black"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#2a89a4"/>
@@ -153,7 +155,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <!--<Setter Property="Background" Value="#FFFCF5"/>-->
             <Setter Property="Background" Value="White"/>
@@ -173,7 +175,7 @@
                             <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                           <Trigger Property="IsEnabled" Value="false">
+                            <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Background" TargetName="BackBorder" Value="#e3e3e3"/>
                                 <Setter Property="Foreground" Value="#9A9A9A"/>
                             </Trigger>
@@ -193,7 +195,8 @@
         </Style>
         <Style x:Key="textblockStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Padding" Value="9" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="15,9" />
             <Setter Property="FontSize" Value="16" />
         </Style>
     </Window.Resources>
@@ -262,11 +265,14 @@
                 </Grid.ColumnDefinitions>
             </Grid>
         </Border>
-    </Grid>Background="#f4f3ef"
+    </Grid>Background="#f4f3ef"#fab915
     fab915
     -->
     <Border BorderBrush="#fab915" BorderThickness="1">
-        <Grid Background="#f4f3ef" >
+        <Grid>
+            <Grid.Background>
+                <ImageBrush ImageSource="Resources/bgImg.jpg"/>
+            </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="100"/>
@@ -282,25 +288,27 @@
                 </StackPanel>
             </StackPanel>
             <Border  Grid.Row="1" BorderBrush="LightGray" BorderThickness="0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="150"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto" MinWidth="60"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Image Source="pack://siteoforigin:,,,/Resources/KeyImg.png"  Margin="5" Height="80" Width="80" HorizontalAlignment="Left"/>
-                <Button Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="#5EB26C"/>
-                <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
-                    <TextBlock Grid.Column="2" Style="{StaticResource textblockStyle}" Text="50000" FontSize="16" Background="#fab915" Foreground="White" Margin="50,0,0,0" />
-                    <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="30" HorizontalAlignment="Left"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="150"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MinWidth="60"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="pack://siteoforigin:,,,/Resources/KeyImg.png"  Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
+                    <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
+                    <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
+                    <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1">
+                        <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="White" Foreground="Black" />
+                    </Border>
+                    <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5"/>
                 </Grid>
             </Border>
             <Border  Grid.Row="2" BorderBrush="LightGray" BorderThickness="0,1">
-                <Grid Margin="0,10">
+                <Grid Margin="0,0,10,0">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -313,15 +321,19 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Image Grid.RowSpan="2" Source="pack://siteoforigin:,,,/Resources/dig.png" Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <Button Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateBlock" FontSize="16" Background="#5EB26C"/>
+                    <Button x:Name="btnCreateBlock" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateBlock" FontSize="16" Background="black" Click="btnCreateBlock_Click"/>
                     <!--<Button Grid.Column="1" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Margin="5,0" Height="40" Padding="5" Content="12228" FontSize="16" Background="#fab915"/>-->
-                    <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource textblockStyle}" Text="12228" FontSize="16" Background="#fab915" Foreground="White"/>
+                    <Border Margin="9" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1">
+                        <TextBlock x:Name="txtLastBlockheight" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="White" Foreground="Black"/>
+                    </Border>
                     <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#fab915"/>-->
-                    <TextBlock Grid.Column="2" Grid.Row="1" Style="{StaticResource textblockStyle}" Text="128" FontSize="16" Background="#fab915" Foreground="White" Margin="5,0,0,0"/>
+                    <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1">
+                        <TextBlock Margin="0" x:Name="txtTxUncomitCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="White" Foreground="Black"/>
+                    </Border>
                     <TextBlock Grid.Column="3" Text="Puzzle:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0"/>
+                    <TextBox x:Name="txtLastPuzzle" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                     <TextBlock Grid.Column="3" Grid.Row="1" Text="Express:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0"/>
+                    <TextBox x:Name="txtPuzzleExpress" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                 </Grid>
             </Border>
             <Border  Grid.Row="3" BorderBrush="LightGray" BorderThickness="0">
@@ -335,25 +347,27 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="150"/>
+                        <ColumnDefinition Width="100"/>
                         <ColumnDefinition MinWidth="100"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="pack://siteoforigin:,,,/Resources/CoinImg.png" Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <ComboBox Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource btCmb}" Width="120" Height="40" FontSize="16" Background="#5EB26C">
+                    <Image Grid.RowSpan="2" Source="pack://siteoforigin:,,,/Resources/CoinImg.png" Margin="24,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
+                    <ComboBox x:Name="cmbKeyList" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource btCmb}" Width="120" Height="40" FontSize="16" Background="#5EB26C" SelectionChanged="cmbKeyList_SelectionChanged" >
                         <ComboBoxItem>keyName1</ComboBoxItem>
                         <ComboBoxItem>keyName2</ComboBoxItem>
                         <ComboBoxItem>keyName3</ComboBoxItem>
                     </ComboBox>
                     <TextBlock Grid.Column="1" Grid.Row="1" Text="Nodes:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="5" />
                     <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#66615b"/>-->
-                    <TextBlock Grid.Column="2" Grid.Row="1" Style="{StaticResource textblockStyle}" Text="128" FontSize="16" Background="#66615b" Foreground="White"/>
-                    <DockPanel  Grid.Row="0"  Grid.Column="3" Grid.ColumnSpan="2" >
+                    <TextBlock x:Name="txtConectNodes" Grid.Column="2" Grid.Row="1" Style="{StaticResource textblockStyle}" Text="0" FontSize="16"  Foreground="White" Background="#fab915"/>
+                    <!--<DockPanel  Grid.Row="0"  Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" >
                         <TextBlock Text="Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="16" />
-                        <TextBox Style="{StaticResource TextBoxStyle}" Height="45" Margin="0" IsEnabled="False" Text="111" FontSize="16"/>
-                    </DockPanel>
-                    <TextBlock Grid.Column="3" Grid.Row="1" Text="Uncommit Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0"/>
-                    <TextBox Grid.Column="5" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0" IsEnabled="False" Text="111" FontSize="16"/>
+                        <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" Margin="0" IsEnabled="False" Text="111" FontSize="16"/>
+                    </DockPanel>-->
+                    <TextBlock Text="Blance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
+                    <TextBox x:Name="txtComitBalance" Grid.Row="0"  Grid.Column="4"  Style="{StaticResource TextBoxStyle}" Height="40" Width="100" HorizontalAlignment="Left" IsEnabled="False" Text="111" FontSize="16"/>
+                    <TextBlock Grid.Column="3" Grid.Row="1" Text="UN-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10,0,5,0"/>
+                    <TextBox x:Name="txtUnComitBalance" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" HorizontalAlignment="Left" IsEnabled="False"/>
+                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
                 </Grid>
             </Border>
             <Border  Grid.Row="4" BorderBrush="LightGray" BorderThickness="0,1,0,0">
@@ -370,11 +384,11 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Image Grid.RowSpan="2" Source="pack://siteoforigin:,,,/Resources/transferImg.png" Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <Button Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="#5EB26C"/>
+                    <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
                     <TextBlock Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0"/>
+                    <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                     <TextBlock Grid.Column="3" Grid.Row="1" Text="Account:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="45" Margin="5,0"/>
+                    <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                 </Grid>
             </Border>
         </Grid>

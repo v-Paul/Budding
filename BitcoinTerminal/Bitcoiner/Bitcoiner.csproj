@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\OutputWPF\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\Output\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Output\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -46,6 +53,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="VTMC.Utils">
+      <HintPath>..\Output\VTMC.Utils.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -68,6 +78,17 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BaseStruct\BkHandler.cs" />
+    <Compile Include="BaseStruct\Block.cs" />
+    <Compile Include="BaseStruct\Communication.cs" />
+    <Compile Include="BaseStruct\Cryptor.cs" />
+    <Compile Include="BaseStruct\KeyHandler.cs" />
+    <Compile Include="BaseStruct\LeveldbOperator.cs" />
+    <Compile Include="BaseStruct\Operation.cs" />
+    <Compile Include="BaseStruct\Transaction.cs" />
+    <Compile Include="BaseStruct\TxHandler.cs" />
+    <Compile Include="BaseStruct\UTXO.cs" />
+    <Compile Include="BaseStruct\UTXOPool.cs" />
     <Compile Include="CSConinerMainUI.xaml.cs">
       <DependentUpon>CSConinerMainUI.xaml</DependentUpon>
     </Compile>
@@ -128,7 +149,30 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\transferImg-copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\KeyImg-copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\KeyIcon-copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CoinImg-copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CSharpCoin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bgImg.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>Xcopy /y "$(SolutionDir)Libraries" "$(OutDir)"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
