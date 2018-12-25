@@ -386,14 +386,18 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
 
             this.Dispatcher.Invoke(() => {
-                string strChoice = this.cmbKeyList.SelectedItem.ToString();
+                if(this.cmbKeyList.SelectedItem!=null)
+                {
+                    string strChoice = this.cmbKeyList.SelectedItem.ToString();
 
-                double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
-                double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
+                    double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
+                    double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
-                this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
-                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                    this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
+                    this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
+                    this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                }
+                
             });
 
             LogHelper.WriteMethodLog(false);
@@ -406,7 +410,7 @@ namespace Bitcoiner
         {
             LogHelper.WriteMethodLog(true);
             string nePubKeyName = this.keyHandler.GernerateKeypairs();
-            this.cmbKeyList.Items.Add(nePubKeyName);
+            this.InitKeyValues();
             LogHelper.WriteMethodLog(false);
         }
 
@@ -515,16 +519,6 @@ namespace Bitcoiner
         }
 
         //选择key
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LogHelper.WriteMethodLog(true);
-            this.RefreshKeyValueBox();
-            LogHelper.WriteMethodLog(false);
-        }
-
-
-        #endregion
-
         private void cmbKeyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //this.cmbKeyList.SelectedValue
@@ -533,5 +527,10 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
 
         }
+
+
+        #endregion
+
+
     }
 }
