@@ -466,9 +466,9 @@ namespace Bitcoiner
                 MessageBox.Show("Please enter the transfer amount");
                 return;
             }
-            if (string.IsNullOrEmpty(this.txtAcount.Text))
+            if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
             {
-                MessageBox.Show("Please enter receiver publicKey hash ");
+                MessageBox.Show("Please enter receiver's right publicKey hash ");
                 return;
             }
             double dPaytoAmount = 0;       
