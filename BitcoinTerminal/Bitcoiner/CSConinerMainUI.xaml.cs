@@ -96,6 +96,8 @@ namespace Bitcoiner
             #region init peizhi
             //应用程序版本号
             AppSettings.ProductVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            LogHelper.WriteInfoLog(string.Format("当前产品版本：{0}", AppSettings.ProductVersion));
+
             AppSettings.XXPCommonFolder = string.Format(AppConfigHelper.GetConfigValByKey("XXPCommonFolder"), Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             AppSettings.XXPCommport = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPCommPort"));
             AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
@@ -469,10 +471,10 @@ namespace Bitcoiner
                 MessageBox.Show("Please enter receiver publicKey hash ");
                 return;
             }
-            double dPaytoAmount = Convert.ToDouble(this.txtAmount.Text);
-            if (dPaytoAmount == 0)
+            double dPaytoAmount = 0;       
+            if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
-                MessageBox.Show("Please enter the transfer amount");
+                MessageBox.Show("Please enter the transfer amount NUMBER");
                 return;
             }
             string strChoice = this.cmbKeyList.SelectedItem.ToString();
