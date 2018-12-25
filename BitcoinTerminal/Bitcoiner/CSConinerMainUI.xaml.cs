@@ -429,7 +429,8 @@ namespace Bitcoiner
         private void btnCreatekey_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.WriteMethodLog(true);
-            string nePubKeyName = this.keyHandler.GernerateKeypairs();
+            string newPubKeyName = this.keyHandler.GernerateKeypairs();
+            MessageBox.Show(string.Format("Generate {0} success", newPubKeyName));
             this.InitKeyValues();
             LogHelper.WriteMethodLog(false);
         }
@@ -496,7 +497,7 @@ namespace Bitcoiner
                 return;
             }
             string strChoice = this.cmbKeyList.SelectedItem.ToString();
-            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
 
             string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
 

@@ -806,7 +806,7 @@ namespace BaseSturct
        
 
         #endregion
-
+     
 
     }
 }
