@@ -39,6 +39,8 @@ namespace Bitcoiner
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            this.Hide();
+            this.commHandler.NotifyOffline();
             this.Close();
         }
 
@@ -67,6 +69,7 @@ namespace Bitcoiner
                 this.commHandler.NewTransactionCallBack = this.NewTransactionCallBack;
                 this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
                 this.commHandler.RefresfNodeCountCallBack = this.RefresfNodeCountCallBack;
+                this.commHandler.PushTxhsPoolCallBack = this.PushTxhsPoolCallBack;
 
                 this.CurrentBkHash = string.Empty;
 
@@ -245,13 +248,32 @@ namespace Bitcoiner
             });
             LogHelper.WriteMethodLog(false);
         }
+
+
+        void PushTxhsPoolCallBack(string ip)
+        {
+            List<Transaction> lstTx = new List<Transaction>();
+            lstTx = this.bkHandler.GetlstPoolTx();
+            foreach (var item in lstTx)
+            {
+                this.commHandler.SendNewtransactions(ip, item);
+            }
+        }
         #endregion
 
         #region Sync fucntions
 
+        private int ReserchNodes()
+        {
+            LogHelper.WriteMethodLog(true);
+            this.commHandler.ReserchNodes();
+            return this.commHandler.GetAddressCount();
+            LogHelper.WriteMethodLog(false);
+        }
         private void ReqSyncBlock(bool bCheckemptyDB = true)
         {
             LogHelper.WriteMethodLog(true);
+            #region empty DB，Sync all db
             if (bCheckemptyDB)
             {
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
@@ -287,7 +309,7 @@ namespace Bitcoiner
                 LeveldbOperator.CloseDB();
 
             }
-
+            #endregion
 
             ResponseBlock BkInfo = this.commHandler.RequestNewBlockInfo(this.bkHandler.GetLastBlock());
             if (BkInfo.BlockResult == BlockResultType.Lower)
@@ -296,6 +318,8 @@ namespace Bitcoiner
             }
             LogHelper.WriteMethodLog(false);
         }
+
+
         private void RemoveComitedTx(List<Transaction> lstTX)
         {
             LogHelper.WriteMethodLog(true);
@@ -314,13 +338,7 @@ namespace Bitcoiner
             }
             LogHelper.WriteMethodLog(false);
         }
-        private int ReserchNodes()
-        {
-            LogHelper.WriteMethodLog(true);
-            this.commHandler.ReserchNodes();
-            return this.commHandler.GetAddressCount();
-            LogHelper.WriteMethodLog(false);
-        }
+
 
         #endregion
 

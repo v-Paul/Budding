@@ -87,6 +87,7 @@ namespace BaseSturct
         public Func<Transaction, string> NewTransactionCallBack;
         public Func<Block, string> NewBlockCallBack;
         public Action<int> RefresfNodeCountCallBack;
+        public Action<string> PushTxhsPoolCallBack;
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
@@ -122,6 +123,18 @@ namespace BaseSturct
             {
                 LogHelper.WriteInfoLog("Add new IP:" + Ip);
                 this.dicAddressesPool.Add(Ip, 0);
+                this.RefresfNodeCountCallBack(this.GetAddressCount());
+            }
+            LogHelper.WriteMethodLog(false);
+        }
+
+        public void RemoveAddressFromPool(string Ip)
+        {
+            LogHelper.WriteMethodLog(true);
+            if (this.dicAddressesPool.ContainsKey(Ip))
+            {
+                LogHelper.WriteInfoLog("Offline IP:" + Ip);
+                this.dicAddressesPool.Remove(Ip);
                 this.RefresfNodeCountCallBack(this.GetAddressCount());
             }
             LogHelper.WriteMethodLog(false);
@@ -331,6 +344,19 @@ namespace BaseSturct
             LogHelper.WriteInfoLog("RequestHandshake failed");
             return false;
         }
+
+        public void NotifyOffline()
+        {
+            LogHelper.WriteMethodLog(true);
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.Handshake;
+            sendMod.Value = ConstHelper.BC_NotifyOffline;
+
+            foreach (var item in this.dicAddressesPool)
+            {
+                XXPSocketsModel RcvMod = this.XXPSendMessage(item.Key, sendMod, 3000);
+            }
+        }
         private string  HandlleHandshakeEvent(XXPSocketsModel socketMod)
         {
             LogHelper.WriteMethodLog(true);
@@ -345,10 +371,14 @@ namespace BaseSturct
                     List<string> lstTemp = new List<string>();
                     lstTemp.Add(socketMod.IpAddress);
                     Task.Run(()=> {
+                        this.PushTxhsPoolCallBack(socketMod.IpAddress);
                         this.SendNewAddress2Others(lstTemp);
                     });
                 }
-
+            }
+            else if(socketMod.Value == ConstHelper.BC_NotifyOffline)
+            {
+                this.RemoveAddressFromPool(socketMod.IpAddress);
             }
             LogHelper.WriteMethodLog(false);
             return sRet;
@@ -356,6 +386,53 @@ namespace BaseSturct
         #endregion
 
         #region NewAddresses
+
+        public string ReserchNodes()
+        {
+            LogHelper.WriteMethodLog(true);
+            AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
+            var lstSeeds = (from x in AppSettings.SeedNodes.Split('|')
+                            where x != ""
+                            select x).ToList();
+            foreach (var item in lstSeeds)
+            {
+                if (item != OSHelper.GetLocalIP() && item != "127.0.0.1")
+                    this.RequestHandshake(item);
+            }
+            if (this.dicAddressesPool.Count == 0)
+            {
+                return "Connect to XXPCoin Net failed";
+            }
+
+            HashSet<string> hsNew = new HashSet<string>();
+            foreach (var item in this.dicAddressesPool)
+            {
+                List<string> lstAddress = this.RequestMoreNodes(item.Key);
+
+
+                foreach (var Adds in lstAddress)
+                {
+                    if (Adds != OSHelper.GetLocalIP() && !this.dicAddressesPool.ContainsKey(Adds))
+                    {
+                        if (!hsNew.Contains(Adds))
+                        {
+                            hsNew.Add(Adds);
+                        }
+
+                    }
+                }
+            }
+            foreach (var item in hsNew)
+            {
+                if (this.RequestHandshake(item))
+                {
+                    this.Add2AddressPool(item);
+                }
+            }
+            LogHelper.WriteMethodLog(false);
+            return ConstHelper.BC_OK;
+
+        }
         public List<string> RequestMoreNodes(string ip)
         {
             LogHelper.WriteMethodLog(true);
@@ -726,52 +803,7 @@ namespace BaseSturct
             return sRet;
         }
 
-        public string ReserchNodes()
-        {
-            LogHelper.WriteMethodLog(true);
-            AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
-            var lstSeeds = (from x in AppSettings.SeedNodes.Split('|')
-                              where x != ""
-                              select x).ToList();
-            foreach (var item in lstSeeds)
-            {
-                if(item != OSHelper.GetLocalIP() && item !="127.0.0.1")
-                    this.RequestHandshake(item);
-            }
-            if(this.dicAddressesPool.Count ==0 )
-            {
-                return "Connect to XXPCoin Net failed";
-            }
-
-            HashSet<string> hsNew = new HashSet<string>();
-            foreach (var item in this.dicAddressesPool)
-            {
-                List<string> lstAddress = this.RequestMoreNodes(item.Key);
-                
-              
-                foreach (var Adds in lstAddress)
-                {
-                    if (Adds != OSHelper.GetLocalIP()&&!this.dicAddressesPool.ContainsKey(Adds))
-                    {
-                        if(!hsNew.Contains(Adds))
-                        {
-                            hsNew.Add(Adds);
-                        }
-                        
-                    }
-                }                   
-            }
-            foreach (var item in hsNew)
-            {
-                if(this.RequestHandshake(item))
-                {
-                    this.Add2AddressPool(item);
-                }
-            }
-            LogHelper.WriteMethodLog(false);
-            return ConstHelper.BC_OK;
-
-        }
+       
 
         #endregion
 
