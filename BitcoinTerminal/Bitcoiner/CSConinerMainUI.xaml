@@ -385,7 +385,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="Auto" MinWidth="60" />
                         <ColumnDefinition MinWidth="100"/>
                     </Grid.ColumnDefinitions>
                     <Image Grid.RowSpan="2" Source="Resources/CoinImg-gold.png" Margin="15,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
@@ -404,10 +404,16 @@
                         <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" Margin="0" IsEnabled="False" Text="111" FontSize="16"/>
                     </DockPanel>-->
                     <TextBlock Foreground="White" Text="Blance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
-                    <TextBox x:Name="txtComitBalance" Grid.Row="0"  Grid.Column="4"  Style="{StaticResource TextBoxStyle}" Height="40" Width="100" HorizontalAlignment="Left" IsEnabled="False" Text="111" FontSize="16"/>
-                    <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
-                    <TextBox x:Name="txtUnComitBalance" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" HorizontalAlignment="Left" IsEnabled="False"/>
-                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
+                    <StackPanel  Grid.Row="0"  Grid.Column="4" Orientation="Horizontal" >
+                        <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00" FontSize="16"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
+                    </StackPanel>
+                        <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
+                    <StackPanel  Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
+                        <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
+                        <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
+                    </StackPanel>
+                        <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
                 </Grid>
             </Border>
             <Border  Grid.Row="4" BorderBrush="LightGray" BorderThickness="0,1,0,0">

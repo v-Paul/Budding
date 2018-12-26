@@ -425,8 +425,8 @@ namespace Bitcoiner
                 double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
                 this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                this.txtComitBalance.Text = dCommitedValue.ToString("0.00")+ " $";
-                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.00" + " $");
+                this.txtComitBalance.Text = dCommitedValue.ToString("F2");
+                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("F2");
                 }
                 
             });
