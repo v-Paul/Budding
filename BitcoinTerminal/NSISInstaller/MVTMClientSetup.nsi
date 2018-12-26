@@ -93,7 +93,7 @@ Section "MainSection" SEC01
   CreateDirectory "$SMPROGRAMS\ChinaSofti\"
   CreateDirectory "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}\Bitcoiner.lnk" "$INSTDIR\Bitcoiner.exe"
-
+  CreateShortCut "$DESKTOP\Bitcoiner.lnk" "$INSTDIR\Bitcoiner.exe"
   CreateShortCut "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\uninst.exe"
   LogEx::Write "end out put to the install dir"
   LogEx::Write "---------- end install -------"
@@ -131,7 +131,7 @@ Section Uninstall
   SetShellVarContext all
   Delete "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}\Uninstall.lnk"
   
-  Delete "$DESKTOP\MVTMClient.lnk"
+  Delete "$DESKTOP\Bitcoiner.lnk"
   
   Delete "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}\Bitcoiner.lnk"
   RMDir /r "$SMPROGRAMS\Chinasofti\${PRODUCT_NAME}"
