@@ -399,8 +399,12 @@ namespace BaseSturct
             string hash = string.Empty;
             if (keyname == ConstHelper.BC_All)
             {
-                KeyValuePair<string, string> firstKV = this.dicKey2Hash.First();
-                hash= firstKV.Value;
+                if( this.dicKey2Hash.Count != 0)
+                {
+                    KeyValuePair<string, string> firstKV = this.dicKey2Hash.First();
+                    hash = firstKV.Value;
+                }
+                
             }
             else
             {
