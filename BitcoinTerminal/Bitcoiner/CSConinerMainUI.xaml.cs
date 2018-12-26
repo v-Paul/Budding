@@ -88,6 +88,9 @@ namespace Bitcoiner
             catch(Exception ex)
             {
                 LogHelper.WriteErrorLog(ex.Message);
+                Task.Run(()=> {
+                    MessageBox.Show(ex.Message);
+                });
             }
             
         }
@@ -414,8 +417,8 @@ namespace Bitcoiner
                 double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
                 this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
-                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                this.txtComitBalance.Text = dCommitedValue.ToString("0.00")+ " $";
+                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.00" + " $");
                 }
                 
             });
