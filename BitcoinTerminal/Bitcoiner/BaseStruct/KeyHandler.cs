@@ -67,6 +67,9 @@ namespace BaseSturct
        
             Cryptor.generateRSAKey2File(pubPath, priPath);
             this.dicKey2Hash.Add(PubKeyname, pubkey2Hash(pubPath));
+            List<UTXO> lsteTmp = new List<UTXO>();
+            this.dicComitkeysUtxoList.Add(PubKeyname, lsteTmp);
+            this.dicUnComitkeysUtxoList.Add(PubKeyname, lsteTmp);
             LogHelper.WriteInfoLog("GernerateKeypairs Create:" + PubKeyname);
             return PubKeyname;
         }

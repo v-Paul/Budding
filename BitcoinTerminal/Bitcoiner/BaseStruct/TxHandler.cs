@@ -123,7 +123,8 @@ namespace BaseSturct
         /// <returns>just for update key corresponding value</returns>
         public UTXOPool BlockData2UTXOPool(bool bCommitedPool, Block block)
         {
-            LogHelper.WriteMethodInfoLog(bCommitedPool);
+            LogHelper.WriteMethodLog(true);
+            LogHelper.WriteInfoLog("bCommitedPool: " + bCommitedPool.ToString());
             UTXOPool utxopoll = new UTXOPool();
             if (bCommitedPool)
             { utxopoll = this.CommitedUtxoPool; }

@@ -39,6 +39,8 @@ namespace Bitcoiner
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            this.Hide();
+            this.commHandler.NotifyOffline();
             this.Close();
         }
 
@@ -67,6 +69,7 @@ namespace Bitcoiner
                 this.commHandler.NewTransactionCallBack = this.NewTransactionCallBack;
                 this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
                 this.commHandler.RefresfNodeCountCallBack = this.RefresfNodeCountCallBack;
+                this.commHandler.PushTxhsPoolCallBack = this.PushTxhsPoolCallBack;
 
                 this.CurrentBkHash = string.Empty;
 
@@ -96,6 +99,8 @@ namespace Bitcoiner
             #region init peizhi
             //应用程序版本号
             AppSettings.ProductVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            LogHelper.WriteInfoLog(string.Format("当前产品版本：{0}", AppSettings.ProductVersion));
+
             AppSettings.XXPCommonFolder = string.Format(AppConfigHelper.GetConfigValByKey("XXPCommonFolder"), Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             AppSettings.XXPCommport = Convert.ToInt32(AppConfigHelper.GetConfigValByKey("XXPCommPort"));
             AppSettings.SeedNodes = AppConfigHelper.GetConfigValByKey("SeedNodes");
@@ -243,13 +248,32 @@ namespace Bitcoiner
             });
             LogHelper.WriteMethodLog(false);
         }
+
+
+        void PushTxhsPoolCallBack(string ip)
+        {
+            List<Transaction> lstTx = new List<Transaction>();
+            lstTx = this.bkHandler.GetlstPoolTx();
+            foreach (var item in lstTx)
+            {
+                this.commHandler.SendNewtransactions(ip, item);
+            }
+        }
         #endregion
 
         #region Sync fucntions
 
+        private int ReserchNodes()
+        {
+            LogHelper.WriteMethodLog(true);
+            this.commHandler.ReserchNodes();
+            return this.commHandler.GetAddressCount();
+            LogHelper.WriteMethodLog(false);
+        }
         private void ReqSyncBlock(bool bCheckemptyDB = true)
         {
             LogHelper.WriteMethodLog(true);
+            #region empty DB，Sync all db
             if (bCheckemptyDB)
             {
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
@@ -285,7 +309,7 @@ namespace Bitcoiner
                 LeveldbOperator.CloseDB();
 
             }
-
+            #endregion
 
             ResponseBlock BkInfo = this.commHandler.RequestNewBlockInfo(this.bkHandler.GetLastBlock());
             if (BkInfo.BlockResult == BlockResultType.Lower)
@@ -294,6 +318,8 @@ namespace Bitcoiner
             }
             LogHelper.WriteMethodLog(false);
         }
+
+
         private void RemoveComitedTx(List<Transaction> lstTX)
         {
             LogHelper.WriteMethodLog(true);
@@ -312,13 +338,7 @@ namespace Bitcoiner
             }
             LogHelper.WriteMethodLog(false);
         }
-        private int ReserchNodes()
-        {
-            LogHelper.WriteMethodLog(true);
-            this.commHandler.ReserchNodes();
-            return this.commHandler.GetAddressCount();
-            LogHelper.WriteMethodLog(false);
-        }
+
 
         #endregion
 
@@ -386,6 +406,8 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
 
             this.Dispatcher.Invoke(() => {
+                if(this.cmbKeyList.SelectedItem!=null)
+                {
                 string strChoice = this.cmbKeyList.SelectedItem.ToString();
 
                 double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
@@ -394,6 +416,8 @@ namespace Bitcoiner
                 this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
                 this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
                 this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                }
+                
             });
 
             LogHelper.WriteMethodLog(false);
@@ -405,8 +429,9 @@ namespace Bitcoiner
         private void btnCreatekey_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.WriteMethodLog(true);
-            string nePubKeyName = this.keyHandler.GernerateKeypairs();
-            this.cmbKeyList.Items.Add(nePubKeyName);
+            string newPubKeyName = this.keyHandler.GernerateKeypairs();
+            MessageBox.Show(string.Format("Generate {0} success", newPubKeyName));
+            this.InitKeyValues();
             LogHelper.WriteMethodLog(false);
         }
 
@@ -460,19 +485,19 @@ namespace Bitcoiner
                 MessageBox.Show("Please enter the transfer amount");
                 return;
             }
-            if (string.IsNullOrEmpty(this.txtAcount.Text))
+            if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
             {
-                MessageBox.Show("Please enter receiver publicKey hash ");
+                MessageBox.Show("Please enter receiver's right publicKey hash ");
                 return;
             }
-            double dPaytoAmount = Convert.ToDouble(this.txtAmount.Text);
-            if (dPaytoAmount == 0)
+            double dPaytoAmount = 0;       
+            if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
-                MessageBox.Show("Please enter the transfer amount");
+                MessageBox.Show("Please enter the transfer amount NUMBER");
                 return;
             }
             string strChoice = this.cmbKeyList.SelectedItem.ToString();
-            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
 
             string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
 
@@ -515,16 +540,6 @@ namespace Bitcoiner
         }
 
         //选择key
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LogHelper.WriteMethodLog(true);
-            this.RefreshKeyValueBox();
-            LogHelper.WriteMethodLog(false);
-        }
-
-
-        #endregion
-
         private void cmbKeyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //this.cmbKeyList.SelectedValue
@@ -534,9 +549,14 @@ namespace Bitcoiner
 
         }
 
+
+        #endregion
+
+
+        }
+
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
     }
-}

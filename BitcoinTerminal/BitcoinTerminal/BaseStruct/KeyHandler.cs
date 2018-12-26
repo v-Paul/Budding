@@ -67,6 +67,9 @@ namespace BaseSturct
        
             Cryptor.generateRSAKey2File(pubPath, priPath);
             this.dicKey2Hash.Add(PubKeyname, pubkey2Hash(pubPath));
+            List<UTXO> lsteTmp = new List<UTXO>();
+            this.dicComitkeysUtxoList.Add(PubKeyname, lsteTmp);
+            this.dicUnComitkeysUtxoList.Add(PubKeyname, lsteTmp);
             LogHelper.WriteInfoLog("GernerateKeypairs Create:" + PubKeyname);
             return PubKeyname;
         }
@@ -108,18 +111,18 @@ namespace BaseSturct
         public void RefKUtxoList(bool bCommited, UTXOPool utxopool)
         {
             LogHelper.WriteMethodLog(true);
-            Dictionary<string, List<UTXO>> keysUtxoList = new Dictionary<string, List<UTXO>>();
+            Dictionary<string, List<UTXO>> dicKeysUtxoList = new Dictionary<string, List<UTXO>>();
             if(bCommited)
-            { keysUtxoList = this.dicComitkeysUtxoList; }
+            { dicKeysUtxoList = this.dicComitkeysUtxoList; }
             else
-            { keysUtxoList = this.dicUnComitkeysUtxoList; }
+            { dicKeysUtxoList = this.dicUnComitkeysUtxoList; }
 
 
 
             DirectoryInfo KeyFolder = new DirectoryInfo(AppSettings.XXPKeysFolder);
             FileInfo[] files = KeyFolder.GetFiles("pubkey?.pem");
 
-            if(keysUtxoList.Count == 0)
+            if(dicKeysUtxoList.Count == 0)
             {// 初始化
                 foreach (FileInfo fi in files)
                 {
@@ -130,17 +133,17 @@ namespace BaseSturct
                     }
                    
                     List<UTXO> lstKeyUtxo = new List<UTXO>();
-                    keysUtxoList.Add(fi.Name, lstKeyUtxo);
+                    dicKeysUtxoList.Add(fi.Name, lstKeyUtxo);
                 }
             }
             else
             {//先清空，赋零，
-                keysUtxoList.Clear();
+                dicKeysUtxoList.Clear();
                 foreach (FileInfo fi in files)
                 {
                     //this.dickeyValue[fi.Name] = 0;                   
                     List<UTXO> lstKeyUtxo = new List<UTXO>();
-                    keysUtxoList.Add(fi.Name, lstKeyUtxo);
+                    dicKeysUtxoList.Add(fi.Name, lstKeyUtxo);
                 }
             }
 
@@ -167,9 +170,9 @@ namespace BaseSturct
                         //    this.dickeyValue[fi.Name] = output.value;
                         //}
                         List<UTXO> lstTemp = new List<UTXO>();
-                        keysUtxoList.TryGetValue(fi.Name, out lstTemp);
+                        dicKeysUtxoList.TryGetValue(fi.Name, out lstTemp);
                         lstTemp.Add(utxo);
-                        keysUtxoList[fi.Name] = lstTemp;
+                        dicKeysUtxoList[fi.Name] = lstTemp;
 
                         break;
                     }
