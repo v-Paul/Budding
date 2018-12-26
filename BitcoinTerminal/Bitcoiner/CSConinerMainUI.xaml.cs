@@ -89,7 +89,7 @@ namespace Bitcoiner
             {
                 LogHelper.WriteErrorLog(ex.Message);
             }
-
+            
         }
 
         #region Initiate function
@@ -160,7 +160,7 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
             this.cmbKeyList.Items.Clear();
             this.cmbKeyList.Items.Add("All");
-
+            
             Dictionary<string, string> dickeyValue = this.keyHandler.GetDicKeyHash();
             this.txtKeyCount.Text = dickeyValue.Count().ToString();
             foreach (var dicItem in dickeyValue)
@@ -416,16 +416,16 @@ namespace Bitcoiner
             {
                 if (this.cmbKeyList.SelectedItem != null)
                 {
-                    string strChoice = this.cmbKeyList.SelectedItem.ToString();
+                string strChoice = this.cmbKeyList.SelectedItem.ToString();
 
-                    double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
-                    double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
+                double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
+                double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
-                    this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                    this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
-                    this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
+                this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
+                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
                 }
-
+                
             });
 
             LogHelper.WriteMethodLog(false);
@@ -498,7 +498,7 @@ namespace Bitcoiner
                 MessageBox.Show("Please enter receiver's right publicKey hash ");
                 return;
             }
-            double dPaytoAmount = 0;
+            double dPaytoAmount = 0;       
             if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
                 MessageBox.Show("Please enter the transfer amount NUMBER");
@@ -567,5 +567,5 @@ namespace Bitcoiner
         }
     }
 
-
-}
+   
+    }
