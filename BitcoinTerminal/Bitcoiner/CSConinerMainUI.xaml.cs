@@ -533,5 +533,10 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
 
         }
+
+        private void btnMin_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
     }
 }
