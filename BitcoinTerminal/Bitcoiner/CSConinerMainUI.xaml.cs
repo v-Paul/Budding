@@ -85,11 +85,11 @@ namespace Bitcoiner
 
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogHelper.WriteErrorLog(ex.Message);
             }
-            
+
         }
 
         #region Initiate function
@@ -160,7 +160,7 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
             this.cmbKeyList.Items.Clear();
             this.cmbKeyList.Items.Add("All");
-            
+
             Dictionary<string, string> dickeyValue = this.keyHandler.GetDicKeyHash();
             this.txtKeyCount.Text = dickeyValue.Count().ToString();
             foreach (var dicItem in dickeyValue)
@@ -215,7 +215,8 @@ namespace Bitcoiner
             {
                 if (this.bkHandler.WriteLastblock(block) == ConstHelper.BC_OK)
                 {
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
 
                         RefreshByNewBlock(block);
                     });
@@ -227,7 +228,8 @@ namespace Bitcoiner
             {
                 if (iRet == 1)
                 {
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         this.ReqSyncBlock(false);
                     });
                 }
@@ -242,7 +244,8 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
             //this.textBoxConnectedNodes.Text = iNodesCount.ToString();
 
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.txtConectNodes.Text = iNodesCount.ToString();
 
             });
@@ -281,7 +284,8 @@ namespace Bitcoiner
                     DBFileInfo df = this.commHandler.RequestHightestDBInfo();
                     string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
                     MessageBox.Show(str);
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
 
                         string SavePath = System.IO.Path.Combine(AppSettings.XXPTempFolder, ConstHelper.BC_DBZipName);
                         long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
@@ -371,7 +375,8 @@ namespace Bitcoiner
         private void RefreshInterfaceItem()
         {
             LogHelper.WriteMethodLog(true);
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.txtLastPuzzle.Text = this.bkHandler.GetLastPuzzleStr();
                 this.txtLastBlockheight.Text = this.bkHandler.GetLastBkHeight().ToString();
                 this.txtPuzzleExpress.Text = "";//express
@@ -385,7 +390,8 @@ namespace Bitcoiner
         private void RefreshInterfaceTxCount()
         {
             LogHelper.WriteMethodLog(true);
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.txtTxUncomitCount.Text = this.bkHandler.GetHsTxPoolCount().ToString();
             });
             LogHelper.WriteMethodLog(false);
@@ -394,7 +400,8 @@ namespace Bitcoiner
         private void ResetInterfacePayItem()
         {
             LogHelper.WriteMethodLog(true);
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.txtAmount.Text = "";
                 this.txtAcount.Text = "";
             });
@@ -405,19 +412,20 @@ namespace Bitcoiner
         {
             LogHelper.WriteMethodLog(true);
 
-            this.Dispatcher.Invoke(() => {
-                if(this.cmbKeyList.SelectedItem!=null)
+            this.Dispatcher.Invoke(() =>
+            {
+                if (this.cmbKeyList.SelectedItem != null)
                 {
-                string strChoice = this.cmbKeyList.SelectedItem.ToString();
+                    string strChoice = this.cmbKeyList.SelectedItem.ToString();
 
-                double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
-                double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
+                    double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
+                    double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
-                this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
-                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
+                    this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
+                    this.txtComitBalance.Text = dCommitedValue.ToString("0.0000");
+                    this.txtUnComitBalance.Text = dUnCommitedValue.ToString("0.0000");
                 }
-                
+
             });
 
             LogHelper.WriteMethodLog(false);
@@ -490,7 +498,7 @@ namespace Bitcoiner
                 MessageBox.Show("Please enter receiver's right publicKey hash ");
                 return;
             }
-            double dPaytoAmount = 0;       
+            double dPaytoAmount = 0;
             if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
                 MessageBox.Show("Please enter the transfer amount NUMBER");
@@ -531,7 +539,8 @@ namespace Bitcoiner
             this.RefreshKeyValueBox();
             this.ResetInterfacePayItem();
 
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 this.commHandler.SendNewTx2AddressLst(Tx);
 
             });
@@ -552,11 +561,11 @@ namespace Bitcoiner
 
         #endregion
 
-
-        }
-
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
     }
+
+
+}
