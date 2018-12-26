@@ -553,10 +553,11 @@ namespace Bitcoiner
         #endregion
 
 
-        }
-
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+ this.WindowState = WindowState.Minimized;
         }
+    }
+
+   
     }
