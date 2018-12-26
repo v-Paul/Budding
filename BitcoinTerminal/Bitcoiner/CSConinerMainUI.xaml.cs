@@ -161,17 +161,20 @@ namespace Bitcoiner
         private void InitKeyValues()
         {
             LogHelper.WriteMethodLog(true);
-            this.cmbKeyList.Items.Clear();
-            this.cmbKeyList.Items.Add("All");
-            
-            Dictionary<string, string> dickeyValue = this.keyHandler.GetDicKeyHash();
-            this.txtKeyCount.Text = dickeyValue.Count().ToString();
-            foreach (var dicItem in dickeyValue)
-            {
-                this.cmbKeyList.Items.Add(dicItem.Key);
+            this.Dispatcher.Invoke(()=> {
+                this.cmbKeyList.Items.Clear();
+                this.cmbKeyList.Items.Add("All");
 
-            }
-            this.cmbKeyList.SelectedIndex = 0;
+                Dictionary<string, string> dickeyValue = this.keyHandler.GetDicKeyHash();
+                this.txtKeyCount.Text = dickeyValue.Count().ToString();
+                foreach (var dicItem in dickeyValue)
+                {
+                    this.cmbKeyList.Items.Add(dicItem.Key);
+
+                }
+                this.cmbKeyList.SelectedIndex = 0;
+            });
+           
             LogHelper.WriteMethodLog(false);
         }
         #endregion
@@ -440,9 +443,12 @@ namespace Bitcoiner
         private void btnCreatekey_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.WriteMethodLog(true);
-            string newPubKeyName = this.keyHandler.GernerateKeypairs();
-            MessageBox.Show(string.Format("Generate {0} success", newPubKeyName));
-            this.InitKeyValues();
+            Task.Run(()=> {
+                string newPubKeyName = this.keyHandler.GernerateKeypairs();
+                MessageBox.Show(string.Format("Generate {0} success", newPubKeyName));
+                this.InitKeyValues();
+            });
+            
             LogHelper.WriteMethodLog(false);
         }
 
