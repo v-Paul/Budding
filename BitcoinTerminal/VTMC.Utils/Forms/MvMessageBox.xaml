@@ -14,7 +14,7 @@
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         FontFamily="Microsoft YaHei"
-        Title="MvMessageBox" Height="300" Width="800">
+        Title="MvMessageBox" Height="200" Width="500">
     <Window.Resources>
         <Style x:Key="TimeOut" TargetType="{x:Type Button}">
             <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -90,15 +90,69 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="BtnCancelStyle" TargetType="Button">
+            <!--<Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="25"/>-->
+            <Setter Property="Foreground" Value="#fab915"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <!--<Setter Property="Background" Value="#5EB26C"/>-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" CornerRadius="5">
+                            <TextBlock x:Name="txtinput" Margin="{TemplateBinding Padding}" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#fab915"/>
+                                <Setter TargetName="txtinput" Property="TextBlock.Foreground" Value="Black"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2a89a4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BtnInfoStyle" TargetType="Button">
+            <!--<Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="25"/>-->
+            <Setter Property="Foreground" Value="#fab915"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <!--<Setter Property="Background" Value="#5EB26C"/>-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True" CornerRadius="5">
+                            <TextBlock x:Name="txtinput" Margin="{TemplateBinding Padding}" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="White"/>
+                                <Setter TargetName="txtinput" Property="TextBlock.Foreground" Value="Black"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2a89a4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <Border BorderThickness="0" BorderBrush="Black" Background="White">
+    <Border BorderThickness="1" BorderBrush="#fab915" Background="Black" MouseDown="Border_MouseDown">
         <Grid Background="Transparent">
             <Grid.RowDefinitions>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="103"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="35"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed">
                 <Grid.RowDefinitions>
@@ -109,15 +163,15 @@
                 <Label  x:Name="lblCaption"  Content="Attention" Grid.Row="1" Foreground="#F7931E" FontWeight="Bold" FontSize="20"/>
             </Grid>
 
-            <TextBlock  Grid.Row="0" x:Name="lblMessage" Text="Message Zone." MaxWidth="895" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" Margin="39,38,0,-200"/>
-            <Grid Grid.Row="2" x:Name="grdBtn" Visibility="Collapsed">
+            <TextBlock  Grid.Row="0" x:Name="lblMessage" Text="Message Zone." MaxWidth="895" Foreground="#fab915" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14" Margin="10,30,0,-200"/>
+            <Grid Grid.Row="2" x:Name="grdBtn" Visibility="Visible">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                    <Button x:Name="btnCancel" Style="{StaticResource ResourceKey=CancelStyle}" Content="Cancel" Height="40" Width="130"  FontSize="18" Click="btnCancel_Click" Cursor="Hand" FontFamily="Microsoft YaHei"/>
-                    <Button x:Name="btnCancelOK" Content="OK" Height="40" Width="130" IsDefault="True" FontSize="18" Click="btnCancelOK_Click" Margin="20,0,35,0" Cursor="Hand" FontFamily="Microsoft YaHei"/>
+                    <Button x:Name="btnCancel" Style="{StaticResource ResourceKey=BtnCancelStyle}" Background="White" Foreground="Black" Content="Cancel" Height="30" Width="80"  FontSize="14" Click="btnCancel_Click" Cursor="Hand" FontFamily="Microsoft YaHei"/>
+                    <Button x:Name="btnCancelOK" Content="OK" Style="{StaticResource BtnInfoStyle}" Height="30" Width="80" IsDefault="True" Foreground="Black" Background="#fab915" FontSize="14" Click="btnCancelOK_Click" Margin="10" Cursor="Hand" FontFamily="Microsoft YaHei"/>
                 </StackPanel>
             </Grid>
-            <Button x:Name="btnOK" Grid.Row="2" IsDefault="True" Content="OK" Height="40" Width="130" FontSize="18" Click="btnOK_Click" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="35,0" FontFamily="Microsoft YaHei" />
-            <Label Visibility="Collapsed" Margin="20,0,0,0" x:Name="lblErrorCode" Content="Error Code:{0}" Grid.Row="3" Foreground="Black" FontWeight="Bold" VerticalAlignment="Center" FontSize="15" />
+            <Button x:Name="btnOK" Visibility="Collapsed" Grid.Row="2" IsDefault="True" Style="{StaticResource BtnInfoStyle}" Content="OK" Foreground="Black" Background="#fab915" Height="30" Width="80" FontSize="14" Click="btnOK_Click" Cursor="Hand" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" FontFamily="Microsoft YaHei" />
+            <Label Visibility="Collapsed" Grid.Row="3" Margin="5,0" x:Name="lblErrorCode" Content="Error Code:{0}"  Foreground="Red" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="11" />
         </Grid>
     </Border>
 </Window>

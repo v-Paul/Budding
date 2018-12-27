@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTMC.Utils", "VTMC.Utils\VT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcoiner", "Bitcoiner\Bitcoiner.csproj", "{AE6C4370-A95F-454B-A748-E202A6EE8ACE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitUinitTest", "BitUinitTest\BitUinitTest.csproj", "{4BE8B764-3198-4799-B324-16391B8AF723}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		A|Any CPU = A|Any CPU
@@ -34,6 +36,12 @@ Global
 		{AE6C4370-A95F-454B-A748-E202A6EE8ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE6C4370-A95F-454B-A748-E202A6EE8ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE6C4370-A95F-454B-A748-E202A6EE8ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.A|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.A|Any CPU.Build.0 = Release|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE8B764-3198-4799-B324-16391B8AF723}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -454,6 +454,12 @@ namespace Bitcoiner
 
         private void btnCreateBlock_Click(object sender, RoutedEventArgs e)
         {
+            //MessageHelper.Info_001.Show(new object[] { "PaulInfoInfoInfoInfoInfoInfoInfoInfoInfoInfo" });
+            //MessageHelper.Warn_001.Show(new object[] { "PaulWarnWarnWarnWarnWarnWarnWarnWarnWarnWarn" });
+            //MessageHelper.Error_001.Show(new object[] { "PaulErrorErrorErrorErrorErrorErrorErrorError" });
+            //MessageHelper.Question_001.Show(new object[] { "PaulQuestionQuestionQuestionQuestionQuestion" });
+            //return;
+
             LogHelper.WriteMethodLog(true);
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
 

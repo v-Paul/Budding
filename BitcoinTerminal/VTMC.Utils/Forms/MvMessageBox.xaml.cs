@@ -64,6 +64,11 @@ namespace VTMC.Utils
         /// </summary>
         public int Countdown { get; set; }
 
+        /// <summary>
+        /// 字体
+        /// </summary>
+        public string MsgFamilyName { get; set; }
+
         #endregion
 
         #region 构造函数
@@ -77,7 +82,7 @@ namespace VTMC.Utils
         /// <param name="caption">标题</param>
         /// <param name="button">按钮类型</param>
         /// <param name="icon"></param>
-        public MvMessageBox(Window owner, string errorcode, string strmessage, string caption, MessageBoxButton button, MessageBoxType icon)
+        public MvMessageBox(string errorcode, string strmessage, string caption, MessageBoxButton button, MessageBoxType icon, Window owner = null)
         {
             InitializeComponent();
             this.Caption = caption;
@@ -227,6 +232,18 @@ namespace VTMC.Utils
             }
         }
 
+        private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                this.DragMove();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             try
@@ -254,10 +271,10 @@ namespace VTMC.Utils
                 case MessageBoxType.QYesAndNo:
                 case MessageBoxType.QCancelAndAmend:
                     this.lblCaption.Content = ResourceHelper.GetResourceInfo("M_Caption_Question");
-                    this.lblErrorCode.Visibility = Visibility.Collapsed;
                     break;
                 case MessageBoxType.Error:
                     this.lblCaption.Content = ResourceHelper.GetResourceInfo("M_Caption_Error");
+                    this.lblErrorCode.Visibility = Visibility.Visible;
                     break;
                 case MessageBoxType.Warning:
                     this.lblCaption.Content = ResourceHelper.GetResourceInfo("M_Caption_Attention");
@@ -338,14 +355,21 @@ namespace VTMC.Utils
                 this.btnCancelOK.Content = ResourceHelper.GetResourceInfo("M_Button_Amend");
             }
 
-            this.btnCancel.FontFamily = new FontFamily(AppSettings.FamilyName);
-            this.btnCancelOK.FontFamily = new FontFamily(AppSettings.FamilyName);
-            this.btnOK.FontFamily = new FontFamily(AppSettings.FamilyName);
-            this.lblMessage.FontFamily = new FontFamily(AppSettings.FamilyName);
+            if (!string.IsNullOrEmpty(MsgFamilyName))
+            {
+                this.btnCancel.FontFamily = new FontFamily(MsgFamilyName);
+                this.btnCancelOK.FontFamily = new FontFamily(MsgFamilyName);
+                this.btnOK.FontFamily = new FontFamily(MsgFamilyName);
+                this.lblMessage.FontFamily = new FontFamily(MsgFamilyName);
+            }
 
+            
             this.lblErrorCode.Content = string.Format(this.lblErrorCode.Content.ToString(), this.ErrorCode);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
