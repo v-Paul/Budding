@@ -7,6 +7,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Loaded="Window_Loaded"
+        Closing="Window_Closing"
         mc:Ignorable="d"
         Icon="Resources/CSharpCoin.png"
         FontFamily="Microsoft YaHei"

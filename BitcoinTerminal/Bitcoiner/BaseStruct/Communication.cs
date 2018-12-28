@@ -117,6 +117,7 @@ namespace BaseSturct
         {
             return this.SocketsHelp.XXPSendMessage(ip, Request, AppSettings.XXPCommport, iTimeout);
         }
+
         public void Add2AddressPool(string Ip)
         {
             LogHelper.WriteMethodLog(true);
@@ -396,11 +397,22 @@ namespace BaseSturct
             var lstSeeds = (from x in AppSettings.SeedNodes.Split('|')
                             where x != ""
                             select x).ToList();
-            foreach (var item in lstSeeds)
+            //foreach (var item in lstSeeds)
+            //{
+            //    if (item != OSHelper.GetLocalIP() && item != "127.0.0.1")
+            //        this.RequestHandshake(item);
+            //}
+
+            ParallelOptions po = new ParallelOptions();
+            po.MaxDegreeOfParallelism = 4;
+            
+            Parallel.ForEach(lstSeeds, po, (item) =>
             {
                 if (item != OSHelper.GetLocalIP() && item != "127.0.0.1")
                     this.RequestHandshake(item);
-            }
+            });
+
+
             if (this.dicAddressesPool.Count == 0)
             {
                 return "Connect to XXPCoin Net failed";

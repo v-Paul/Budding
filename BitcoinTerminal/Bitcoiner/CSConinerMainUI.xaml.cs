@@ -41,8 +41,8 @@ namespace Bitcoiner
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
-            this.commHandler.NotifyOffline();
+            //this.Hide();
+            //this.commHandler.NotifyOffline();
             this.Close();
         }
 
@@ -196,10 +196,7 @@ namespace Bitcoiner
                 this.RefreshKeyValueBox();
 
                 this.RefreshInterfaceTxCount();
-                this.Dispatcher.Invoke(() =>
-                {
-                    Test_Double();
-                });
+
             }
             else
             {
@@ -444,8 +441,23 @@ namespace Bitcoiner
                     double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
                     this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                    this.txtComitBalance.Text = dCommitedValue.ToString("F2");
-                    this.txtUnComitBalance.Text = dUnCommitedValue.ToString("F2");
+
+                    
+                    string strComitValue = dCommitedValue.ToString("F2");
+                    if(!string.Equals(strComitValue, this.txtComitBalance.Text))
+                    { 
+                        this.Test_Double();
+                        this.txtComitBalance.Text = strComitValue;
+                    }
+
+                    string strUnComitValue = dUnCommitedValue.ToString("F2");
+                    if (!string.Equals(strUnComitValue, this.txtUnComitBalance.Text) && dUnCommitedValue!= 0)
+                    {
+                        this.Test_Double();
+                        this.txtUnComitBalance.Text = strUnComitValue;
+                    }
+
+                    
                 }
 
             });
@@ -677,6 +689,12 @@ namespace Bitcoiner
         private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             ((MediaElement)sender).Position = ((MediaElement)sender).Position.Add(TimeSpan.FromMilliseconds(1));
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Hide();
+            this.commHandler.NotifyOffline();
         }
     }
 

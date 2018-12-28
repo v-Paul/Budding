@@ -89,6 +89,7 @@ namespace BaseSturct
             this.AddTx2hsPool(basecoinTrans);
             this.HashsetPool2list();
             block.listTransactions = this.GetlstPoolTx();
+            this.ClearTxPool();
             block.SetTransInfo();
 
             block.SetBlockHeader("0000000000000000000000000000000000000000000000000000000000000000", -1);
@@ -155,6 +156,7 @@ namespace BaseSturct
                 this.HashsetPool2list();
 
                 block.listTransactions = this.GetlstPoolTx();
+                this.ClearTxPool();
                 block.SetTransInfo();
                 block.SetBlockHeader(this.mLastBlock.Hash, this.mLastBlock.Header.Height);
 
@@ -363,9 +365,12 @@ namespace BaseSturct
             foreach (var item in this.lstPoolTx)
             {
                 lstTx.Add(item);
-            }
-            this.lstPoolTx.Clear();
+            }            
             return lstTx;
+        }
+        public void ClearTxPool()
+        {
+            this.lstPoolTx.Clear();
         }
 
 
