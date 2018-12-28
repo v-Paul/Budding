@@ -13,5 +13,6 @@ namespace Bitcoiner
     /// </summary>
     public partial class App : Application
     {
+  
     }
 }
