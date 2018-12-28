@@ -211,6 +211,16 @@
   <ItemGroup>
     <None Include="Resources\CSharpCoin.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\timg.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gold.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>Xcopy /y "$(SolutionDir)Libraries" "$(OutDir)"</PreBuildEvent>

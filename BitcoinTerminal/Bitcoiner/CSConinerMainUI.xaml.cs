@@ -15,6 +15,8 @@ using System.Windows.Navigation;
 using System.IO;
 using BaseSturct;
 using VTMC.Utils;
+using System.Windows.Media.Animation;
+
 namespace Bitcoiner
 {
     /// <summary>
@@ -194,7 +196,10 @@ namespace Bitcoiner
                 this.RefreshKeyValueBox();
 
                 this.RefreshInterfaceTxCount();
-
+                this.Dispatcher.Invoke(() =>
+                {
+                    Test_Double();
+                });
             }
             else
             {
@@ -202,7 +207,6 @@ namespace Bitcoiner
             }
             LogHelper.WriteInfoLog("NewTransactionCallBack ret: " + sRet);
             return sRet;
-
 
         }
 
@@ -434,16 +438,16 @@ namespace Bitcoiner
             {
                 if (this.cmbKeyList.SelectedItem != null)
                 {
-                string strChoice = this.cmbKeyList.SelectedItem.ToString();
+                    string strChoice = this.cmbKeyList.SelectedItem.ToString();
 
-                double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
-                double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
+                    double dCommitedValue = this.keyHandler.GetValue(true, strChoice, this.txHandler.GetUtxoPool(true));
+                    double dUnCommitedValue = this.keyHandler.GetValue(false, strChoice, this.txHandler.GetUtxoPool(false));
 
-                this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
-                this.txtComitBalance.Text = dCommitedValue.ToString("F2");
-                this.txtUnComitBalance.Text = dUnCommitedValue.ToString("F2");
+                    this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
+                    this.txtComitBalance.Text = dCommitedValue.ToString("F2");
+                    this.txtUnComitBalance.Text = dUnCommitedValue.ToString("F2");
                 }
-                
+
             });
 
             LogHelper.WriteMethodLog(false);
@@ -599,9 +603,80 @@ namespace Bitcoiner
 
         #endregion
 
+        private void Test_Double()
+        {
+            if (border1.Visibility != Visibility.Visible)
+                border1.Visibility = Visibility.Visible;
+            //Canvas.SetTop(this.border1, -this.border1.ActualHeight / 2);
+            //Canvas.SetLeft(this.border1, -this.border1.ActualWidth / 2);
+
+            //this.border1.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            TranslateTransform translate = new TranslateTransform();
+            RotateTransform rotate = new RotateTransform();
+
+            TransformGroup group = new TransformGroup();
+            //group.Children.Add(rotate);//先旋转
+            group.Children.Add(translate);//再平移
+
+
+            this.border1.RenderTransform = group;
+
+            NameScope.SetNameScope(this, new NameScope());
+            this.RegisterName("translate", translate);
+            ///this.RegisterName("rotate", rotate);
+
+            DoubleAnimationUsingPath animationX = new DoubleAnimationUsingPath();
+            animationX.PathGeometry = this.path1.Data.GetFlattenedPathGeometry();
+            animationX.Source = PathAnimationSource.X;
+            animationX.Duration = new Duration(TimeSpan.FromSeconds(1));
+
+            DoubleAnimationUsingPath animationY = new DoubleAnimationUsingPath();
+            animationY.PathGeometry = this.path1.Data.GetFlattenedPathGeometry();
+            animationY.Source = PathAnimationSource.Y;
+            animationY.Duration = animationX.Duration;
+
+            DoubleAnimationUsingPath animationAngle = new DoubleAnimationUsingPath();
+            animationAngle.PathGeometry = this.path1.Data.GetFlattenedPathGeometry();
+            animationAngle.Source = PathAnimationSource.Angle;
+            animationAngle.Duration = animationX.Duration;
+
+
+            Storyboard story = new Storyboard();
+            story.Completed += Story_Completed;
+            // story.RepeatBehavior = RepeatBehavior.Forever;
+            story.AutoReverse = false;
+            story.Children.Add(animationX);
+            story.Children.Add(animationY);
+
+            //story.Children.Add(animationAngle);
+            Storyboard.SetTargetName(animationX, "translate");
+            Storyboard.SetTargetName(animationY, "translate");
+            // Storyboard.SetTargetName(animationAngle, "rotate");
+            Storyboard.SetTargetProperty(animationX, new PropertyPath(TranslateTransform.XProperty));
+            Storyboard.SetTargetProperty(animationY, new PropertyPath(TranslateTransform.YProperty));
+            //Storyboard.SetTargetProperty(animationAngle, new PropertyPath(RotateTransform.AngleProperty));
+            MediaPlayer player = new MediaPlayer();
+            player.Open(new Uri(@"Resources/gold.mp3", UriKind.Relative));
+            player.Play();
+            System.Threading.Thread.Sleep(500);
+            story.Begin(this);
+
+        }
+
+        private void Story_Completed(object sender, EventArgs e)
+        {
+            border1.Visibility = Visibility.Collapsed;
+        }
+
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            ((MediaElement)sender).Position = ((MediaElement)sender).Position.Add(TimeSpan.FromMilliseconds(1));
         }
     }
 
