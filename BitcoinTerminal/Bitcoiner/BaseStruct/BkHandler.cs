@@ -362,7 +362,7 @@ namespace BaseSturct
         public List<Transaction> GetlstPoolTx()
         {
             List<Transaction> lstTx = new List<Transaction>();
-            foreach (var item in this.lstPoolTx)
+            foreach (var item in this.hashsetPoolTx)
             {
                 lstTx.Add(item);
             }            
@@ -371,6 +371,7 @@ namespace BaseSturct
         public void ClearTxPool()
         {
             this.lstPoolTx.Clear();
+            this.hashsetPoolTx.Clear();
         }
 
 
