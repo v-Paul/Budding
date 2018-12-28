@@ -628,12 +628,12 @@
                 </Grid>
             </Border>
 
-            <Canvas Width="260" Height="200" Margin="280,35,133,21" Grid.Row="2" Grid.RowSpan="2">
+            <Canvas Width="200" Height="200" Margin="60,-10,133,21" Grid.Row="2" Grid.RowSpan="2">
                 <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="0" Canvas.Top="190">
                     <Path.Data>
                         <PathGeometry>
-                            <PathFigure StartPoint="50,0">
-                                <ArcSegment Point="150,0" Size="30,40" SweepDirection="Clockwise"
+                            <PathFigure StartPoint="120,-20">
+                                <ArcSegment Point="150,10" Size="10,30" SweepDirection="Clockwise"
                                     RotationAngle="0"
                                     IsSmoothJoin="False" IsLargeArc="True"/>
                             </PathFigure>
@@ -649,8 +649,8 @@
                         <Border Height="30" Width="20" Background="#fab915" CornerRadius="5">
                       
                         </Border>
-                        <Border Height="15" Width="5" Background="#1E2049" CornerRadius="2.5" Canvas.Left="7.5" Canvas.Top="7.5">
-
+                        <Border  CornerRadius="2.5" Canvas.Left="5" Canvas.Top="5">
+                            <TextBlock Text="$" Foreground="#1E2049" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                     </Canvas>
                 </Border>
