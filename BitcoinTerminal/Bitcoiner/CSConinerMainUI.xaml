@@ -121,7 +121,9 @@
                             </Grid.RowDefinitions>
                             <RepeatButton x:Name="UpButton" Foreground="#fab915" Tag="▲" Style="{StaticResource ScrollBarButton}" Command="{x:Static ScrollBar.LineUpCommand}" IsEnabled="{TemplateBinding IsMouseOver}"   >
                                 <!--<RepeatButton.Content>
-                                    --><!--<Image x:Name="imgUp" Source="BarUp.png" ></Image>--><!--
+                                    -->
+                                <!--<Image x:Name="imgUp" Source="BarUp.png" ></Image>-->
+                                <!--
                                     <TextBlock VerticalAlignment="Center" Text="▲">
                                     </TextBlock>
                                 </RepeatButton.Content>-->
@@ -139,7 +141,9 @@
                             </Track>
                             <RepeatButton Style="{StaticResource ScrollBarButton}" Foreground="#fab915" Tag="▼" Command="{x:Static ScrollBar.LineDownCommand}" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="2" >
                                 <!--<RepeatButton.Content>
-                                    --><!--<Image x:Name="imgDown" Source="Images/BarDown.png"></Image>--><!--
+                                    -->
+                                <!--<Image x:Name="imgDown" Source="Images/BarDown.png"></Image>-->
+                                <!--
                                     <TextBlock VerticalAlignment="Center" Text="V"/>
                                 </RepeatButton.Content>-->
                             </RepeatButton>
@@ -197,7 +201,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Grid Height="25">
                 <Border Grid.Column="1" Background="White" Opacity="0"   Cursor="Hand"/>
@@ -364,7 +368,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <!--<Setter Property="Background" Value="#FFFCF5"/>-->
             <Setter Property="Background" Value="#40000000"/>
@@ -388,7 +392,7 @@
                                 <Setter Property="Background" TargetName="BackBorder" Value="#70000000"/>
                                 <Setter Property="Foreground" Value="#fab915"/>
                             </Trigger>
-                           <!--   <Trigger Property="IsMouseOver" Value="True">
+                            <!--   <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" TargetName="BackBorder" Value="#30FFFFFF"/>
                                 <Setter Property="BorderBrush" TargetName="BackBorder" Value="#30FFFFFF"/>
                             </Trigger>
@@ -594,12 +598,12 @@
                         <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00" FontSize="16"/>
                         <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
                     </StackPanel>
-                        <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
+                    <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
                     <StackPanel  Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
                         <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
                         <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
                     </StackPanel>
-                        <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
+                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
                 </Grid>
             </Border>
             <Border  Grid.Row="4" BorderBrush="LightGray" BorderThickness="0,1,0,0">
@@ -623,6 +627,34 @@
                     <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                 </Grid>
             </Border>
+
+            <Canvas Width="260" Height="200" Margin="280,35,133,21" Grid.Row="2" Grid.RowSpan="2">
+                <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="0" Canvas.Top="190">
+                    <Path.Data>
+                        <PathGeometry>
+                            <PathFigure StartPoint="50,0">
+                                <ArcSegment Point="150,0" Size="30,40" SweepDirection="Clockwise"
+                                    RotationAngle="0"
+                                    IsSmoothJoin="False" IsLargeArc="True"/>
+                            </PathFigure>
+                        </PathGeometry>
+                    </Path.Data>
+                </Path>
+                <Border x:Name="border1" Visibility="Collapsed" Width="30" Height="30" CornerRadius="12.5" Canvas.Left="0" Canvas.Top="175" >
+                    <!--<Image Source="pack://siteoforigin:,,,/Resources/goldcoin.png" Width="50" Height="50"/>-->
+                    <!--<MediaElement Name="pan5A" Source="Resources/timg.gif" MediaEnded="MediaElement_MediaEnded" Width="30" Height="30" >
+
+                    </MediaElement>-->
+                    <Canvas Height="30" Width="20" VerticalAlignment="Bottom">
+                        <Border Height="30" Width="20" Background="#fab915" CornerRadius="5">
+                      
+                        </Border>
+                        <Border Height="15" Width="5" Background="#1E2049" CornerRadius="2.5" Canvas.Left="7.5" Canvas.Top="7.5">
+
+                        </Border>
+                    </Canvas>
+                </Border>
+            </Canvas>
         </Grid>
     </Border>
 </Window>
