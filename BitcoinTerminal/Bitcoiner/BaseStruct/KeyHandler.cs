@@ -335,6 +335,11 @@ namespace BaseSturct
         {
             LogHelper.WriteMethodLog(true);
             string strRet = ConstHelper.BC_OK;
+            if(dPaytoAmount == 0)
+            {
+                strRet = "You want to trap me, NOWAY!";
+            }
+
             if (strKey != ConstHelper.BC_All)
             {
                 double dMyval = this.GetValue(true, strKey, utxopool);
@@ -344,11 +349,11 @@ namespace BaseSturct
                     dMyval = this.GetValue(true, ConstHelper.BC_All, utxopool);
                     if (dMyval < dPaytoAmount)
                     {
-                        strRet = "not sufficient funds";  
+                        strRet = "Insufficient balance";  
                     }
                     else
                     {
-                        strRet = @"Current key not sufficient funds,pls select key <All>";
+                        strRet = @"Current key's balance is insufficient,pls select key <All>";
                     }
                 }
             }
@@ -357,7 +362,7 @@ namespace BaseSturct
                 double dMyval = this.GetValue(true, strKey, utxopool);
                 if (dMyval < dPaytoAmount)
                 {
-                    strRet = "not sufficient funds";
+                    strRet = "Insufficient balance";
                 }
             }
             LogHelper.WriteInfoLog("CheckBalance result: " + strRet);

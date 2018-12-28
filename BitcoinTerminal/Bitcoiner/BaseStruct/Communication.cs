@@ -88,6 +88,7 @@ namespace BaseSturct
         public Func<Block, string> NewBlockCallBack;
         public Action<int> RefresfNodeCountCallBack;
         public Action<string> PushTxhsPoolCallBack;
+        public Action<string> PushLastBlockCallBack;
         public Communication()
         {
             this.SocketsHelp = new SocketsHelper();
@@ -371,7 +372,8 @@ namespace BaseSturct
                     List<string> lstTemp = new List<string>();
                     lstTemp.Add(socketMod.IpAddress);
                     Task.Run(()=> {
-                        this.PushTxhsPoolCallBack(socketMod.IpAddress);
+                        this.PushLastBlockCallBack(socketMod.IpAddress);
+                        this.PushTxhsPoolCallBack(socketMod.IpAddress);                        
                         this.SendNewAddress2Others(lstTemp);
                     });
                 }
@@ -528,8 +530,16 @@ namespace BaseSturct
             sendMod.Type = XXPCoinMsgType.Newtransactions;
             sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
             XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
-            LogHelper.WriteInfoLog("SendNewtransactions ret: " + RcvMod.Value);
-            return RcvMod.Value;
+            if(RcvMod.Type == XXPCoinMsgType.Exception)
+            {
+                return Decision.Reject;
+            }
+            else
+            {
+                LogHelper.WriteInfoLog("SendNewtransactions ret: " + RcvMod.Value);
+                return RcvMod.Value;
+            }
+
         }
 
         public void SendNewTx2AddressLst(Transaction Tx)
@@ -755,8 +765,17 @@ namespace BaseSturct
             sendMod.Type = XXPCoinMsgType.NewBlock;
             sendMod.Value = JsonHelper.Serializer<Block>(block);
             XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod,20000);
-            LogHelper.WriteInfoLog(string.Format("SendNewBlock to {0} return: {1}",ip, RcvMod.Value));
-            return RcvMod.Value;
+            //add by fdp 181228
+            if(RcvMod.Type == XXPCoinMsgType.Exception)
+            {
+                return Decision.Reject;
+            }
+            else
+            {
+                LogHelper.WriteInfoLog(string.Format("SendNewBlock to {0} return: {1}", ip, RcvMod.Value));
+                return RcvMod.Value;
+            }
+            
         }
 
         public string SendNewBlock2AddressLst(Block block)
