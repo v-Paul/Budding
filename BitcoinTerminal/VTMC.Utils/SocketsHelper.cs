@@ -39,6 +39,7 @@ namespace VTMC.Utils
         {
             try
             {
+                LogHelper.WriteMethodLog(true);
                 //1.发送数据
                 TcpClient client = new TcpClient(ip, port);
                 NetworkStream stream = client.GetStream();
@@ -97,6 +98,10 @@ namespace VTMC.Utils
 
 
                 return Response;
+            }
+            finally
+            {
+                LogHelper.WriteMethodLog(false);
             }
         }
 

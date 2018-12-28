@@ -63,6 +63,10 @@ namespace BaseSturct
         {
             return this.mLastBlock.Header.Height;
         }
+        public string GetLastBKHash()
+        {
+            return this.mLastBlock.Hash;
+        }
         public void RefreshLastBlock(Block newLastBlock)
         {
             LogHelper.WriteMethodInfoLog(true);
@@ -139,6 +143,7 @@ namespace BaseSturct
 
             try
             {
+                LogHelper.WriteMethodLog(true);
                 Block block = new Block();
 
                 if (!Cryptor.Verify24Puzzel(this.mLastBlock.Header.Puzzle, strNounce))

@@ -72,6 +72,7 @@ namespace Bitcoiner
                 this.commHandler.NewBlockCallBack = this.NewBlockCallBack;
                 this.commHandler.RefresfNodeCountCallBack = this.RefresfNodeCountCallBack;
                 this.commHandler.PushTxhsPoolCallBack = this.PushTxhsPoolCallBack;
+                this.commHandler.PushLastBlockCallBack = this.PushLastBlockCallBack;
 
                 this.CurrentBkHash = string.Empty;
 
@@ -83,15 +84,13 @@ namespace Bitcoiner
                     {
                         this.ReqSyncBlock();
                     }
-
-
                 });
             }
             catch (Exception ex)
             {
                 LogHelper.WriteErrorLog(ex.Message);
                 Task.Run(()=> {
-                    MessageBox.Show(ex.Message);
+                    MessageHelper.Error_001.Show(ex.Message);
                 });
             }
             
@@ -215,7 +214,8 @@ namespace Bitcoiner
         {
             LogHelper.WriteMethodLog(true);
             string sRet = string.Empty;
-            if (this.CurrentBkHash == block.Hash)
+            if (this.CurrentBkHash == block.Hash ||
+                block.Hash == this.bkHandler.GetLastBKHash())
             {
                 LogHelper.WriteInfoLog("Accepted");
                 return Decision.Accepted;
@@ -263,14 +263,26 @@ namespace Bitcoiner
         }
 
 
+        void PushLastBlockCallBack(string ip)
+        {
+            LogHelper.WriteMethodLog(true);
+            Block lstBlock = new Block();
+            lstBlock = this.bkHandler.GetLastBlock();
+
+            this.commHandler.SendNewBlock(ip, lstBlock);
+            LogHelper.WriteMethodLog(false);
+
+        }
         void PushTxhsPoolCallBack(string ip)
         {
+            LogHelper.WriteMethodLog(true);
             List<Transaction> lstTx = new List<Transaction>();
             lstTx = this.bkHandler.GetlstPoolTx();
             foreach (var item in lstTx)
             {
                 this.commHandler.SendNewtransactions(ip, item);
             }
+            LogHelper.WriteMethodLog(false);
         }
         #endregion
 
@@ -292,8 +304,8 @@ namespace Bitcoiner
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
                 {
                     DBFileInfo df = this.commHandler.RequestHightestDBInfo();
-                    string str = string.Format("Ip:{0}, highest:{1} size:{2}", df.IP, df.LastBlockHeight, df.DBFileSize);
-                    MessageBox.Show(str);
+                    string str = string.Format("Your DB is empty, Sync DB size:{2}MB height:{1} from Ip:{0},  ", df.IP, df.LastBlockHeight, df.DBFileSize/1024.0/1024.0);
+                    MessageHelper.Info_001.Show(str);
                     Task.Run(() =>
                     {
 
@@ -301,11 +313,11 @@ namespace Bitcoiner
                         long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
                         if (lRet == -1)
                         {
-                            MessageBox.Show("try later, there is a file transfering now");
+                            MessageHelper.Info_001.Show("Try later, there is a file transfering now");
                         }
                         else
                         {
-                            MessageBox.Show("Received: " + lRet.ToString());
+                            MessageHelper.Info_001.Show("Received: " + (lRet/1024.0/1024.0).ToString() + "MB");
                             FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
                             Directory.CreateDirectory(AppSettings.XXPDBFolder);
                             ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
@@ -449,7 +461,9 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
             Task.Run(()=> {
                 string newPubKeyName = this.keyHandler.GernerateKeypairs();
-                MessageBox.Show(string.Format("Generate {0} success", newPubKeyName));
+                this.Dispatcher.Invoke(()=> {
+                    MessageHelper.Info_001.Show(string.Format("Generate {0} success", newPubKeyName));
+                });
                 this.InitKeyValues();
             });
             
@@ -464,22 +478,25 @@ namespace Bitcoiner
             //MessageHelper.Question_001.Show(new object[] { "PaulQuestionQuestionQuestionQuestionQuestion" });
             //return;
 
-            //Test_Double();
-            //return;
-
             LogHelper.WriteMethodLog(true);
+            if (this.commHandler.GetAddressCount() == 0)
+            {
+                MessageHelper.Error_001.Show("Offline, No nodes connected.");
+                return;
+            }
             string sBaseCoinScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
 
             if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastBkPuzzleArr(), this.txtPuzzleExpress.Text))
             {
-                MessageBox.Show("Verify24Puzzel fail");
+                
+                MessageHelper.Info_001.Show("Verifying 24-point expression failed, Please re-enter the expression. ");
                 return;
             }
 
             Block newBlock = this.bkHandler.CreatBlock(this.txtPuzzleExpress.Text, sBaseCoinScript);
             if (newBlock == null)
             {
-                MessageBox.Show("CreatBlock fail");
+                MessageHelper.Error_001.Show("Create Block failed.");
                 return;
             }
             this.CurrentBkHash = newBlock.Hash;
@@ -487,7 +504,7 @@ namespace Bitcoiner
             string strRet = this.commHandler.SendNewBlock2AddressLst(newBlock);
             if (strRet == Decision.Reject)
             {
-                MessageBox.Show("Other nodes rejected this block");
+                MessageHelper.Info_001.Show("Other nodes rejected this block.");
                 return;
             }
             strRet = this.bkHandler.WriteLastblock(newBlock);
@@ -497,7 +514,7 @@ namespace Bitcoiner
             }
             else
             {
-                MessageBox.Show(strRet);
+                MessageHelper.Info_001.Show(strRet);
             }
             LogHelper.WriteMethodLog(false);
         }
@@ -507,36 +524,39 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(true);
             if (this.commHandler.GetAddressCount() == 0)
             {
-                MessageBox.Show("Offline, Please search seeds first");
+                MessageHelper.Error_001.Show("Offline, No nodes connected.");
                 return;
             }
             if (string.IsNullOrEmpty(this.txtAmount.Text))
             {
-                MessageBox.Show("Please enter the transfer amount");
+                MessageHelper.Info_001.Show("Please enter transfer AMOUNT.");
                 return;
             }
             if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
             {
-                MessageBox.Show("Please enter receiver's right publicKey hash ");
+                MessageHelper.Info_001.Show("Please enter receiver's right publicKey hash. ");
                 return;
             }
             double dPaytoAmount = 0;       
             if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
-                MessageBox.Show("Please enter the transfer amount NUMBER");
+                MessageHelper.Info_001.Show("Please enter transfer amount NUMBER");
                 return;
             }
+
             string strChoice = this.cmbKeyList.SelectedItem.ToString();
-            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
-
-            string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
-
             string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
+
             if (strRet != ConstHelper.BC_OK)
             {
-                MessageBox.Show(strRet);
+                MessageHelper.Info_001.Show(strRet);
                 return;
             }
+
+            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
+            string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+
+
             double dInputTatolAmount = 0;
             Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
                                                         this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
@@ -549,7 +569,7 @@ namespace Bitcoiner
 
             if (strRet != ConstHelper.BC_OK)
             {
-                MessageBox.Show(strRet);
+                MessageHelper.Info_001.Show(strRet);
                 return;
             }
             this.bkHandler.AddTx2hsPool(Tx);
