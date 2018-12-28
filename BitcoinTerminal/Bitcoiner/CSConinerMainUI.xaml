@@ -7,6 +7,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Icon="Resources/CSharpCoin.png"
         FontFamily="Microsoft YaHei"
@@ -484,7 +485,7 @@
     <Border BorderBrush="#fab915" BorderThickness="1">
         <Grid>
             <Grid.Background>
-                <ImageBrush ImageSource="Resources/bgImg2 - Copy.jpg"/>
+                <ImageBrush ImageSource="Resources/bgImg2.jpg"/>
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
