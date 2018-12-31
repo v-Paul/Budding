@@ -97,6 +97,8 @@ namespace Bitcoiner
                 });
 
                 InitNotifyIcon();
+
+                txtExpress.Text = @"Use puzzle's four numbers Calculate 24 point, you can use any + - * / ()," + Environment.NewLine + "but each Number must and only be used once.";
             }
             catch (Exception ex)
             {
@@ -719,43 +721,63 @@ namespace Bitcoiner
             this.notifyIcon.ShowBalloonTip(2000);
             this.notifyIcon.Icon = new System.Drawing.Icon(@"Resources\CSharpCoin.ico");
             this.notifyIcon.Visible = true;
-
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler((o, e) =>
-        {
+            {
                 if (e.Button == MouseButtons.Left) this.Show(o, e);
             });
 
+
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.DropShadowEnabled = false;
+            contextMenuStrip.BackColor = System.Drawing.Color.Black;
+            contextMenuStrip.ShowImageMargin = false;
+            //contextMenuStrip.DropShadowEnabled = false;
             //contextMenuStrip.BackColor = System.Drawing.Color.Black;
 
             //打开菜单项
             ToolStripMenuItem tsOpen = new ToolStripMenuItem();
             tsOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
             tsOpen.BackColor = System.Drawing.Color.Black;
-            tsOpen.Font = new System.Drawing.Font("Microsoft YaHei", 14);
-            tsOpen.Width = 150;
-            tsOpen.Height = 40;
+            tsOpen.Font = new System.Drawing.Font("Microsoft YaHei", 10);
             tsOpen.ForeColor = System.Drawing.Color.FromArgb(250, 185, 21);
             tsOpen.Text = "Open";
             tsOpen.Click += new EventHandler(Show);
+            //tsOpen.MouseHover += Ts_MouseHover;
+            //tsOpen.MouseLeave += Ts_MouseLeave;
 
             ToolStripSeparator ts = new ToolStripSeparator();
+            ts.BackColor = System.Drawing.Color.FromArgb(250, 185, 21);
 
             //退出菜单项
             ToolStripMenuItem tsClose = new ToolStripMenuItem();
             tsClose.DisplayStyle = ToolStripItemDisplayStyle.Text;
             tsClose.BackColor = System.Drawing.Color.Black;
-            tsClose.Width = 150;
-            tsClose.Height = 40;
-            tsClose.Font = new System.Drawing.Font("Microsoft YaHei", 14);
+            tsClose.Font = new System.Drawing.Font("Microsoft YaHei", 10);
             tsClose.ForeColor = System.Drawing.Color.FromArgb(250, 185, 21);
             tsClose.Text = "Exit";
             tsClose.Click += new EventHandler(Close);
+            //tsClose.MouseHover += Ts_MouseHover;
+            //tsClose.MouseLeave += Ts_MouseLeave;
+
             contextMenuStrip.Items.Add(tsOpen);
             contextMenuStrip.Items.Add(ts);
             contextMenuStrip.Items.Add(tsClose);
+        
+
             this.notifyIcon.ContextMenuStrip = contextMenuStrip;
+        }
+
+        private void Ts_MouseLeave(object sender, EventArgs e)
+        {
+            ToolStripMenuItem tm = (ToolStripMenuItem)sender;
+            tm.BackColor = System.Drawing.Color.Black;
+            tm.ForeColor = System.Drawing.Color.FromArgb(250, 185, 21);
+        }
+
+        private void Ts_MouseHover(object sender, EventArgs e)
+        {
+            ToolStripMenuItem tm = (ToolStripMenuItem)sender;
+            tm.BackColor = System.Drawing.Color.WhiteSmoke;
+            tm.ForeColor = System.Drawing.Color.Black;
         }
 
         private void Show(object sender, EventArgs e)
