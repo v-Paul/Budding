@@ -605,7 +605,11 @@
                     <TextBlock Grid.Column="1" Grid.Row="1" Text="Nodes:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="5" Foreground="White" />
                     <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#66615b"/>-->
                     <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock x:Name="txtConectNodes" Style="{StaticResource textblockStyle}" Text="0" FontSize="16"  Background="Transparent" Foreground="#fab915"/>
+                        <TextBlock x:Name="txtConectNodes" Style="{StaticResource textblockStyle}" Text="0" FontSize="16"  Background="Transparent" Foreground="#fab915">
+                            <TextBlock.ToolTip>
+                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
                     </Border>
                     <!--<DockPanel  Grid.Row="0"  Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" >
                         <TextBlock Text="Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="16" />
@@ -621,7 +625,11 @@
                         <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
                         <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
                     </StackPanel>
-                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16"/>
+                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16">
+                        <TextBox.ToolTip>
+                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Selected key's hash"/>
+                        </TextBox.ToolTip>
+                    </TextBox>
                 </Grid>
             </Border>
             <Border  Grid.Row="4" BorderBrush="LightGray" BorderThickness="0,1,0,0">
