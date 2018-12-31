@@ -50,6 +50,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -206,7 +207,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CSharpCoin.ico" />
+    <None Include="Resources\CSharpCoin.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\timg.gif">

@@ -16,6 +16,7 @@ using System.IO;
 using BaseSturct;
 using VTMC.Utils;
 using System.Windows.Media.Animation;
+using System.Windows.Forms;
 
 namespace Bitcoiner
 {
@@ -30,20 +31,21 @@ namespace Bitcoiner
         private KeyHandler keyHandler;
         private Communication commHandler;
         private string CurrentBkHash;
+        private NotifyIcon notifyIcon;
 
         public CSConinerMainUI()
         {
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
             //LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
-
         }
 
+        #region Events
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //this.Hide();
+            this.Hide();
             //this.commHandler.NotifyOffline();
-            this.Close();
+            //this.Close();
         }
 
         private void spTtile_MouseDown(object sender, MouseButtonEventArgs e)
@@ -85,16 +87,41 @@ namespace Bitcoiner
                         this.ReqSyncBlock();
                     }
                 });
+
+                InitNotifyIcon();
             }
             catch (Exception ex)
             {
                 LogHelper.WriteErrorLog(ex.Message);
-                Task.Run(()=> {
+                Task.Run(() =>
+                {
                     MessageHelper.Error_001.Show(ex.Message);
                 });
             }
-            
+
         }
+
+        private void Story_Completed(object sender, EventArgs e)
+        {
+            border1.Visibility = Visibility.Collapsed;
+        }
+
+        private void btnMin_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            ((MediaElement)sender).Position = ((MediaElement)sender).Position.Add(TimeSpan.FromMilliseconds(1));
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Hide();
+            this.commHandler.NotifyOffline();
+        }
+        #endregion
 
         #region Initiate function
         private void InitAppseting()
@@ -162,7 +189,8 @@ namespace Bitcoiner
         private void InitKeyValues()
         {
             LogHelper.WriteMethodLog(true);
-            this.Dispatcher.Invoke(()=> {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.cmbKeyList.Items.Clear();
                 this.cmbKeyList.Items.Add("All");
 
@@ -175,7 +203,7 @@ namespace Bitcoiner
                 }
                 this.cmbKeyList.SelectedIndex = 0;
             });
-           
+
             LogHelper.WriteMethodLog(false);
         }
         #endregion
@@ -301,7 +329,7 @@ namespace Bitcoiner
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
                 {
                     DBFileInfo df = this.commHandler.RequestHightestDBInfo();
-                    string str = string.Format("Your DB is empty, Sync DB size:{2}MB height:{1} from Ip:{0},  ", df.IP, df.LastBlockHeight, df.DBFileSize/1024.0/1024.0);
+                    string str = string.Format("Your DB is empty, Sync DB size:{2}MB height:{1} from Ip:{0},  ", df.IP, df.LastBlockHeight, df.DBFileSize / 1024.0 / 1024.0);
                     MessageHelper.Info_001.Show(str);
                     Task.Run(() =>
                     {
@@ -314,7 +342,7 @@ namespace Bitcoiner
                         }
                         else
                         {
-                            MessageHelper.Info_001.Show("Received: " + (lRet/1024.0/1024.0).ToString() + "MB");
+                            MessageHelper.Info_001.Show("Received: " + (lRet / 1024.0 / 1024.0).ToString() + "MB");
                             FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
                             Directory.CreateDirectory(AppSettings.XXPDBFolder);
                             ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
@@ -442,22 +470,22 @@ namespace Bitcoiner
 
                     this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
 
-                    
+
                     string strComitValue = dCommitedValue.ToString("F2");
-                    if(!string.Equals(strComitValue, this.txtComitBalance.Text))
-                    { 
+                    if (!string.Equals(strComitValue, this.txtComitBalance.Text))
+                    {
                         this.Test_Double();
                         this.txtComitBalance.Text = strComitValue;
                     }
 
                     string strUnComitValue = dUnCommitedValue.ToString("F2");
-                    if (!string.Equals(strUnComitValue, this.txtUnComitBalance.Text) && dUnCommitedValue!= 0)
+                    if (!string.Equals(strUnComitValue, this.txtUnComitBalance.Text) && dUnCommitedValue != 0)
                     {
                         this.Test_Double();
                         this.txtUnComitBalance.Text = strUnComitValue;
                     }
 
-                    
+
                 }
 
             });
@@ -471,14 +499,16 @@ namespace Bitcoiner
         private void btnCreatekey_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.WriteMethodLog(true);
-            Task.Run(()=> {
+            Task.Run(() =>
+            {
                 string newPubKeyName = this.keyHandler.GernerateKeypairs();
-                this.Dispatcher.Invoke(()=> {
+                this.Dispatcher.Invoke(() =>
+                {
                     MessageHelper.Info_001.Show(string.Format("Generate {0} success", newPubKeyName));
                 });
                 this.InitKeyValues();
             });
-            
+
             LogHelper.WriteMethodLog(false);
         }
 
@@ -500,7 +530,7 @@ namespace Bitcoiner
 
             if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastBkPuzzleArr(), this.txtPuzzleExpress.Text))
             {
-                
+
                 MessageHelper.Info_001.Show("Verifying 24-point expression failed, Please re-enter the expression. ");
                 return;
             }
@@ -549,7 +579,7 @@ namespace Bitcoiner
                 MessageHelper.Info_001.Show("Please enter receiver's right publicKey hash. ");
                 return;
             }
-            double dPaytoAmount = 0;       
+            double dPaytoAmount = 0;
             if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
                 MessageHelper.Info_001.Show("Please enter transfer amount NUMBER");
@@ -676,27 +706,72 @@ namespace Bitcoiner
 
         }
 
-        private void Story_Completed(object sender, EventArgs e)
+        private void InitNotifyIcon()
         {
-            border1.Visibility = Visibility.Collapsed;
+            this.notifyIcon = new NotifyIcon();
+            this.notifyIcon.BalloonTipText = "西夏普币";
+            this.notifyIcon.ShowBalloonTip(2000);
+            this.notifyIcon.Icon = new System.Drawing.Icon(@"Resources\CSharpCoin.ico");
+            this.notifyIcon.Visible = true;
+
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler((o, e) =>
+            {
+                if (e.Button == MouseButtons.Left) this.Show(o, e);
+            });
+
+            ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.DropShadowEnabled = false;
+            //contextMenuStrip.BackColor = System.Drawing.Color.Black;
+
+            //打开菜单项
+            ToolStripMenuItem tsOpen = new ToolStripMenuItem();
+            tsOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsOpen.BackColor = System.Drawing.Color.Black;
+            tsOpen.Font = new System.Drawing.Font("Microsoft YaHei", 14);
+            tsOpen.Width = 150;
+            tsOpen.Height = 40;
+            tsOpen.ForeColor = System.Drawing.Color.FromArgb(250, 185, 21);
+            tsOpen.Text = "Open";
+            tsOpen.Click += new EventHandler(Show);
+
+            ToolStripSeparator ts = new ToolStripSeparator();
+
+            //退出菜单项
+            ToolStripMenuItem tsClose = new ToolStripMenuItem();
+            tsClose.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tsClose.BackColor = System.Drawing.Color.Black;
+            tsClose.Width = 150;
+            tsClose.Height = 40;
+            tsClose.Font = new System.Drawing.Font("Microsoft YaHei", 14);
+            tsClose.ForeColor = System.Drawing.Color.FromArgb(250, 185, 21);
+            tsClose.Text = "Exit";
+            tsClose.Click += new EventHandler(Close);
+            contextMenuStrip.Items.Add(tsOpen);
+            contextMenuStrip.Items.Add(ts);
+            contextMenuStrip.Items.Add(tsClose);
+            this.notifyIcon.ContextMenuStrip = contextMenuStrip;
         }
 
-        private void btnMin_Click(object sender, RoutedEventArgs e)
+        private void Show(object sender, EventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            this.Visibility = System.Windows.Visibility.Visible;
+            this.ShowInTaskbar = true;
+            this.Activate();
         }
 
-        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        private void Hide(object sender, EventArgs e)
         {
-            ((MediaElement)sender).Position = ((MediaElement)sender).Position.Add(TimeSpan.FromMilliseconds(1));
+            this.ShowInTaskbar = false;
+            this.Visibility = System.Windows.Visibility.Hidden;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+
+        private void Close(object sender, EventArgs e)
         {
-            this.Hide();
-            this.commHandler.NotifyOffline();
+            System.Windows.Application.Current.Shutdown();
         }
+
     }
 
-   
-    }
+
+}

@@ -528,7 +528,7 @@
                         <ColumnDefinition Width="Auto" MinWidth="60"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Image Source="Resources/KeyImg-gold.png"  Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
+                    <Image Source="Resources/KeyImg-gold.png"  Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
                     <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
                     <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
                     <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
@@ -550,7 +550,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/dig-gold.png" Margin="15" Height="80" Width="80" HorizontalAlignment="Left"/>
+                    <Image Grid.RowSpan="2" Source="Resources/dig-gold.png" Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
                     <Button x:Name="btnCreateBlock" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateBlock" FontSize="16" Background="Black" Click="btnCreateBlock_Click"/>
                     <!--<Button Grid.Column="1" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Margin="5,0" Height="40" Padding="5" Content="12228" FontSize="16" Background="#fab915"/>-->
                     <Border Margin="9" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
@@ -580,7 +580,7 @@
                         <ColumnDefinition Width="Auto" MinWidth="60" />
                         <ColumnDefinition MinWidth="100"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/CoinImg-gold.png" Margin="15,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
+                    <Image Grid.RowSpan="2" Source="Resources/CoinImg-gold.png" Margin="20,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
                     <ComboBox x:Name="cmbKeyList" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource btCmb}" Width="120" Height="40" FontSize="16" Foreground="#fab915" SelectionChanged="cmbKeyList_SelectionChanged" >
                         <ComboBoxItem>keyName1</ComboBoxItem>
                         <ComboBoxItem>keyName2</ComboBoxItem>
@@ -621,7 +621,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="15" Height="75" Width="75" HorizontalAlignment="Left"/>
+                    <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="20,15" Height="75" Width="75" HorizontalAlignment="Left"/>
                     <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
                     <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                     <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
