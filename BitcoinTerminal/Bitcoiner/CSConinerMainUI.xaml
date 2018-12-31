@@ -532,7 +532,11 @@
                     <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
                     <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
                     <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915" />
+                        <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
+                            <TextBlock.ToolTip>
+                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Number of keys."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
                     </Border>
                     <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5"/>
                 </Grid>
