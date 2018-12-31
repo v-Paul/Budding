@@ -37,7 +37,8 @@ namespace Bitcoiner
         {
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
-            //LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
+            LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
+
         }
 
         #region Events
@@ -82,6 +83,13 @@ namespace Bitcoiner
                 Task.Run(() =>
                 {
                     this.InitFromDB();
+                    if (this.keyHandler.GetDicKeyCount() == 0)
+                    {
+
+                            Info001Show("You don't have any Keys,Please Greate a Key first.");
+
+                       
+                    }
                     if (this.ReserchNodes() != 0)
                     {
                         this.ReqSyncBlock();
@@ -98,7 +106,7 @@ namespace Bitcoiner
                     MessageHelper.Error_001.Show(ex.Message);
                 });
             }
-
+            
         }
 
         private void Story_Completed(object sender, EventArgs e)
@@ -203,7 +211,7 @@ namespace Bitcoiner
                 }
                 this.cmbKeyList.SelectedIndex = 0;
             });
-
+           
             LogHelper.WriteMethodLog(false);
         }
         #endregion
@@ -329,8 +337,8 @@ namespace Bitcoiner
                 if (LeveldbOperator.OpenDB(AppSettings.XXPDBFolder) != ConstHelper.BC_OK)
                 {
                     DBFileInfo df = this.commHandler.RequestHightestDBInfo();
-                    string str = string.Format("Your DB is empty, Sync DB size:{2}MB height:{1} from Ip:{0},  ", df.IP, df.LastBlockHeight, df.DBFileSize / 1024.0 / 1024.0);
-                    MessageHelper.Info_001.Show(str);
+                    string str = string.Format("Your DB is empty, Sync DB size:{2}MB height:{1} from Ip:{0},  ", df.IP, df.LastBlockHeight, (df.DBFileSize/1024.0/1024.0).ToString("F2"));
+                    Info001Show(str);
                     Task.Run(() =>
                     {
 
@@ -338,11 +346,11 @@ namespace Bitcoiner
                         long lRet = this.commHandler.StartReceiveFile(df.IP, df.DBFileSize, SavePath);
                         if (lRet == -1)
                         {
-                            MessageHelper.Info_001.Show("Try later, there is a file transfering now");
+                            Info001Show("Try later, there is a file transfering now");
                         }
                         else
                         {
-                            MessageHelper.Info_001.Show("Received: " + (lRet / 1024.0 / 1024.0).ToString() + "MB");
+                            Info001Show("Received: " + (lRet/1024.0/1024.0).ToString("F2") + "MB");
                             FileIOHelper.DeleteDir(AppSettings.XXPDBFolder);
                             Directory.CreateDirectory(AppSettings.XXPDBFolder);
                             ZipHelper.UnZip(SavePath, AppSettings.XXPDBFolder);
@@ -470,10 +478,10 @@ namespace Bitcoiner
 
                     this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
 
-
+                    
                     string strComitValue = dCommitedValue.ToString("F2");
                     if (!string.Equals(strComitValue, this.txtComitBalance.Text))
-                    {
+                    { 
                         this.Test_Double();
                         this.txtComitBalance.Text = strComitValue;
                     }
@@ -482,9 +490,8 @@ namespace Bitcoiner
                     if (!string.Equals(strUnComitValue, this.txtUnComitBalance.Text) && dUnCommitedValue != 0)
                     {
                         this.Test_Double();
-                        this.txtUnComitBalance.Text = strUnComitValue;
                     }
-
+                    this.txtUnComitBalance.Text = strUnComitValue;
 
                 }
 
@@ -502,19 +509,18 @@ namespace Bitcoiner
             Task.Run(() =>
             {
                 string newPubKeyName = this.keyHandler.GernerateKeypairs();
-                this.Dispatcher.Invoke(() =>
-                {
-                    MessageHelper.Info_001.Show(string.Format("Generate {0} success", newPubKeyName));
-                });
+
+                    Info001Show(string.Format("Generate {0} success", newPubKeyName));
+
                 this.InitKeyValues();
             });
-
+            
             LogHelper.WriteMethodLog(false);
         }
 
         private void btnCreateBlock_Click(object sender, RoutedEventArgs e)
         {
-            //MessageHelper.Info_001.Show(new object[] { "PaulInfoInfoInfoInfoInfoInfoInfoInfoInfoInfo" });
+            //Info001Show(new object[] { "PaulInfoInfoInfoInfoInfoInfoInfoInfoInfoInfo" });
             //MessageHelper.Warn_001.Show(new object[] { "PaulWarnWarnWarnWarnWarnWarnWarnWarnWarnWarn" });
             //MessageHelper.Error_001.Show(new object[] { "PaulErrorErrorErrorErrorErrorErrorErrorError" });
             //MessageHelper.Question_001.Show(new object[] { "PaulQuestionQuestionQuestionQuestionQuestion" });
@@ -530,8 +536,8 @@ namespace Bitcoiner
 
             if (!Cryptor.Verify24Puzzel(this.bkHandler.GetlastBkPuzzleArr(), this.txtPuzzleExpress.Text))
             {
-
-                MessageHelper.Info_001.Show("Verifying 24-point expression failed, Please re-enter the expression. ");
+                
+                Info001Show("Verifying 24-point expression failed, Please re-enter the expression. ");
                 return;
             }
 
@@ -546,7 +552,7 @@ namespace Bitcoiner
             string strRet = this.commHandler.SendNewBlock2AddressLst(newBlock);
             if (strRet == Decision.Reject)
             {
-                MessageHelper.Info_001.Show("Other nodes rejected this block.");
+                Info001Show("Other nodes rejected this block.");
                 return;
             }
             strRet = this.bkHandler.WriteLastblock(newBlock);
@@ -556,7 +562,7 @@ namespace Bitcoiner
             }
             else
             {
-                MessageHelper.Info_001.Show(strRet);
+                Info001Show(strRet);
             }
             LogHelper.WriteMethodLog(false);
         }
@@ -571,18 +577,18 @@ namespace Bitcoiner
             }
             if (string.IsNullOrEmpty(this.txtAmount.Text))
             {
-                MessageHelper.Info_001.Show("Please enter transfer AMOUNT.");
+                Info001Show("Please enter transfer AMOUNT.");
                 return;
             }
             if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
             {
-                MessageHelper.Info_001.Show("Please enter receiver's right publicKey hash. ");
+                Info001Show("Please enter receiver's right publicKey hash. ");
                 return;
             }
-            double dPaytoAmount = 0;
+            double dPaytoAmount = 0;       
             if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
             {
-                MessageHelper.Info_001.Show("Please enter transfer amount NUMBER");
+                Info001Show("Please enter transfer amount NUMBER");
                 return;
             }
 
@@ -591,7 +597,7 @@ namespace Bitcoiner
 
             if (strRet != ConstHelper.BC_OK)
             {
-                MessageHelper.Info_001.Show(strRet);
+                Info001Show(strRet);
                 return;
             }
 
@@ -611,7 +617,7 @@ namespace Bitcoiner
 
             if (strRet != ConstHelper.BC_OK)
             {
-                MessageHelper.Info_001.Show(strRet);
+                Info001Show(strRet);
                 return;
             }
             this.bkHandler.AddTx2hsPool(Tx);
@@ -715,7 +721,7 @@ namespace Bitcoiner
             this.notifyIcon.Visible = true;
 
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler((o, e) =>
-            {
+        {
                 if (e.Button == MouseButtons.Left) this.Show(o, e);
             });
 
@@ -771,7 +777,14 @@ namespace Bitcoiner
             System.Windows.Application.Current.Shutdown();
         }
 
+        private void Info001Show(string msg)
+        {
+            this.Dispatcher.Invoke(()=> {
+                MessageHelper.Info_001.Show(msg);
+
+            });
+        }
     }
 
-
-}
+   
+    }

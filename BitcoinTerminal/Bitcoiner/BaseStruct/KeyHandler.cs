@@ -43,13 +43,13 @@ namespace BaseSturct
         //private Dictionary<string, double> dickeyValue;
         private Dictionary<string, List<UTXO>> dicComitkeysUtxoList;
         private Dictionary<string, List<UTXO>> dicUnComitkeysUtxoList;
-        private Dictionary<string, string> dicKey2Hash;
+        private Dictionary<string, string> dicKeyHash;
         public KeyHandler()
         {
             //this.dickeyValue = new Dictionary<string, double>();
             this.dicComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicUnComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
-            this.dicKey2Hash = new Dictionary<string, string>();
+            this.dicKeyHash = new Dictionary<string, string>();
         }
 
         public string   GernerateKeypairs()
@@ -66,7 +66,7 @@ namespace BaseSturct
             string priPath = Path.Combine(AppSettings.XXPKeysFolder, PriKeyname);
        
             Cryptor.generateRSAKey2File(pubPath, priPath);
-            this.dicKey2Hash.Add(PubKeyname, pubkey2Hash(pubPath));
+            this.dicKeyHash.Add(PubKeyname, pubkey2Hash(pubPath));
             List<UTXO> lsteTmp = new List<UTXO>();
             this.dicComitkeysUtxoList.Add(PubKeyname, lsteTmp);
             this.dicUnComitkeysUtxoList.Add(PubKeyname, lsteTmp);
@@ -127,9 +127,9 @@ namespace BaseSturct
                 foreach (FileInfo fi in files)
                 {
                     //this.dickeyValue.Add(fi.Name, 0);
-                    if(!this.dicKey2Hash.ContainsKey(fi.Name))
+                    if(!this.dicKeyHash.ContainsKey(fi.Name))
                     {
-                        this.dicKey2Hash.Add(fi.Name, this.pubkey2Hash(fi.FullName));
+                        this.dicKeyHash.Add(fi.Name, this.pubkey2Hash(fi.FullName));
                     }
                    
                     List<UTXO> lstKeyUtxo = new List<UTXO>();
@@ -155,7 +155,7 @@ namespace BaseSturct
                 foreach (FileInfo fi in files)
                 {
                     string pukhash = string.Empty;
-                    this.dicKey2Hash.TryGetValue(fi.Name, out pukhash);
+                    this.dicKeyHash.TryGetValue(fi.Name, out pukhash);
                     if (output.scriptPubKey.IndexOf(pukhash) >= 0)
                     {
                         //deleted by fdp 181224 key corresponding value calculate from utxo list
@@ -395,7 +395,11 @@ namespace BaseSturct
 
         public Dictionary<string, string > GetDicKeyHash()
         {
-            return this.dicKey2Hash;
+            return this.dicKeyHash;
+        }
+        public int GetDicKeyCount()
+        {
+            return this.dicKeyHash.Count;
         }
 
         public string GetKeyHash(string keyname)
@@ -404,16 +408,16 @@ namespace BaseSturct
             string hash = string.Empty;
             if (keyname == ConstHelper.BC_All)
             {
-                if( this.dicKey2Hash.Count != 0)
+                if( this.dicKeyHash.Count != 0)
                 {
-                    KeyValuePair<string, string> firstKV = this.dicKey2Hash.First();
+                    KeyValuePair<string, string> firstKV = this.dicKeyHash.First();
                     hash = firstKV.Value;
                 }
                 
             }
             else
             {
-                this.dicKey2Hash.TryGetValue(keyname, out hash);
+                this.dicKeyHash.TryGetValue(keyname, out hash);
             }
             LogHelper.WriteInfoLog(hash);
             return hash;
