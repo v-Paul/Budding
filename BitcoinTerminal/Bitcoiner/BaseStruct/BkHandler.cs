@@ -87,7 +87,7 @@ namespace BaseSturct
             // mutex todo 181215
             Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
             this.AddTx2hsPool(basecoinTrans);
-            this.HashsetPool2list();
+            //this.HashsetPool2list();
             block.listTransactions = this.GetlstPoolTx();
             this.ClearTxPool();
             block.SetTransInfo();
@@ -153,7 +153,7 @@ namespace BaseSturct
                 // mutex todo 181215
                 Transaction basecoinTrans = this.CreatCoinBaseTX(sBaseCoinScript);
                 this.AddTx2hsPool(basecoinTrans);
-                this.HashsetPool2list();
+                //this.HashsetPool2list();
 
                 block.listTransactions = this.GetlstPoolTx();
                 this.ClearTxPool();

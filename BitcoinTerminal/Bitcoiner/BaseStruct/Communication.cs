@@ -373,15 +373,23 @@ namespace BaseSturct
                     List<string> lstTemp = new List<string>();
                     lstTemp.Add(socketMod.IpAddress);
                     Task.Run(()=> {
-                        this.PushLastBlockCallBack(socketMod.IpAddress);
-                        this.PushTxhsPoolCallBack(socketMod.IpAddress);                        
+                        //modify by fdp 181231 放在外面push，只要握手成功就push，避免对方掉线重新连接，没有push
+                        //this.PushLastBlockCallBack(socketMod.IpAddress);
+                        //this.PushTxhsPoolCallBack(socketMod.IpAddress);                        
                         this.SendNewAddress2Others(lstTemp);
                     });
                 }
+
+                Task.Run(() =>
+                {
+                    this.PushLastBlockCallBack(socketMod.IpAddress);
+                    this.PushTxhsPoolCallBack(socketMod.IpAddress);
+                });
             }
             else if(socketMod.Value == ConstHelper.BC_NotifyOffline)
             {
                 this.RemoveAddressFromPool(socketMod.IpAddress);
+                sRet = ConstHelper.BC_ResponseOffline;
             }
             LogHelper.WriteMethodLog(false);
             return sRet;

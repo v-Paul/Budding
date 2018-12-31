@@ -23,6 +23,7 @@ namespace VTMC.Utils
         public const string BC_ReturnHandshake = "神通广大，法驾中原";
         public const string BC_DBZipName = "DBZipName.zip";
         public const string BC_NotifyOffline = "青山常在";
+        public const string BC_ResponseOffline = "绿水长流";
         /// <summary>
         ///  ZIP文件扩展名[.zip]
         /// </summary>

@@ -35,7 +35,7 @@ namespace Bitcoiner
         {
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
-            //LogHelper.WriteInfoLog(string.Format("当前产品名：{0}，当前产品版本：{1}", new object[] { System.Windows.Forms.Application.ProductName, System.Windows.Forms.Application.ProductVersion }));
+            LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
 
         }
 
@@ -80,11 +80,20 @@ namespace Bitcoiner
                 Task.Run(() =>
                 {
                     this.InitFromDB();
+                    if (this.keyHandler.GetDicKeyCount() == 0)
+                    {
+                        this.Dispatcher.Invoke(()=> {
+                            MessageHelper.Info_001.Show("You don't have any Keys,Please Greate a Key first.");
+                        });
+                       
+                    }
                     if (this.ReserchNodes() != 0)
                     {
                         this.ReqSyncBlock();
                     }
                 });
+
+
             }
             catch (Exception ex)
             {
@@ -453,11 +462,10 @@ namespace Bitcoiner
                     string strUnComitValue = dUnCommitedValue.ToString("F2");
                     if (!string.Equals(strUnComitValue, this.txtUnComitBalance.Text) && dUnCommitedValue!= 0)
                     {
-                        this.Test_Double();
-                        this.txtUnComitBalance.Text = strUnComitValue;
+                        this.Test_Double();                        
                     }
+                    this.txtUnComitBalance.Text = strUnComitValue;
 
-                    
                 }
 
             });
