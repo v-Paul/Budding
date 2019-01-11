@@ -490,9 +490,6 @@
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="100"/>
-                <RowDefinition/>
-                <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <StackPanel x:Name="spTtile" MouseDown="spTtile_MouseDown"  Background="#fab915">
@@ -517,170 +514,186 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
-            <Border  Grid.Row="1" BorderBrush="LightGray" BorderThickness="0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="150"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="60"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="Resources/KeyImg-gold.png"  Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
-                    <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
-                    <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
-                            <TextBlock.ToolTip>
-                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Number of keys."/>
-                            </TextBlock.ToolTip>
+            <TabControl Grid.Row="1" Background="{Binding}">
+                <TabItem Header="T1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Border BorderBrush="LightGray" BorderThickness="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="60"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="Resources/KeyImg-gold.png"  Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
+                                <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
+                                <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
+                                <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
+                                    <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Number of keys."/>
+                                        </TextBlock.ToolTip>
                         </TextBlock>
-                    </Border>
-                    <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5"/>
-                </Grid>
-            </Border>
-            <Border  Grid.Row="2" BorderBrush="LightGray" BorderThickness="0,1">
-                <Grid Margin="0,0,10,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="150"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/dig-gold.png" Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <Button x:Name="btnCreateBlock" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateBlock" FontSize="16" Background="Black" Click="btnCreateBlock_Click"/>
-                    <!--<Button Grid.Column="1" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Margin="5,0" Height="40" Padding="5" Content="12228" FontSize="16" Background="#fab915"/>-->
-                    <Border Margin="9" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock x:Name="txtLastBlockheight" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
-                            <TextBlock.ToolTip>
-                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Last Block Height"/>
-                            </TextBlock.ToolTip>
+                                </Border>
+                                <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5"/>
+                            </Grid>
+                        </Border>
+                        <Border  Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1">
+                            <Grid Margin="0,0,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Source="Resources/dig-gold.png" Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
+                                <Button x:Name="btnCreateBlock" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateBlock" FontSize="16" Background="Black" Click="btnCreateBlock_Click"/>
+                                <!--<Button Grid.Column="1" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Margin="5,0" Height="40" Padding="5" Content="12228" FontSize="16" Background="#fab915"/>-->
+                                <Border Margin="9" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
+                                    <TextBlock x:Name="txtLastBlockheight" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Last Block Height"/>
+                                        </TextBlock.ToolTip>
                         </TextBlock>
-                    </Border>
-                    <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#fab915"/>-->
-                    <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock Margin="0" x:Name="txtTxUncomitCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
-                            <TextBlock.ToolTip>
-                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Uncommitted Tx Count"/>
-                            </TextBlock.ToolTip>
+                                </Border>
+                                <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#fab915"/>-->
+                                <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
+                                    <TextBlock Margin="0" x:Name="txtTxUncomitCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Uncommitted Tx Count"/>
+                                        </TextBlock.ToolTip>
                         </TextBlock>
-                    </Border>
-                    <TextBlock Foreground="White" Grid.Column="3" Text="Puzzle:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox x:Name="txtLastPuzzle" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0" IsReadOnly="True"/>
-                    <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Express:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
-                    <TextBox x:Name="txtPuzzleExpress" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0">
-                        <TextBox.ToolTip>
-                            <TextBlock x:Name="txtExpress" Background="WhiteSmoke" Foreground="Black"/>
-                        </TextBox.ToolTip>
-                    </TextBox>
-                </Grid>
-            </Border>
-            <Border  Grid.Row="3" BorderBrush="LightGray" BorderThickness="0">
-                <Grid  Margin="0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="150"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="60" />
-                        <ColumnDefinition MinWidth="100"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/CoinImg-gold.png" Margin="20,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
-                    <ComboBox x:Name="cmbKeyList" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource btCmb}" Width="120" Height="40" FontSize="16" Foreground="#fab915" SelectionChanged="cmbKeyList_SelectionChanged" >
-                        <ComboBoxItem>keyName1</ComboBoxItem>
-                        <ComboBoxItem>keyName2</ComboBoxItem>
-                        <ComboBoxItem>keyName3</ComboBoxItem>
-                    </ComboBox>
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="Nodes:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="5" Foreground="White" />
-                    <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#66615b"/>-->
-                    <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
-                        <TextBlock x:Name="txtConectNodes" Style="{StaticResource textblockStyle}" Text="0" FontSize="16"  Background="Transparent" Foreground="#fab915">
-                            <TextBlock.ToolTip>
-                                <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
-                            </TextBlock.ToolTip>
+                                </Border>
+                                <TextBlock Foreground="White" Grid.Column="3" Text="Puzzle:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
+                                <TextBox x:Name="txtLastPuzzle" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0" IsReadOnly="True"/>
+                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Express:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10" />
+                                <TextBox x:Name="txtPuzzleExpress" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0">
+                                    <TextBox.ToolTip>
+                                        <TextBlock x:Name="txtExpress" Background="WhiteSmoke" Foreground="Black"/>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                            </Grid>
+                        </Border>
+                        <Border  Grid.Row="2" BorderBrush="LightGray" BorderThickness="0">
+                            <Grid  Margin="0,10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="60" />
+                                    <ColumnDefinition MinWidth="100"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Source="Resources/CoinImg-gold.png" Margin="20,0,0,0" Height="80" Width="80" HorizontalAlignment="Left"/>
+                                <ComboBox x:Name="cmbKeyList" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource btCmb}" Width="120" Height="40" FontSize="16" Foreground="#fab915" SelectionChanged="cmbKeyList_SelectionChanged" >
+                                    <ComboBoxItem>keyName1</ComboBoxItem>
+                                    <ComboBoxItem>keyName2</ComboBoxItem>
+                                    <ComboBoxItem>keyName3</ComboBoxItem>
+                                </ComboBox>
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="Nodes:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="5" Foreground="White" />
+                                <!--<Button Grid.Column="2" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" Height="40"  Content="128" Padding="5" FontSize="16" Background="#66615b"/>-->
+                                <Border Margin="9" Padding="0" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
+                                    <TextBlock x:Name="txtConectNodes" Style="{StaticResource textblockStyle}" Text="0" FontSize="16"  Background="Transparent" Foreground="#fab915">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
+                                        </TextBlock.ToolTip>
                         </TextBlock>
-                    </Border>
-                    <!--<DockPanel  Grid.Row="0"  Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" >
+                                </Border>
+                                <!--<DockPanel  Grid.Row="0"  Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" >
                         <TextBlock Text="Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="16" />
                         <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" Margin="0" IsEnabled="False" Text="111" FontSize="16"/>
                     </DockPanel>-->
-                    <TextBlock Foreground="White" Text="Blance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
-                    <StackPanel  Grid.Row="0"  Grid.Column="4" Orientation="Horizontal" >
-                        <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00" FontSize="16"/>
-                        <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
-                    </StackPanel>
-                    <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
-                    <StackPanel  Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
-                        <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
-                        <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
-                    </StackPanel>
-                    <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16">
-                        <TextBox.ToolTip>
-                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Selected key's hash"/>
-                        </TextBox.ToolTip>
-                    </TextBox>
-                </Grid>
-            </Border>
-            <Border  Grid.Row="4" BorderBrush="LightGray" BorderThickness="0,1,0,0">
-                <Grid Margin="0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="150"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="20,15" Height="75" Width="75" HorizontalAlignment="Left"/>
-                    <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
-                    <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
-                    <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
-                    <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Account:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
-                    <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
-                </Grid>
-            </Border>
+                                <TextBlock Foreground="White" Text="Blance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <StackPanel  Grid.Row="0"  Grid.Column="4" Orientation="Horizontal" >
+                                    <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00" FontSize="16"/>
+                                    <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
+                                </StackPanel>
+                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
+                                <StackPanel  Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
+                                    <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
+                                    <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
+                                </StackPanel>
+                                <TextBox x:Name="txtKeyHash" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" Margin="5,5,10,5" Text="" FontSize="16">
+                                    <TextBox.ToolTip>
+                                        <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Selected key's hash"/>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                            </Grid>
+                        </Border>
+                        <Border  Grid.Row="3" BorderBrush="LightGray" BorderThickness="0,1,0,0">
+                            <Grid Margin="0,10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="20,15" Height="75" Width="75" HorizontalAlignment="Left"/>
+                                <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
+                                <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
+                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Account:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
+                            </Grid>
+                        </Border>
 
-            <Canvas Width="200" Height="200" Margin="60,-10,133,21" Grid.Row="2" Grid.RowSpan="2">
-                <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="0" Canvas.Top="190">
-                    <Path.Data>
-                        <PathGeometry>
-                            <PathFigure StartPoint="120,-20">
-                                <ArcSegment Point="150,10" Size="10,30" SweepDirection="Clockwise"
+                        <Canvas Width="200" Height="200" Margin="60,-10,133,21" Grid.Row="1" Grid.RowSpan="2">
+                            <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="4" Canvas.Top="188">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="120,-20">
+                                            <ArcSegment Point="150,10" Size="10,30" SweepDirection="Clockwise"
                                     RotationAngle="0"
                                     IsSmoothJoin="False" IsLargeArc="True"/>
-                            </PathFigure>
-                        </PathGeometry>
-                    </Path.Data>
-                </Path>
-                <Border x:Name="border1" Visibility="Collapsed" Width="30" Height="30" CornerRadius="12.5" Canvas.Left="0" Canvas.Top="175" >
-                    <!--<Image Source="pack://siteoforigin:,,,/Resources/goldcoin.png" Width="50" Height="50"/>-->
-                    <!--<MediaElement Name="pan5A" Source="Resources/timg.gif" MediaEnded="MediaElement_MediaEnded" Width="30" Height="30" >
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                            <Border x:Name="border1" Visibility="Collapsed" Width="30" Height="30" CornerRadius="12.5" Canvas.Left="0" Canvas.Top="175" >
+                                <!--<Image Source="pack://siteoforigin:,,,/Resources/goldcoin.png" Width="50" Height="50"/>-->
+                                <!--<MediaElement Name="pan5A" Source="Resources/timg.gif" MediaEnded="MediaElement_MediaEnded" Width="30" Height="30" >
 
                     </MediaElement>-->
-                    <Canvas Height="30" Width="20" VerticalAlignment="Bottom">
-                        <Border Height="30" Width="20" Background="#fab915" CornerRadius="5">
-                      
-                        </Border>
-                        <Border  CornerRadius="2.5" Canvas.Left="5" Canvas.Top="5">
-                            <TextBlock Text="$" Foreground="#1E2049" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </Border>
-                    </Canvas>
-                </Border>
-            </Canvas>
+                                <Canvas Height="30" Width="20" VerticalAlignment="Bottom">
+                                    <Border Height="30" Width="20" Background="#fab915" CornerRadius="5">
+
+                                    </Border>
+                                    <Border  CornerRadius="2.5" Canvas.Left="5" Canvas.Top="5">
+                                        <TextBlock Text="$" Foreground="#1E2049" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Canvas>
+                            </Border>
+                        </Canvas>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="T3">
+                  
+                </TabItem>
+            </TabControl>
         </Grid>
     </Border>
 </Window>
