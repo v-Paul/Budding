@@ -172,42 +172,51 @@ namespace BaseSturct
 
 
 
-
-        public Transaction CreatTransaction(string strPreHash, uint iIndex, double dValue, 
-                                            string strPaytoPKHash,string myPriKeyPath,string myPubkeyPath)
-        {
-            LogHelper.WriteMethodLog(true);
+        /// <summary>
+        /// abandon
+        /// </summary>
+        /// <param name="strPreHash"></param>
+        /// <param name="iIndex"></param>
+        /// <param name="dValue"></param>
+        /// <param name="strPaytoPKHash"></param>
+        /// <param name="myPriKeyPath"></param>
+        /// <param name="myPubkeyPath"></param>
+        /// <returns></returns>
+        //public Transaction CreatTransaction(string strPreHash, uint iIndex, double dValue, 
+        //                                    string strPaytoPKHash,string myPriKeyPath,string myPubkeyPath)
+        //{
+        //    LogHelper.WriteMethodLog(true);
             
-            string strPubKeyValuem = FileIOHelper.ReadFromText(myPubkeyPath);
-            string strKeyHash = Cryptor.SHA256(strPubKeyValuem, strPubKeyValuem.Length);
-            string myPubScript = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", strKeyHash);
+        //    string strPubKeyValuem = FileIOHelper.ReadFromText(myPubkeyPath);
+        //    string strKeyHash = Cryptor.SHA256(strPubKeyValuem, strPubKeyValuem.Length);
+        //    string myPubScript = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", strKeyHash);
 
 
-            UTXO utxo = new UTXO(strPreHash, iIndex);
-            if (!this.CommitedUtxoPool.contains(utxo))
-            {
-                LogHelper.WriteErrorLog("not in utxo");
-                return null;
-            }
+        //    UTXO utxo = new UTXO(strPreHash, iIndex);
+        //    if (!this.CommitedUtxoPool.contains(utxo))
+        //    {
+        //        LogHelper.WriteErrorLog("not in utxo");
+        //        return null;
+        //    }
 
-            Transaction spendTrans = new Transaction();
-            spendTrans.addInput(strPreHash, (int)iIndex);
-            spendTrans.addOutput(dValue, strPaytoPKHash);
+        //    Transaction spendTrans = new Transaction();
+        //    spendTrans.addInput(strPreHash, (int)iIndex);
+        //    spendTrans.addOutput(dValue, strPaytoPKHash);
 
-            Output preOutput = this.CommitedUtxoPool.getTxOutput(utxo);
-            if (dValue < preOutput.value)
-            {
-                Output ctOutput = new Output();
-                ctOutput.value = preOutput.value - dValue;
-                ctOutput.scriptPubKey = myPubScript;
-                spendTrans.addOutput(ctOutput);
-            }
-            spendTrans.signTrans(myPriKeyPath, strPubKeyValuem);
-            spendTrans.FinalSetTrans();
+        //    Output preOutput = this.CommitedUtxoPool.getTxOutput(utxo);
+        //    if (dValue < preOutput.value)
+        //    {
+        //        Output ctOutput = new Output();
+        //        ctOutput.value = preOutput.value - dValue;
+        //        ctOutput.scriptPubKey = myPubScript;
+        //        spendTrans.addOutput(ctOutput);
+        //    }
+        //    spendTrans.signTrans(myPriKeyPath, strPubKeyValuem);
+        //    spendTrans.FinalSetTrans();
 
-            LogHelper.WriteInfoLog("CreatTransaction: " + spendTrans.TxHash);
-            return spendTrans;
-        }
+        //    LogHelper.WriteInfoLog("CreatTransaction: " + spendTrans.TxHash);
+        //    return spendTrans;
+        //}
 
 
         public Transaction CreatTransaction(Dictionary<UTXO, keyPair> dicUTXO, double dInputAmount, double dPayToValue,
@@ -215,16 +224,11 @@ namespace BaseSturct
         {
             LogHelper.WriteMethodLog(true);
 
-            //string strPubKeyValuem = FileIOHelper.ReadFromText(myPubkeyPath);
-            //string strKeyHash = Cryptor.SHA256(strPubKeyValuem, strPubKeyValuem.Length);
-            //string myPubScript = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", strKeyHash);
-
             Transaction spendTrans = new Transaction();
 
             // 为了计算sign方便add output
             spendTrans.addOutput(dPayToValue, strPaytoPKHash);
 
-            //Output preOutput = this.utxoPool.getTxOutput(utxo);
             if (dPayToValue < dInputAmount)
             {
                 Output ctOutput = new Output();
@@ -233,7 +237,6 @@ namespace BaseSturct
                 spendTrans.addOutput(ctOutput);
             }
 
-            //List<string> lstPrikeysPath = new List<string>();
             foreach (var item in dicUTXO)
             {
                 if (!this.CommitedUtxoPool.contains(item.Key))
@@ -246,7 +249,6 @@ namespace BaseSturct
                 {
                     Input input = new Input(item.Key.getTxHash(), (int)item.Key.getIndex());
                     spendTrans.addInput(input);
-                    //spendTrans.addInput(item.Key.getTxHash(), (int)item.Key.getIndex());
                     string strPriKPath = Path.Combine(AppSettings.XXPKeysFolder, item.Value.PriKeyNmae);
                     string strPubKPath = Path.Combine(AppSettings.XXPKeysFolder, item.Value.PubKeyNmae);
                     string strPubValue = FileIOHelper.ReadFromText(strPubKPath);
@@ -254,11 +256,6 @@ namespace BaseSturct
                 }
             }
 
-            
-            //for(int i=0; i< lstPrikeysPath.Count; i++)
-            //{
-            //    spendTrans.signTrans(lstPrikeysPath[i], changePubScript, i);
-            //}
             
             spendTrans.FinalSetTrans();
             LogHelper.WriteInfoLog("CreatTransaction: " + spendTrans.TxHash);
@@ -306,13 +303,24 @@ namespace BaseSturct
                 Output PreOutput = CommitedUtxoPool.getTxOutput(utxo);// the consume coin correspond prev output coin;
                 sumIn += PreOutput.value;//(5) 计算input 指向的pre output 的value，最后保证输入的value等于该笔交易输出的
                 string strOriginalTxt = tx.getRawDataToSign(i);
-                if (! Cryptor.VerifySignature(input.ScriptSig, PreOutput.scriptPubKey, strOriginalTxt) )
+
+                // add by fdp compatible MultiSign 190114
+                bool bVfRet = false;
+                if(input.ScriptSig != null)
+                {
+                    bVfRet = Cryptor.VerifySignature(input.ScriptSig, PreOutput.scriptPubKey, strOriginalTxt);
+                }
+                else if(input.lstScriptSig != null)
+                {
+                    bVfRet = Cryptor.VerifyMultiSignature(input.lstScriptSig, PreOutput.scriptPubKey, strOriginalTxt);
+                }
+                if (!bVfRet)
                 {
                     LogHelper.WriteInfoLog(" VerifySignature fail");
                     return false;//check(2) 
                 }
 
-                    
+
                 bool bIsContain = dicUsed.ContainsKey(utxo.utoxHashCode());
                 if(!bIsContain) // UTXO不会被重复添加
                 {
@@ -449,6 +457,240 @@ namespace BaseSturct
         {
             this.UnCommitedUtxoPool.clearUtxoPool();
         }
+
+
+        #region MutiSign function
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="N"></param>
+        /// <param name="M"></param>
+        /// <param name="lstPKHash"></param>
+        /// <param name="Script"></param>
+        /// <returns>0：成功 -1：PKHash个数和M不相等 -2：不满足 1<N<M<10 -3:PkHash 长度错 </returns>
+        public int  AssumbleMutiSignScript(int N, int M, List<string> lstPKHash, ref string Script)
+        {
+            Script = string.Empty;
+            if(M != lstPKHash.Count)
+            {
+                return -1;
+            }
+
+            if (1 < N && N < M && M < 10)
+            {
+                Script = "OP_" + N.ToString();
+                foreach (var item in lstPKHash)
+                {
+                    if(item.Length != 64)
+                    {
+                        Script = string.Empty;
+                        return -3;
+                    }
+                    Script += " " + item;
+                }
+                Script += " " + "OP_" + M.ToString();
+                Script += " " + "OP_CHECKMULTISIG";
+            }
+            else
+            {
+                return -2;
+            }
+
+            return 0;
+        }
+
+        #region 暂时不用
+        // 暂不使用
+        public bool CreateInputChangeOutput(Dictionary<UTXO, keyPair> dicUTXO, double dInputAmount, double dPayToValue,
+                                           string strPaytoPKHash, string changePubScript, 
+                                           ref List<Input>lstInput, ref List<Output>lstOutput)
+        {
+            LogHelper.WriteMethodLog(true);
+
+            foreach (var item in dicUTXO)
+            {
+                if (!this.CommitedUtxoPool.contains(item.Key))
+                {
+                    LogHelper.WriteErrorLog("not in utxo pool");
+                    LogHelper.WriteErrorLog(JsonHelper.Serializer<UTXO>(item.Key));
+                    return false;
+                }
+                else
+                {
+                    Input input = new Input(item.Key.getTxHash(), (int)item.Key.getIndex());
+                    lstInput.Add(input);
+                }
+            }
+
+            Output eOutPut = new Output(dPayToValue, strPaytoPKHash);
+            lstOutput.Add(eOutPut);
+            if (dPayToValue < dInputAmount)
+            {
+                Output ctOutput = new Output();
+                ctOutput.value = dInputAmount - dPayToValue;
+                ctOutput.scriptPubKey = changePubScript;
+                lstOutput.Add(ctOutput);
+            }
+
+            LogHelper.WriteInfoLog("Input list: " + JsonHelper.Serializer<List<Input>>(lstInput));
+            LogHelper.WriteInfoLog("Output list: " + JsonHelper.Serializer<List<Output>>(lstOutput));
+            LogHelper.WriteMethodLog(false);
+            return true;
+        }
+
+        //暂时不用
+        public bool SignPrimitiveTx(Dictionary<UTXO, keyPair> dicUTXO, ref Transaction PrimitiveTx)
+        {
+            int iInputCount = PrimitiveTx.listInputs.Count;
+            for (int i = 0; i < iInputCount; i++)
+            {
+                if (PrimitiveTx.listInputs[i].ScriptSig == null)
+                {
+                    UTXO utxo = new UTXO(PrimitiveTx.listInputs[i].PreTxHash, (uint)PrimitiveTx.listInputs[i].OutputIndex);
+                    if (dicUTXO.ContainsKey(utxo))
+                    {
+                        keyPair kp = new keyPair();
+                        dicUTXO.TryGetValue(utxo, out kp);
+                        string strPriKPath = Path.Combine(AppSettings.XXPKeysFolder, kp.PriKeyNmae);
+                        string strPubKPath = Path.Combine(AppSettings.XXPKeysFolder, kp.PubKeyNmae);
+                        string strPubValue = FileIOHelper.ReadFromText(strPubKPath);
+
+                        PrimitiveTx.signTrans(strPriKPath, strPubValue, i);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        public int CreatPrimitiveTx( List<Input> lstInput, double dValue, string strPay2Hash, ref Transaction PrimitiveTx)
+        {
+            LogHelper.WriteMethodLog(true);
+
+           
+            double inputValue = 0;
+            foreach (var item in lstInput)
+            {
+                UTXO utxo = new UTXO(item.PreTxHash, (uint)item.OutputIndex);
+                Output tempoutput = this.CommitedUtxoPool.getTxOutput(utxo);
+                inputValue += tempoutput.value;
+            }
+            if(inputValue != dValue)
+            {
+                LogHelper.WriteErrorLog(string.Format("Input Utxo's value not equal with output value, inputV:{0}, outputV:{1}", inputValue, dValue));
+                return -1;
+            }
+          
+            PrimitiveTx.listInputs = lstInput;
+            string Pay2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", strPay2Hash);
+            Output output = new Output(dValue, Pay2Script);
+            PrimitiveTx.addOutput(output);
+
+            LogHelper.WriteInfoLog("MultiSign TX: " + JsonHelper.Serializer<Transaction>(PrimitiveTx));
+            LogHelper.WriteMethodLog(false);
+            return 0;
+        }
+
+
+        public bool SignPrimitiveTx(Dictionary<string, keyPair> KeyHashKeypair, ref Transaction PrimitiveTx)
+        {
+            int iInputCount = PrimitiveTx.listInputs.Count;
+
+            for (int i = 0; i < iInputCount; i++)
+            {
+                UTXO utxo = new UTXO(PrimitiveTx.listInputs[i].PreTxHash, (uint)PrimitiveTx.listInputs[i].OutputIndex);
+
+                if (!CommitedUtxoPool.contains(utxo))
+                {
+                    LogHelper.WriteInfoLog(" utxoPool not contain utxo:");
+                    return false; //check (1),utox 包含该交易返回false
+                }
+                Output output = CommitedUtxoPool.getTxOutput(utxo);
+                List<string> lstScript = output.scriptPubKey.Split(' ').ToList<string>();
+
+                var lstPKHash = (from x in lstScript
+                                 where x.Substring(0,3) != "OP_"
+                                 select x).ToList();
+
+
+                foreach (var item in lstPKHash)
+                {
+                    if(KeyHashKeypair.ContainsKey(item))
+                    {
+                        keyPair kp = new keyPair();
+                        KeyHashKeypair.TryGetValue(item, out kp);
+                        string strPriKPath = Path.Combine(AppSettings.XXPKeysFolder, kp.PriKeyNmae);
+                        string strPubKPath = Path.Combine(AppSettings.XXPKeysFolder, kp.PubKeyNmae);
+                        string strPubValue = FileIOHelper.ReadFromText(strPubKPath);
+                        PrimitiveTx.MultiSignTrans(strPriKPath, strPubValue, i);
+                    }
+                    
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signedPrimitiveTx"></param>
+        /// <returns>0:succ, -1: not multisign, -2:</returns>
+        public bool CreateRedeemTx(ref Transaction signedPrimitiveTx)
+        {
+            LogHelper.WriteMethodLog(true);
+            int iRet = this.CheckMultiSignCount(signedPrimitiveTx);
+            if(iRet != 0)
+            {
+                return false;
+            }
+            signedPrimitiveTx.FinalSetTrans();
+
+            LogHelper.WriteMethodLog(false);
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signedPrimitiveTx"></param>
+        /// <returns>0:succ, -1:not multiSign, -2:sign not enough -3: signature more than M </returns>
+        public int CheckMultiSignCount(Transaction signedPrimitiveTx)
+        {
+            int i = 0;
+            foreach (var item in signedPrimitiveTx.listInputs)
+            {
+
+                UTXO utxo1 = new UTXO(item.PreTxHash, (uint)item.OutputIndex);
+                Output output1 = this.CommitedUtxoPool.getTxOutput(utxo1);
+                var lstScript = output1.scriptPubKey.Split(' ').ToList<string>();
+                if (lstScript.Last() != "OP_CHECKMULTISIG")
+                {
+                    LogHelper.WriteErrorLog("input isn't MultiSign Tx ");
+                    return -1;
+                }
+                string OP_N = lstScript.First();
+                string OP_M = lstScript[lstScript.Count - 2];
+                int N = int.Parse(OP_N.Substring(3));
+                int M = int.Parse(OP_M.Substring(3));
+                if (item.lstScriptSig.Count < N )
+                {
+                    LogHelper.WriteErrorLog(string.Format("input[{0}] sign not enough",i));
+                    return -2;
+                }
+                else if(item.lstScriptSig.Count > M)
+                {
+                    LogHelper.WriteErrorLog(string.Format("input[{0}] signature more than M", i));
+                    return -3;
+                }
+                i++;
+            }
+
+            return 0;
+        }
+        #endregion
 
 
     }

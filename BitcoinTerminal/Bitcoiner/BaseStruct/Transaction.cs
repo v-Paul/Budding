@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Threading;
 using VTMC.Utils;
+using Newtonsoft.Json;
+
 namespace BaseSturct
 {
     /// <summary>
@@ -19,7 +21,12 @@ namespace BaseSturct
         //used output's index in the previous transaction 
         public int OutputIndex;
         // the signature produced to check validity
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public scriptSig ScriptSig;
+
+        // add by fdp 190110, for mutisign
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<scriptSig> lstScriptSig;
 
         
         public Input(string strHash, int index)
@@ -31,14 +38,26 @@ namespace BaseSturct
                 PreTxHash = strHash;
             OutputIndex = index;
 
-            ScriptSig = new scriptSig();
+            //ScriptSig = new scriptSig();
+            //this.lstScriptSig = new List<scriptSig>();
         }
 
         public void addSignature(scriptSig Sig)
         {
+            if(this.ScriptSig == null)
+            {
+                ScriptSig = new scriptSig();
+            }
             this.ScriptSig = Sig;
         }
-
+        public void addMutiSignTolst(scriptSig Sig)
+        {
+            if(this.lstScriptSig == null)
+            {
+                this.lstScriptSig = new List<scriptSig>();
+            }
+            this.lstScriptSig.Add(Sig);
+        }
         public string getrawdata()
         {
             return PreTxHash + OutputIndex.ToString();
@@ -195,9 +214,23 @@ namespace BaseSturct
         {
             string strRawTx = string.Empty;
             string strAllInput = string.Empty;
-            foreach (Input inEnty in listInputs)
+            foreach (Input input in listInputs)
             {
-                strAllInput += inEnty.PreTxHash + inEnty.OutputIndex + inEnty.ScriptSig.Signature + inEnty.ScriptSig.PubKey;
+                // modified by fdp compatiable MultiSign
+                if(input.ScriptSig != null)
+                {
+                    strAllInput += input.PreTxHash + input.OutputIndex + input.ScriptSig.Signature + input.ScriptSig.PubKey;
+                }
+                else if(input.lstScriptSig != null)
+                {
+                    strAllInput += input.PreTxHash + input.OutputIndex;
+                    foreach (var item in input.lstScriptSig)
+                    {
+                        string Sign = item.Signature + item.PubKey;
+                        strAllInput += Sign;
+                    }
+                }
+                
             }
 
             string strAllOutput = string.Empty;
@@ -285,19 +318,25 @@ namespace BaseSturct
         public void signTrans(string strmyPriKeyPath, string strmyPubkeyValue, int InputIndex)
         {
             string strRawdata = this.getRawDataToSign(InputIndex);
-            listInputs[InputIndex].ScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
-            listInputs[InputIndex].ScriptSig.PubKey = strmyPubkeyValue;
+            scriptSig tempScriptSig = new scriptSig();
+            tempScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
+            tempScriptSig.PubKey = strmyPubkeyValue;
+            
+            // modified by fdp 190110
+            listInputs[InputIndex].addSignature(tempScriptSig);          
+            //listInputs[InputIndex].ScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
+            //listInputs[InputIndex].ScriptSig.PubKey = strmyPubkeyValue;
 
         }
 
-        public void signTrans(string strmyPriKeyPath, string strmyPubkeyValue)
+        public void MultiSignTrans(string strmyPriKeyPath, string strmyPubkeyValue, int InputIndex)
         {
-            for (int i = 0; i < this.listInputs.Count; i++)
-            {
-                string strRawdata = this.getRawDataToSign(i);
-                listInputs[i].ScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
-                listInputs[i].ScriptSig.PubKey = strmyPubkeyValue;
-            }
+            string strRawdata = this.getRawDataToSign(InputIndex);
+            scriptSig tempScriptSig = new scriptSig();
+            tempScriptSig.Signature = Cryptor.rsaPriSign(strRawdata, strmyPriKeyPath);
+            tempScriptSig.PubKey = strmyPubkeyValue;
+            listInputs[InputIndex].addMutiSignTolst(tempScriptSig);
+
 
         }
         public void FinalSetTrans()

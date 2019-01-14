@@ -18,6 +18,11 @@ namespace BaseSturct
             PubKeyNmae = string.Empty;
             PriKeyNmae = string.Empty;
         }
+        public keyPair(string PKN, string PvKN)
+        {
+            PubKeyNmae = PKN;
+            PriKeyNmae = PvKN;
+        }
         public string PubKeyNmae { get; set; }
         public string PriKeyNmae { get; set; }
     }
@@ -50,6 +55,7 @@ namespace BaseSturct
             this.dicComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicUnComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicKeyHash = new Dictionary<string, string>();
+
         }
 
         public string   GernerateKeypairs()
@@ -156,7 +162,7 @@ namespace BaseSturct
                 {
                     string pukhash = string.Empty;
                     this.dicKeyHash.TryGetValue(fi.Name, out pukhash);
-                    if (output.scriptPubKey.IndexOf(pukhash) >= 0)
+                    if (output.scriptPubKey.IndexOf(pukhash) >= 0 && output.scriptPubKey.IndexOf("OP_CHECKMULTISIG") <0 )
                     {
                         //deleted by fdp 181224 key corresponding value calculate from utxo list
                         //if(this.dickeyValue.ContainsKey(fi.Name))
@@ -421,6 +427,17 @@ namespace BaseSturct
             }
             LogHelper.WriteInfoLog(hash);
             return hash;
+        }
+
+        public int GetdicPkHKeypair(ref Dictionary<string, keyPair> dicPkHKeypair)
+        {
+            foreach (var item in this.dicKeyHash)
+            {
+
+                keyPair kp =  new keyPair(item.Key, this.PkName2PriKeyName(item.Key));
+                dicPkHKeypair.Add(item.Value, kp);
+            }
+            return 0;
         }
     }
 }
