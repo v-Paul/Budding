@@ -422,7 +422,7 @@
             <Setter Property="Foreground" Value="#fab915"/>
             <Setter Property="Background" Value="black" />
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Height" Value="25" />
+            <Setter Property="Height" Value="30" />
             <Setter Property="Width" Value="{Binding}" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -442,7 +442,29 @@
                 </Setter.Value>
             </Setter>
         </Style>
-       
+        
+        <Style TargetType="{x:Type ListViewItem}">
+            <Style.Setters>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border x:Name="bd" BorderThickness="1" Background="Transparent" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <GridViewRowPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="3"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Trigger.Setters>
+                                        <Setter TargetName="bd" Property="Background" Value="black"/>
+                                        <Setter Property="Foreground" Value="#fab915"/>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
     </Window.Resources>
     <!--
     <Grid Background="#f4f3ef">
@@ -727,7 +749,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="Condition Position!" Foreground="white" FontSize="30"/>
-                        <ListView Grid.Row="1" Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" MinHeight="50" IsSynchronizedWithCurrentItem="True">
+                        <ListView  Grid.Row="1" Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" MinHeight="50" IsSynchronizedWithCurrentItem="True">
                             <ListView.View>
                                 <GridView>
                                     <GridView.Columns>
@@ -742,9 +764,16 @@
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
                                         <GridViewColumn Header="TxHash" Width="100"  DisplayMemberBinding="{Binding TxHash}"/>
-                                        <GridViewColumn Header="Output Index"  Width="150" DisplayMemberBinding="{Binding OutputIndex}"/>
-                                        <GridViewColumn Header="Value"  Width="100" DisplayMemberBinding="{Binding Value}"/>
-                                        <GridViewColumn Header="OutScriptPKHash list"  Width="150" DisplayMemberBinding="{Binding OutScriptPKHash}"/>
+                                        <GridViewColumn Header="OpIndex"  Width="80" DisplayMemberBinding="{Binding OutputIndex}"/>
+                                        <GridViewColumn Header="Value"  Width="55" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="OutScriptPKHash list"  Width="155" DisplayMemberBinding="{Binding OutScriptPKHash}"/>
+                                        <!--<GridViewColumn Header="OutScriptPKHash list"  Width="150">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding OutScriptPKHash}" ScrollViewer.VerticalScrollBarVisibility="Visible" ></TextBox>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>-->
                                     </GridView.Columns>
                                 </GridView>
                             </ListView.View>
