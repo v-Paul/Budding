@@ -95,6 +95,11 @@ namespace BaseSturct
             block.SetBlockHeader("0000000000000000000000000000000000000000000000000000000000000000", -1);
 
             block.SetNonce("");
+            //add by fdp 190114 set hash all 0 temporary for computing block size, 
+            block.Hash = ConstHelper.BC_BaseCoinInputTxHash;
+            string jsonBlock = JsonHelper.Serializer<Block>(block);
+            block.SetBlockSize(jsonBlock.Length);
+
             block.SetBlockHash();
 
             string jsonblock = JsonHelper.Serializer<Block>(block);
@@ -161,6 +166,11 @@ namespace BaseSturct
                 block.SetBlockHeader(this.mLastBlock.Hash, this.mLastBlock.Header.Height);
 
                 block.SetNonce(strNounce);
+                //add by fdp 190114 set hash all 0 temporary for computing block size, 
+                block.Hash = ConstHelper.BC_BaseCoinInputTxHash;
+                string jsonBlock = JsonHelper.Serializer<Block>(block);
+                block.SetBlockSize(jsonBlock.Length);
+
                 block.SetBlockHash();
 
                 string jsonblock = JsonHelper.Serializer<Block>(block);

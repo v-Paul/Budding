@@ -91,6 +91,7 @@
     <Compile Include="BaseStruct\KeyHandler.cs" />
     <Compile Include="BaseStruct\LeveldbOperator.cs" />
     <Compile Include="BaseStruct\Operation.cs" />
+    <Compile Include="BaseStruct\MultiSignShowModel.cs" />
     <Compile Include="BaseStruct\Transaction.cs" />
     <Compile Include="BaseStruct\TxHandler.cs" />
     <Compile Include="BaseStruct\UTXO.cs" />

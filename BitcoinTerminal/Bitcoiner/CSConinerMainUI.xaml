@@ -744,7 +744,7 @@
                                         <GridViewColumn Header="TxHash" Width="100"  DisplayMemberBinding="{Binding TxHash}"/>
                                         <GridViewColumn Header="Output Index"  Width="150" DisplayMemberBinding="{Binding OutputIndex}"/>
                                         <GridViewColumn Header="Value"  Width="100" DisplayMemberBinding="{Binding Value}"/>
-                                        <GridViewColumn Header="OutScriptPKHash list"  Width="150" DisplayMemberBinding="{Binding lstOutScriptPKHash}"/>
+                                        <GridViewColumn Header="OutScriptPKHash list"  Width="150" DisplayMemberBinding="{Binding OutScriptPKHash}"/>
                                     </GridView.Columns>
                                 </GridView>
                             </ListView.View>

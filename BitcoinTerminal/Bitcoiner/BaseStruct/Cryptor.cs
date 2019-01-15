@@ -86,6 +86,34 @@ namespace BaseSturct
                 return false;
         }
 
+        public static bool VerifyMultiSignature(List<scriptSig>lstscript, string strOpScript, string strOriginalTxt)
+        {
+            // string strDecodeTxt = rsaPubDecrySign(strSignature, strPubKey, false);
+            // return string.Equals(strDecodeTxt, strOriginalTxt);
+            string strDecodeTxt = string.Empty;
+
+            Operation Oper = new Operation(lstscript, strOpScript);
+            bool bRet = Oper.RunScript(ref strDecodeTxt);
+            if (bRet)
+            {
+                if (string.Equals(strDecodeTxt, strOriginalTxt))
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        //add by fdp 190114 
+        //public static bool VerifyMutilSignature(List<scriptSig> lstscriptSig, string strOpScript, string strOriginalTxt)
+        //{
+        //    foreach (var item in lstscriptSig)
+        //    {
+        //        VerifySignature(item, );
+        //    }
+        //}
+
         public static bool Calc24(int[] lstNums)
         {
             int iOK = calc24(lstNums[0], lstNums[1], lstNums[2], lstNums[3]);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Collections;
+using VTMC.Utils;
 
 namespace BaseSturct
 {
@@ -14,6 +15,8 @@ namespace BaseSturct
     {
         private Stack<string> staData;
         private List<string> lstPubOperate;
+        private int N = 0;
+        private int M = 0;
 
         public Operation(scriptSig inputSig, string outputScript)
         {
@@ -30,6 +33,17 @@ namespace BaseSturct
             this.staData = new Stack<string>();
             this.lstPubOperate = new List<string>();
 
+        }
+        public Operation(List<scriptSig> lstscript, string outputScript)
+        {
+            this.staData = new Stack<string>();
+            foreach (var item in lstscript)
+            {
+                this.AddData(item.Signature);
+                this.AddData(item.PubKey);
+            }
+            this.lstPubOperate = new List<string>();
+            this.lstPubOperate = this.PubScri2list(outputScript);
         }
 
         public List<string> PubScri2list(string strscriptPubKey)
@@ -70,13 +84,65 @@ namespace BaseSturct
             else
                 return false;
         }
-        string OP_CHECKSIG()
+        private string OP_CHECKSIG()
         {
             string strPubkey = this.staData.Pop();
             string strSign = this.staData.Pop();
 
             string strRet = Cryptor.rsaPubDecrySign(strSign, strPubkey, false);
             return strRet;
+        }
+        private void OP_MN(string OP_MN)
+        {
+            int a = int.Parse(OP_MN.Substring(3));
+            if(a>M)
+            {
+                this.N = this.M;
+                this.M = a;          
+            }
+        }
+        private bool OP_CHECKMULTISIG(ref string strDecResult)
+        {
+            strDecResult = string.Empty;
+            List<string> lstPKHash = new List<string>();
+            for(int i=0; i<this.M; i++)
+            {
+                lstPKHash.Add(this.staData.Pop());
+            }
+
+            List<string> lstDecryptRes = new List<string>();
+            for (int j = 0; j < this.N; j++)
+            {
+                this.OP_DUP();
+                string strTemp = this.staData.Pop();
+                strTemp = Cryptor.SHA256(strTemp, strTemp.Length);
+                if (lstPKHash.Contains(strTemp))
+                {
+                    string strDecRes = OP_CHECKSIG();
+                    if (string.IsNullOrEmpty(strDecRes))
+                    {
+                        LogHelper.WriteErrorLog("check signature fail");
+                        return false;
+                    }
+                    else
+                    {
+                        lstDecryptRes.Add(strDecRes);
+                    }
+                }
+            }
+
+            string strResult1 = lstDecryptRes[0];
+            foreach (var item in lstDecryptRes)
+            {
+                if(!string.Equals(item, strResult1))
+                {
+                    LogHelper.WriteErrorLog(string.Format("Result not equal, ret[0]:{0}, otherRet:{1}", strResult1, item));
+                    return false;
+                }
+            }
+
+            strDecResult = strResult1;
+            return true;
         }
 
         public bool RunScript(ref string strOutTxt)
@@ -101,6 +167,23 @@ namespace BaseSturct
                         case "OP_CHECKSIG":
                             strOutTxt = this.OP_CHECKSIG();
                             break;
+                        case "OP_1":
+                        case "OP_2":
+                        case "OP_3":
+                        case "OP_4":
+                        case "OP_5":
+                        case "OP_6":
+                        case "OP_7":
+                        case "OP_8":
+                        case "OP_9":
+                        case "OP_10":
+                            this.OP_MN(str);
+                            break;
+                        case "OP_CHECKMULTISIG":
+                            if (!this.OP_CHECKMULTISIG(ref strOutTxt))
+                                return false;
+                            break;
+
                         default:
                             break;
                     }

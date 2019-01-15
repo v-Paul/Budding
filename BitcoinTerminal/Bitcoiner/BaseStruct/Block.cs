@@ -87,7 +87,7 @@ namespace BaseSturct
 
             this.TransCount = this.listTransactions.Count;
             this.Header.HashMerkleRoot = this.CalMerkleRoot(GetTxsHashList());
-            this.SetBlockSize();
+            //this.SetBlockSize();
         }
 
         public List<string> GetTxsHashList( )
@@ -170,10 +170,11 @@ namespace BaseSturct
             return strhash;
         }
 
-        private void SetBlockSize()
+        public void SetBlockSize(int iSize)
         {
-            //C# 无法计算出list对象详细的内存大小，粗略用Count*一个的大小
-            this.Size = this.listTransactions.Count * 100;//* Marshal.SizeOf(new Transaction());
+            //存储是已json字符串形式存储block的，所以这里size设置为block json字符串的长度
+            //this.Size = this.listTransactions.Count * 100;//* Marshal.SizeOf(new Transaction());
+            this.Size = iSize;
         }
 
         public Transaction GetBaseCoinTx()
