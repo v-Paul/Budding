@@ -691,7 +691,30 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="T3">
-                  
+                    <Grid>
+                        <ListView Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" IsSynchronizedWithCurrentItem="True">
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.Columns>
+                                        <GridViewColumn  Width="100">
+                                            <GridViewColumn.Header >
+                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" >Check All</CheckBox>
+                                            </GridViewColumn.Header>
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Checked="CheckBox_Checked" IsChecked="{Binding Path=bIsAdd2PriTx}" Tag="{Binding Path=ID}"></CheckBox>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="TxHash" Width="100"  DisplayMemberBinding="{Binding TxHash}"/>
+                                        <GridViewColumn Header="Output Index"  Width="100" DisplayMemberBinding="{Binding OutputIndex}"/>
+                                        <GridViewColumn Header="Value"  Width="100" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="OutScriptPKHash list"  Width="150" DisplayMemberBinding="{Binding OutScriptPKHash}"/>
+                                    </GridView.Columns>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </Grid>

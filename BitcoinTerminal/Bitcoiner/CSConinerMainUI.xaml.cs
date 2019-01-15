@@ -41,6 +41,9 @@ namespace Bitcoiner
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
             LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
 
+            //MultiSignViewModel vm = new MultiSignViewModel();
+            //MockData(vm);
+            //this.DataContext = vm;
         }
 
         #region Events
@@ -88,9 +91,9 @@ namespace Bitcoiner
                     if (this.keyHandler.GetDicKeyCount() == 0)
                     {
 
-                            Info001Show("You don't have any Keys,Please Greate a Key first.");
+                        Info001Show("You don't have any Keys,Please Greate a Key first.");
 
-                       
+
                     }
                     if (this.ReserchNodes() != 0)
                     {
@@ -110,7 +113,7 @@ namespace Bitcoiner
                     MessageHelper.Error_001.Show(ex.Message);
                 });
             }
-            
+
         }
 
         private void Story_Completed(object sender, EventArgs e)
@@ -215,7 +218,7 @@ namespace Bitcoiner
                 }
                 this.cmbKeyList.SelectedIndex = 0;
             });
-           
+
             LogHelper.WriteMethodLog(false);
         }
         #endregion
@@ -482,10 +485,10 @@ namespace Bitcoiner
 
                     this.txtKeyHash.Text = this.keyHandler.GetKeyHash(strChoice);
 
-                    
+
                     string strComitValue = dCommitedValue.ToString("F2");
                     if (!string.Equals(strComitValue, this.txtComitBalance.Text))
-                    { 
+                    {
                         this.Test_Double();
                         this.txtComitBalance.Text = strComitValue;
                     }
@@ -496,8 +499,12 @@ namespace Bitcoiner
                         this.Test_Double();
                     }
                     this.txtUnComitBalance.Text = strUnComitValue;
-
                 }
+
+                // MultiSign
+                MultiSignViewModel vm = new MultiSignViewModel();
+                vm = this.keyHandler.MultiSignUTXOPool2VM(true);
+                this.DataContext = vm;
 
             });
 
@@ -514,7 +521,7 @@ namespace Bitcoiner
             {
                 string newPubKeyName = this.keyHandler.GernerateKeypairs();
 
-                    Info001Show(string.Format("Generate {0} success", newPubKeyName));
+                Info001Show(string.Format("Generate {0} success", newPubKeyName));
 
                 this.InitKeyValues();
             });
@@ -894,7 +901,7 @@ namespace Bitcoiner
             contextMenuStrip.Items.Add(tsOpen);
             contextMenuStrip.Items.Add(ts);
             contextMenuStrip.Items.Add(tsClose);
-        
+
 
             this.notifyIcon.ContextMenuStrip = contextMenuStrip;
         }
@@ -934,13 +941,37 @@ namespace Bitcoiner
 
         private void Info001Show(string msg)
         {
-            this.Dispatcher.Invoke(()=> {
+            this.Dispatcher.Invoke(() =>
+            {
                 MessageHelper.Info_001.Show(msg);
 
             });
         }
+
+        private void MockData(MultiSignViewModel vm)
+        {
+            MultiSignShowModel ms = new MultiSignShowModel();
+            ms.bIsAdd2PriTx = true;
+            ms.ID = "1";
+            ms.TxHash = "1234567812345678123456781234567812345678123456781234567812345678";
+            ms.OutputIndex = "0";
+            ms.Value = 121.1;
+            ms.OutScriptPKHash = "1234567812345678"+ Environment.NewLine +"1234567812345678" + Environment.NewLine + "1234567812345678";
+            vm.MultiSignShows.Add(ms);
+            vm.MultiSignShows.Add(ms);
+        }
+
+        private void btnCheckAll_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         #endregion
     }
-
 
 }

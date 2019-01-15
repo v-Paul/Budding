@@ -49,12 +49,16 @@ namespace BaseSturct
         private Dictionary<string, List<UTXO>> dicComitkeysUtxoList;
         private Dictionary<string, List<UTXO>> dicUnComitkeysUtxoList;
         private Dictionary<string, string> dicKeyHash;
+        private Dictionary<UTXO, Output> dicComitMsUTXOPool;
+        private Dictionary<UTXO, Output> dicUnComitMsUTXOPool;
         public KeyHandler()
         {
             //this.dickeyValue = new Dictionary<string, double>();
             this.dicComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicUnComitkeysUtxoList = new Dictionary<string, List<UTXO>>();
             this.dicKeyHash = new Dictionary<string, string>();
+            this.dicComitMsUTXOPool = new Dictionary<UTXO, Output>();
+            this.dicUnComitMsUTXOPool = new Dictionary<UTXO, Output>();
 
         }
 
@@ -118,10 +122,18 @@ namespace BaseSturct
         {
             LogHelper.WriteMethodLog(true);
             Dictionary<string, List<UTXO>> keysUtxoList = new Dictionary<string, List<UTXO>>();
-            if(bCommited)
-            { keysUtxoList = this.dicComitkeysUtxoList; }
+            Dictionary<UTXO, Output> dicMsUTXOPool = new Dictionary<UTXO, Output>();
+            if (bCommited)
+            {
+                keysUtxoList = this.dicComitkeysUtxoList;
+                dicMsUTXOPool = this.dicComitMsUTXOPool;
+
+            }
             else
-            { keysUtxoList = this.dicUnComitkeysUtxoList; }
+            {
+                keysUtxoList = this.dicUnComitkeysUtxoList;
+                dicMsUTXOPool = this.dicUnComitMsUTXOPool;
+            }
 
 
 
@@ -151,6 +163,9 @@ namespace BaseSturct
                     List<UTXO> lstKeyUtxo = new List<UTXO>();
                     keysUtxoList.Add(fi.Name, lstKeyUtxo);
                 }
+
+                // Multisign 
+                dicMsUTXOPool.Clear();
             }
 
             // 再根据utxopool重新计算每个key对应的value
@@ -162,24 +177,21 @@ namespace BaseSturct
                 {
                     string pukhash = string.Empty;
                     this.dicKeyHash.TryGetValue(fi.Name, out pukhash);
-                    if (output.scriptPubKey.IndexOf(pukhash) >= 0 && output.scriptPubKey.IndexOf("OP_CHECKMULTISIG") <0 )
-                    {
-                        //deleted by fdp 181224 key corresponding value calculate from utxo list
-                        //if(this.dickeyValue.ContainsKey(fi.Name))
-                        //{
-                        //    double dvalue = 0;
-                        //    this.dickeyValue.TryGetValue(fi.Name, out dvalue);
-                        //    this.dickeyValue[fi.Name] = dvalue + output.value;
-                        //}
-                        //else
-                        //{
-                        //    this.dickeyValue[fi.Name] = output.value;
-                        //}
-                        List<UTXO> lstTemp = new List<UTXO>();
-                        keysUtxoList.TryGetValue(fi.Name, out lstTemp);
-                        lstTemp.Add(utxo);
-                        keysUtxoList[fi.Name] = lstTemp;
 
+                    if (output.scriptPubKey.IndexOf(pukhash) >= 0 )
+                    {
+                        // MultiSign 
+                        if(output.scriptPubKey.IndexOf("OP_CHECKMULTISIG") >= 0)
+                        {
+                            dicMsUTXOPool.Add(utxo, output);
+                        }
+                        else
+                        {
+                            List<UTXO> lstTemp = new List<UTXO>();
+                            keysUtxoList.TryGetValue(fi.Name, out lstTemp);
+                            lstTemp.Add(utxo);
+                            keysUtxoList[fi.Name] = lstTemp;                           
+                        }
                         break;
                     }
                 }
@@ -438,6 +450,36 @@ namespace BaseSturct
                 dicPkHKeypair.Add(item.Value, kp);
             }
             return 0;
+        }
+
+
+        public MultiSignViewModel MultiSignUTXOPool2VM(bool bCommited)
+        {
+            LogHelper.WriteMethodLog(true);
+            Dictionary<UTXO, Output> dicMsUTXOPool = new Dictionary<UTXO, Output>();
+            if (bCommited)
+            { dicMsUTXOPool = this.dicComitMsUTXOPool;}
+            else
+            { dicMsUTXOPool = this.dicUnComitMsUTXOPool; }
+
+            MultiSignViewModel msVM = new MultiSignViewModel();
+            int i = 0;
+            foreach (var item in dicMsUTXOPool)
+            {
+                MultiSignShowModel msSM = new MultiSignShowModel();
+                msSM.ID = i.ToString();
+                msSM.TxHash = item.Key.getTxHash();
+                msSM.OutputIndex = item.Key.getIndex().ToString();
+                msSM.Value = item.Value.value;
+                msSM.OutScriptPKHash = item.Value.getPKHashFromScript();
+                msSM.bIsAdd2PriTx = false;
+                msVM.AddItem(msSM);
+                i++;
+            }
+            LogHelper.WriteMethodLog(false);
+            return msVM;
+            
+
         }
     }
 }

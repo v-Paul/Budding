@@ -95,6 +95,28 @@ namespace BaseSturct
             scriptPubKey = string.Empty;
         }
 
+        public List<string> Script2list()
+        {
+            List<string> lstScript = new List<string>();
+            lstScript = this.scriptPubKey.Split(' ').ToList<string>();
+            return lstScript;
+        }
+
+        public string getPKHashFromScript()
+        {
+            List<string> lstScript = Script2list();
+            var lstPKHash = (from x in lstScript
+                             where x.Substring(0, 3) != "OP_"
+                             select x).ToList();
+
+            string strPKHash = string.Empty;
+            foreach (var item in lstPKHash)
+            {
+                strPKHash += item + Environment.NewLine;
+            }
+            return strPKHash;
+        }
+
 
 
     }
