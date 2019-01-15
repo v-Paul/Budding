@@ -469,7 +469,7 @@ namespace BaseSturct
                 MultiSignShowModel msSM = new MultiSignShowModel();
                 msSM.ID = i.ToString();
                 msSM.TxHash = item.Key.getTxHash();
-                msSM.OutputIndex = item.Key.getIndex().ToString();
+                msSM.OutputIndex = (int)item.Key.getIndex();
                 msSM.Value = item.Value.value;
                 msSM.OutScriptPKHash = item.Value.getPKHashFromScript();
                 msSM.bIsAdd2PriTx = false;

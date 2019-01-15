@@ -442,7 +442,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-       
+
     </Window.Resources>
     <!--
     <Grid Background="#f4f3ef">
@@ -544,7 +544,7 @@
                 </Grid>
             </StackPanel>
             <TabControl Grid.Row="1" Background="{Binding}">
-                <TabItem Header="T1">
+                <TabItem Header="T1" Height="23" VerticalAlignment="Top">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100"/>
@@ -559,22 +559,23 @@
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                    <ColumnDefinition Width="39"/>
+                                    <ColumnDefinition Width="111"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto" MinWidth="60"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <Image Source="Resources/KeyImg-gold.png"  Margin="20,15" Height="80" Width="80" HorizontalAlignment="Left"/>
-                                <Button Name="btnCreateKey" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" />
+                                <Image Source="Resources/KeyImg-gold.png"  Margin="20,15,0,5" Height="80" Width="80" HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
+                                <Button Name="btnCreateKey" Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateKey" FontSize="16" Background="black" Click="btnCreatekey_Click" Margin="0,30" />
                                 <!--<Button Grid.Column="2" Style="{StaticResource BtnInfoStyle}" Height="40" Content="50000" Padding="5"  Background="#fab915" FontSize="16"  Margin="50,0,0,0"/>-->
-                                <Border Grid.Column="2" Padding="0" Margin="50,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
+                                <Border Grid.Column="3" Padding="0" Margin="50,30,0,30"  HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#fab915" BorderThickness="1">
                                     <TextBlock Margin="0" x:Name ="txtKeyCount" Style="{StaticResource textblockStyle}" Text="0" FontSize="16" Background="Transparent" Foreground="#fab915">
                                         <TextBlock.ToolTip>
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Number of keys."/>
                                         </TextBlock.ToolTip>
                         </TextBlock>
                                 </Border>
-                                <Image Grid.Column="3" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5"/>
+                                <Image Grid.Column="4" Source="pack://siteoforigin:,,,/Resources/KeyIcon.png" Height="25" HorizontalAlignment="Left" Margin="5,38,0,38"/>
                             </Grid>
                         </Border>
                         <Border  Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1">
@@ -760,19 +761,19 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black"/>
-                            <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black"/>
-                            <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}"  Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
-                            <Button Margin="5" Grid.Row="2" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black"/>
-                            <TextBox  Style="{StaticResource TextBoxStyle}"  Height="40" Margin="5,0"  Grid.Row="2" Grid.Column="1"/>
+                            <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black" Click="btnCreatePriTx_Click"/>
+                            <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
+                            <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
+                            <Button Margin="5" Grid.Row="2" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
+                            <TextBox  Style="{StaticResource TextBoxStyle}" x:Name="txtredeemPay2Hash" Height="40" Margin="5,0"  Grid.Row="2" Grid.Column="1"/>
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Tx json" FontSize="12" Padding="0" Background="Transparent" Foreground="#fab915"/>
-                                <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}"  Margin="5,0"  />
+                                <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}"  x:Name="txtTxjson" Margin="5,0"  />
                             </Grid>
                         </Grid>
                     </Grid>

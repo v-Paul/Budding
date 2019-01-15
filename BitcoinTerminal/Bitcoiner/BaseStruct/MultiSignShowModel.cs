@@ -9,7 +9,7 @@ namespace BaseSturct
     {     
         public string ID { get; set; }
         public string TxHash { get; set; }
-        public string OutputIndex { get; set; }
+        public int OutputIndex { get; set; }
         public double Value { get; set; }    
         public bool bIsAdd2PriTx { get; set; }
         public string OutScriptPKHash { get; set; }
@@ -26,6 +26,11 @@ namespace BaseSturct
         public void  AddItem(MultiSignShowModel msSM)
         {
             this.MultiSignShows.Add(msSM);
+        }
+
+        public List<MultiSignShowModel> GetMultiSignShows()
+        {
+            return this.MultiSignShows;
         }
     }
 }

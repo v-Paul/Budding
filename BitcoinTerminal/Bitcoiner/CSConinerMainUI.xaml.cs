@@ -34,6 +34,7 @@ namespace Bitcoiner
         private NotifyIcon notifyIcon;
 
         private Transaction mPrimitiveTx;
+        MultiSignViewModel vm = new MultiSignViewModel();
 
         public CSConinerMainUI()
         {
@@ -502,7 +503,8 @@ namespace Bitcoiner
                 }
 
                 // MultiSign
-                MultiSignViewModel vm = new MultiSignViewModel();
+                // todo add condition 
+                
                 vm = this.keyHandler.MultiSignUTXOPool2VM(true);
                 this.DataContext = vm;
 
@@ -581,183 +583,58 @@ namespace Bitcoiner
         private void btnTransfer_Click(object sender, RoutedEventArgs e)
         {
             #region transfer
-            //LogHelper.WriteMethodLog(true);
-            //if (this.commHandler.GetAddressCount() == 0)
-            //{
-            //    MessageHelper.Error_001.Show("Offline, No nodes connected.");
-            //    return;
-            //}
-            //if (string.IsNullOrEmpty(this.txtAmount.Text))
-            //{
-            //    Info001Show("Please enter transfer AMOUNT.");
-            //    return;
-            //}
-            //if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
-            //{
-            //    Info001Show("Please enter receiver's right publicKey hash. ");
-            //    return;
-            //}
-            //double dPaytoAmount = 0;       
-            //if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
-            //{
-            //    Info001Show("Please enter transfer amount NUMBER");
-            //    return;
-            //}
-
-            //string strChoice = this.cmbKeyList.SelectedItem.ToString();
-            //string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
-
-            //if (strRet != ConstHelper.BC_OK)
-            //{
-            //    Info001Show(strRet);
-            //    return;
-            //}
-
-            //string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
-            //string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
-
-
-            //double dInputTatolAmount = 0;
-            //Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
-            //                                            this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
-
-
-            //Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
-            //                                                     strPaytoHash, strChangePuKScript);
-            //LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
-            //strRet = this.txHandler.handleTxs(Tx);
-
-            //if (strRet != ConstHelper.BC_OK)
-            //{
-            //    Info001Show(strRet);
-            //    return;
-            //}
-            //this.bkHandler.AddTx2hsPool(Tx);
-
-            //this.RefreshInterfaceTxCount();
-
-            //this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
-            //this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
-            //this.RefreshKeyValueBox();
-            //this.ResetInterfacePayItem();
-
-            //Task.Run(() =>
-            //{
-            //    this.commHandler.SendNewTx2AddressLst(Tx);
-
-            //});
-
-            //LogHelper.WriteMethodLog(false);
-            #endregion
-
-            #region CreateMutiSignTrans
-            //LogHelper.WriteMethodLog(true);
-
-            //int N = 2;
-            //int M = 3;
-            //string MutiPkHash = "69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 01314092DF4A3BDBA944E458CED99ED34A88ED4F0B9F179A5AEFC62017BB990D 4F54AC9D55552C633360FEA08A4322EED29138E8025D582F9F6F58E5905FD63B";
-            //List<string> lstPkHashs = MutiPkHash.Split(' ').ToList<string>();
-
-            //string strMutiScript = string.Empty;
-            //int iRet = this.txHandler.AssumbleMutiSignScript(N, M, lstPkHashs, ref strMutiScript);
-            //if (iRet != 0)
-            //{
-            //    return;
-            //}
-
-
-            //double dPaytoAmount = 0;
-            //if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
-            //{
-            //    Info001Show("Please enter transfer amount NUMBER");
-            //    return;
-            //}
-
-            //string strChoice = this.cmbKeyList.SelectedItem.ToString();
-            //string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
-
-            //if (strRet != ConstHelper.BC_OK)
-            //{
-            //    Info001Show(strRet);
-            //    return;
-            //}
-
-            ////string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
-            //string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
-
-
-            //double dInputTatolAmount = 0;
-            //Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
-            //                                            this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
-
-
-            //Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
-            //                                                     strMutiScript, strChangePuKScript);
-            //LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
-            //strRet = this.txHandler.handleTxs(Tx);
-
-            //if (strRet != ConstHelper.BC_OK)
-            //{
-            //    Info001Show(strRet);
-            //    return;
-            //}
-            //this.bkHandler.AddTx2hsPool(Tx);
-
-            //this.RefreshInterfaceTxCount();
-
-            //this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
-            //this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
-            //this.RefreshKeyValueBox();
-            //this.ResetInterfacePayItem();
-
-            //Task.Run(() =>
-            //{
-            //    this.commHandler.SendNewTx2AddressLst(Tx);
-
-            //});
-
-            //LogHelper.WriteMethodLog(false);
-
-            #endregion redeem mutising Tx
-
-            #region CreatePrimitiveTX
-            LogHelper.WriteMethodLog(false);
-            List<Input> lstInput = new List<Input>();
-            Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
-            lstInput.Add(input);
-            Transaction PriTx = new Transaction();
-            string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
-
-            int iRet = this.txHandler.CreatPrimitiveTx(lstInput, 10, strp2Script, ref PriTx);
-            if(iRet != 0)
+            LogHelper.WriteMethodLog(true);
+            if (this.commHandler.GetAddressCount() == 0)
             {
-                LogHelper.WriteErrorLog("CreatPrimitiveTx fail");
+                MessageHelper.Error_001.Show("Offline, No nodes connected.");
+                return;
             }
-            else
+            if (string.IsNullOrEmpty(this.txtAmount.Text))
             {
-                this.mPrimitiveTx = PriTx;
+                Info001Show("Please enter transfer AMOUNT.");
+                return;
             }
-            #endregion
+            if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
+            {
+                Info001Show("Please enter receiver's right publicKey hash. ");
+                return;
+            }
+            double dPaytoAmount = 0;
+            if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
+            {
+                Info001Show("Please enter transfer amount NUMBER");
+                return;
+            }
 
-            #region MultiSign
-            Dictionary<string, keyPair> dickHKeyPair = new Dictionary<string, keyPair>();
-            this.keyHandler.GetdicPkHKeypair(ref dickHKeyPair);
-
-            this.txHandler.SignPrimitiveTx(dickHKeyPair, ref this.mPrimitiveTx);
-            LogHelper.WriteInfoLog("MultiSign TX: " + JsonHelper.Serializer<Transaction>(this.mPrimitiveTx));
-            LogHelper.WriteMethodLog(false);
-            #endregion
-
-            #region CreateRedeemTx
-            bool bRet = this.txHandler.CreateRedeemTx(ref this.mPrimitiveTx);
-            string strRet = this.txHandler.handleTxs(mPrimitiveTx);
+            string strChoice = this.cmbKeyList.SelectedItem.ToString();
+            string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
 
             if (strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
                 return;
             }
-            this.bkHandler.AddTx2hsPool(mPrimitiveTx);
+
+            string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
+            string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+
+
+            double dInputTatolAmount = 0;
+            Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
+                                                        this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
+
+
+            Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
+                                                                 strPaytoHash, strChangePuKScript);
+            LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
+            strRet = this.txHandler.handleTxs(Tx);
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            this.bkHandler.AddTx2hsPool(Tx);
 
             this.RefreshInterfaceTxCount();
 
@@ -768,15 +645,12 @@ namespace Bitcoiner
 
             Task.Run(() =>
             {
-                this.commHandler.SendNewTx2AddressLst(mPrimitiveTx);
+                this.commHandler.SendNewTx2AddressLst(Tx);
 
             });
 
             LogHelper.WriteMethodLog(false);
-
             #endregion
-
-
         }
 
         //选择key
@@ -954,7 +828,7 @@ namespace Bitcoiner
             ms.bIsAdd2PriTx = true;
             ms.ID = "1";
             ms.TxHash = "1234567812345678123456781234567812345678123456781234567812345678";
-            ms.OutputIndex = "0";
+            ms.OutputIndex = 0;
             ms.Value = 121.1;
             ms.OutScriptPKHash = "1234567812345678"+ Environment.NewLine +"1234567812345678" + Environment.NewLine + "1234567812345678";
             vm.MultiSignShows.Add(ms);
@@ -971,6 +845,196 @@ namespace Bitcoiner
 
         }
 
+        #endregion
+
+        #region MultiSign
+
+        
+        public void CreateMutiSignTrans(int iN, int iM, string strMutiPkHash)
+        {
+            LogHelper.WriteMethodLog(true);
+
+            int N = 2;
+            int M = 3;
+            string MutiPkHash = "69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 01314092DF4A3BDBA944E458CED99ED34A88ED4F0B9F179A5AEFC62017BB990D 4F54AC9D55552C633360FEA08A4322EED29138E8025D582F9F6F58E5905FD63B";
+            List<string> lstPkHashs = MutiPkHash.Split(' ').ToList<string>();
+
+            string strMutiScript = string.Empty;
+            int iRet = this.txHandler.AssumbleMutiSignScript(N, M, lstPkHashs, ref strMutiScript);
+            if (iRet != 0)
+            {
+                return;
+            }
+
+
+            double dPaytoAmount = 0;
+            if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
+            {
+                Info001Show("Please enter transfer amount NUMBER");
+                return;
+            }
+
+            string strChoice = this.cmbKeyList.SelectedItem.ToString();
+            string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+
+            //string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
+            string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+
+
+            double dInputTatolAmount = 0;
+            Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
+                                                        this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
+
+
+            Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
+                                                                 strMutiScript, strChangePuKScript);
+            LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
+            strRet = this.txHandler.handleTxs(Tx);
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            this.bkHandler.AddTx2hsPool(Tx);
+
+            this.RefreshInterfaceTxCount();
+
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+            this.RefreshKeyValueBox();
+            this.ResetInterfacePayItem();
+
+            Task.Run(() =>
+            {
+                this.commHandler.SendNewTx2AddressLst(Tx);
+
+            });
+
+            LogHelper.WriteMethodLog(false);
+        }
+
+
+
+
+
+        private void btnCreatePriTx_Click(object sender, RoutedEventArgs e)
+        {
+            #region CreatePrimitiveTX
+            LogHelper.WriteMethodLog(false);
+
+            //if (string.IsNullOrEmpty(this.txtAmount.Text))
+            //{
+            //    Info001Show("Please enter transfer AMOUNT.");
+            //    return;
+            //}
+            //if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
+            //{
+            //    Info001Show("Please enter receiver's right publicKey hash. ");
+            //    return;
+            //}
+            //double dPaytoAmount = 0;
+            //if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
+            //{
+            //    Info001Show("Please enter transfer amount NUMBER");
+            //    return;
+            //}
+
+            //foreach (var item in this.vm.GetMultiSignShows())
+            //{
+            //    Input input = new Input(item.TxHash, item.OutputIndex);
+            //    lstInput.Add(input);
+            //}
+            //string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtAcount);
+
+
+
+            List<Input> lstInput = new List<Input>();
+            
+            // test data
+            Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
+            lstInput.Add(input);
+            string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
+            // end test
+
+
+            Transaction PriTx = new Transaction();
+            string strRet = this.txHandler.CreatPrimitiveTx(lstInput, 10, strp2Script, ref PriTx);
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                LogHelper.WriteErrorLog("CreatPrimitiveTx fail");
+            }
+            else
+            {
+                this.mPrimitiveTx = PriTx;
+            }
+            #endregion
+        }
+
+        private void btnSign_Click(object sender, RoutedEventArgs e)
+        {
+            #region MultiSign
+            Dictionary<string, keyPair> dickHKeyPair = new Dictionary<string, keyPair>();
+            this.keyHandler.GetdicPkHKeypair(ref dickHKeyPair);
+
+            string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref this.mPrimitiveTx);
+            if(strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            LogHelper.WriteInfoLog("MultiSign TX: " + JsonHelper.Serializer<Transaction>(this.mPrimitiveTx));
+            LogHelper.WriteMethodLog(false);
+            #endregion
+        }
+
+        private void btnRequestSign_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCreateRedeemTx_Click(object sender, RoutedEventArgs e)
+        {
+            #region CreateRedeemTx
+            string strRet = this.txHandler.CreateRedeemTx(ref this.mPrimitiveTx);
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            strRet = this.txHandler.handleTxs(mPrimitiveTx);
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            this.bkHandler.AddTx2hsPool(mPrimitiveTx);
+
+            this.RefreshInterfaceTxCount();
+
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+            this.RefreshKeyValueBox();
+            this.ResetInterfacePayItem();
+
+            Task.Run(() =>
+            {
+                this.commHandler.SendNewTx2AddressLst(mPrimitiveTx);
+
+            });
+
+            LogHelper.WriteMethodLog(false);
+
+            #endregion
+        }
         #endregion
     }
 

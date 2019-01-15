@@ -565,7 +565,7 @@ namespace BaseSturct
 
         #endregion
 
-        public int CreatPrimitiveTx( List<Input> lstInput, double dValue, string strPay2Hash, ref Transaction PrimitiveTx)
+        public string CreatPrimitiveTx( List<Input> lstInput, double dValue, string strPay2Hash, ref Transaction PrimitiveTx)
         {
             LogHelper.WriteMethodLog(true);
 
@@ -580,7 +580,7 @@ namespace BaseSturct
             if(inputValue != dValue)
             {
                 LogHelper.WriteErrorLog(string.Format("Input Utxo's value not equal with output value, inputV:{0}, outputV:{1}", inputValue, dValue));
-                return -1;
+                return "Input Utxo's value not equal with output value";
             }
           
             PrimitiveTx.listInputs = lstInput;
@@ -590,12 +590,26 @@ namespace BaseSturct
 
             LogHelper.WriteInfoLog("MultiSign TX: " + JsonHelper.Serializer<Transaction>(PrimitiveTx));
             LogHelper.WriteMethodLog(false);
-            return 0;
+            return ConstHelper.BC_OK;
         }
 
 
-        public bool SignPrimitiveTx(Dictionary<string, keyPair> KeyHashKeypair, ref Transaction PrimitiveTx)
+        public string SignPrimitiveTx(Dictionary<string, keyPair> KeyHashKeypair, ref Transaction PrimitiveTx)
         {
+            LogHelper.WriteMethodLog(true);
+            bool bHaveSigned = true;
+            foreach (var item in PrimitiveTx.listInputs)
+            {
+                if(item.lstScriptSig == null)
+                {
+                    bHaveSigned = false;
+                }
+            }
+            if(bHaveSigned)
+            {
+                return "Current Primitive Tx'inputs Have signed";
+            }
+
             int iInputCount = PrimitiveTx.listInputs.Count;
 
             for (int i = 0; i < iInputCount; i++)
@@ -605,7 +619,7 @@ namespace BaseSturct
                 if (!CommitedUtxoPool.contains(utxo))
                 {
                     LogHelper.WriteInfoLog(" utxoPool not contain utxo:");
-                    return false; //check (1),utox 包含该交易返回false
+                    return "Invalid utxo"; //check (1),utox 包含该交易返回false
                 }
                 Output output = CommitedUtxoPool.getTxOutput(utxo);
                 List<string> lstScript = output.scriptPubKey.Split(' ').ToList<string>();
@@ -629,8 +643,8 @@ namespace BaseSturct
                     
                 }
             }
-
-            return true;
+            LogHelper.WriteMethodLog(false);
+            return ConstHelper.BC_OK;
         }
 
         /// <summary>
@@ -638,18 +652,30 @@ namespace BaseSturct
         /// </summary>
         /// <param name="signedPrimitiveTx"></param>
         /// <returns>0:succ, -1: not multisign, -2:</returns>
-        public bool CreateRedeemTx(ref Transaction signedPrimitiveTx)
+        public string CreateRedeemTx(ref Transaction signedPrimitiveTx)
         {
             LogHelper.WriteMethodLog(true);
             int iRet = this.CheckMultiSignCount(signedPrimitiveTx);
             if(iRet != 0)
             {
-                return false;
+                switch (iRet)
+                {
+                    case -1:
+                        return "one of inputs isn't MultiSign Tx";
+                    case -2:
+                        return "The number of signatures did not meet the minimum requirements";
+                    case -3:
+                        return "The number of signatures more than M";
+
+                    default:
+                        break;
+                }
             }
+
             signedPrimitiveTx.FinalSetTrans();
 
             LogHelper.WriteMethodLog(false);
-            return true;
+            return ConstHelper.BC_OK;
         }
 
         /// <summary>
@@ -677,7 +703,7 @@ namespace BaseSturct
                 int M = int.Parse(OP_M.Substring(3));
                 if (item.lstScriptSig.Count < N )
                 {
-                    LogHelper.WriteErrorLog(string.Format("input[{0}] sign not enough",i));
+                    LogHelper.WriteErrorLog(string.Format("input[{0}] signature count not meet mini request",i));
                     return -2;
                 }
                 else if(item.lstScriptSig.Count > M)

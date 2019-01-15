@@ -110,9 +110,19 @@ namespace BaseSturct
                              select x).ToList();
 
             string strPKHash = string.Empty;
-            foreach (var item in lstPKHash)
+            
+            //foreach (var item in lstPKHash)
+            for(int i=0; i< lstPKHash.Count; i++)
             {
-                strPKHash += item + Environment.NewLine;
+                if(i== lstPKHash.Count-1)
+                {
+                    strPKHash += lstPKHash[i];
+                }
+                else
+                {
+                    strPKHash += lstPKHash[i] + Environment.NewLine;
+                }
+                
             }
             return strPKHash;
         }
