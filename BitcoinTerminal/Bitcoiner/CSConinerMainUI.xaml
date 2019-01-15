@@ -414,6 +414,35 @@
             <Setter Property="Padding" Value="15,8" />
             <Setter Property="FontSize" Value="16" />
         </Style>
+
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#fab915"/>
+            <Setter Property="Background" Value="black" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="Width" Value="{Binding}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewColumnHeader">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Border Name="HeaderBorder">
+                                <ContentPresenter x:Name="HeaderContent" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                VerticalAlignment="Center"
+                                Margin="10,0,0,0" RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}">
+                                </ContentPresenter>
+                            </Border>
+                            <Thumb x:Name="PART_HeaderGripper" Width="1" BorderBrush="#fab915" BorderThickness="0"  HorizontalAlignment="Right"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+       
     </Window.Resources>
     <!--
     <Grid Background="#f4f3ef">
@@ -692,13 +721,19 @@
                 </TabItem>
                 <TabItem Header="T3">
                     <Grid>
-                        <ListView Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" IsSynchronizedWithCurrentItem="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Condition Position!" Foreground="white" FontSize="30"/>
+                        <ListView Grid.Row="1" Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" MinHeight="50" IsSynchronizedWithCurrentItem="True">
                             <ListView.View>
                                 <GridView>
                                     <GridView.Columns>
                                         <GridViewColumn  Width="100">
                                             <GridViewColumn.Header >
-                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" >Check All</CheckBox>
+                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" Foreground="#fab915" >Check All</CheckBox>
                                             </GridViewColumn.Header>
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
@@ -707,13 +742,39 @@
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
                                         <GridViewColumn Header="TxHash" Width="100"  DisplayMemberBinding="{Binding TxHash}"/>
-                                        <GridViewColumn Header="Output Index"  Width="100" DisplayMemberBinding="{Binding OutputIndex}"/>
+                                        <GridViewColumn Header="Output Index"  Width="150" DisplayMemberBinding="{Binding OutputIndex}"/>
                                         <GridViewColumn Header="Value"  Width="100" DisplayMemberBinding="{Binding Value}"/>
                                         <GridViewColumn Header="OutScriptPKHash list"  Width="150" DisplayMemberBinding="{Binding lstOutScriptPKHash}"/>
                                     </GridView.Columns>
                                 </GridView>
                             </ListView.View>
                         </ListView>
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black"/>
+                            <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black"/>
+                            <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}"  Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
+                            <Button Margin="5" Grid.Row="2" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black"/>
+                            <TextBox  Style="{StaticResource TextBoxStyle}"  Height="40" Margin="5,0"  Grid.Row="2" Grid.Column="1"/>
+                            <Grid Grid.Row="3" Grid.ColumnSpan="2" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Tx json" FontSize="12" Padding="0" Background="Transparent" Foreground="#fab915"/>
+                                <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}"  Margin="5,0"  />
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </TabItem>
             </TabControl>
