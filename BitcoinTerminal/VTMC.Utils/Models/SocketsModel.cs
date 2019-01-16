@@ -172,6 +172,7 @@ namespace VTMC.Utils
         public const string NewAddresses = "NewAddresses";
         public const string Message = "Message";
         public const string Exception = "Exception";
+        public const string Pritransaction = "Pritransaction";
     }
 
 

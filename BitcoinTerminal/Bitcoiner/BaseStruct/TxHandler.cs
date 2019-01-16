@@ -468,15 +468,15 @@ namespace BaseSturct
         /// <param name="lstPKHash"></param>
         /// <param name="Script"></param>
         /// <returns>0：成功 -1：PKHash个数和M不相等 -2：不满足 1<N<M<10 -3:PkHash 长度错 </returns>
-        public int  AssumbleMutiSignScript(int N, int M, List<string> lstPKHash, ref string Script)
+        public string  AssumbleMutiSignScript(int N, int M, List<string> lstPKHash, ref string Script)
         {
             Script = string.Empty;
             if(M != lstPKHash.Count)
             {
-                return -1;
+                return "The number of PkHash is not equal to M, multiple PkHash , please separate by space ";
             }
 
-            if (1 < N && N < M && M < 10)
+            if (1 < N && N <= M && M < 10)
             {
                 Script = "OP_" + N.ToString();
                 foreach (var item in lstPKHash)
@@ -484,7 +484,7 @@ namespace BaseSturct
                     if(item.Length != 64)
                     {
                         Script = string.Empty;
-                        return -3;
+                        return string.Format("{0} \r\n PkHash length error", item);
                     }
                     Script += " " + item;
                 }
@@ -493,10 +493,10 @@ namespace BaseSturct
             }
             else
             {
-                return -2;
+                return "You are creating a MultiSing Tx, N should less-than M, or set N=M=0,create a single sign Tx  ";
             }
 
-            return 0;
+            return ConstHelper.BC_OK;
         }
 
         #region 暂时不用
@@ -600,9 +600,23 @@ namespace BaseSturct
             bool bHaveSigned = true;
             foreach (var item in PrimitiveTx.listInputs)
             {
+                // 只要input有一个没有签名list，就认为没有签名
                 if(item.lstScriptSig == null)
                 {
                     bHaveSigned = false;
+                    break;
+                }
+                else
+                {   // 有签名list后 判断自己是否已经签名，
+                    bHaveSigned = false;
+                    foreach (var item1 in item.lstScriptSig)
+                    {
+                        string strKeyHash = Cryptor.SHA256(item1.PubKey, item1.PubKey.Length);
+                        if(KeyHashKeypair.ContainsKey(strKeyHash))
+                        {
+                            bHaveSigned = true;
+                        }
+                    }
                 }
             }
             if(bHaveSigned)
