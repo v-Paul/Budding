@@ -674,12 +674,12 @@
                         <TextBlock Text="Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="16" />
                         <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="100" Margin="0" IsEnabled="False" Text="111" FontSize="16"/>
                     </DockPanel>-->
-                                <TextBlock Foreground="White" Text="Blance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBlock Foreground="White" Text="Balance:" Grid.Row="0" Grid.Column="3"  VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <StackPanel  Grid.Row="0"  Grid.Column="4" Orientation="Horizontal" >
                                     <TextBox x:Name="txtComitBalance" Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00" FontSize="16"/>
                                     <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
                                 </StackPanel>
-                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Blance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12,0,5,0"/>
+                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Un-Balance:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="10,0,5,0"/>
                                 <StackPanel  Grid.Column="4" Grid.Row="1" Orientation="Horizontal" >
                                     <TextBox x:Name="txtUnComitBalance"  Style="{StaticResource TextBoxStyle}" Height="40" Width="Auto" MinWidth="60" HorizontalContentAlignment="Right" HorizontalAlignment="Left"  IsEnabled="False" Text="0.00"  FontSize="16"/>
                                     <TextBox Style="{StaticResource TextBoxStyle}" Height="40" Width="20" HorizontalAlignment="Left" IsEnabled="False" Text="$" FontSize="16"/>
@@ -705,33 +705,15 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="20,15" Height="75" Width="75" HorizontalAlignment="Left"/>
-                                <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
+                                <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="CreateTx" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
                                 <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0" >
-                                    <TextBlock Style="{StaticResource textblockStyle}" Text="M" FontSize="16"  Background="Transparent" Foreground="White" Padding="0">
-                                        <TextBlock.ToolTip>
-                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
-                                        </TextBlock.ToolTip>
-                                    </TextBlock>
-                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
-                                        <ComboBoxItem>1</ComboBoxItem>
-                                        <ComboBoxItem>2</ComboBoxItem>
-                                        <ComboBoxItem>3</ComboBoxItem>
-                                        <ComboBoxItem>4</ComboBoxItem>
-                                        <ComboBoxItem>5</ComboBoxItem>
-                                        <ComboBoxItem>6</ComboBoxItem>
-                                        <ComboBoxItem>7</ComboBoxItem>
-                                        <ComboBoxItem>8</ComboBoxItem>
-                                        <ComboBoxItem>9</ComboBoxItem>
-                                        <ComboBoxItem>9</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,0" >
                                     <TextBlock Style="{StaticResource textblockStyle}" Text="N" FontSize="16"  Background="Transparent" Foreground="White" Padding="0">
                                         <TextBlock.ToolTip>
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
                                     <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
+                                        <ComboBoxItem>0</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
                                         <ComboBoxItem>3</ComboBoxItem>
@@ -741,12 +723,32 @@
                                         <ComboBoxItem>7</ComboBoxItem>
                                         <ComboBoxItem>8</ComboBoxItem>
                                         <ComboBoxItem>9</ComboBoxItem>
+                                        <ComboBoxItem>10</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,0" >
+                                    <TextBlock Style="{StaticResource textblockStyle}" Text="M" FontSize="16"  Background="Transparent" Foreground="White" Padding="0">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
+                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
+                                        <ComboBoxItem>0</ComboBoxItem>
+                                        <ComboBoxItem>1</ComboBoxItem>
+                                        <ComboBoxItem>2</ComboBoxItem>
+                                        <ComboBoxItem>3</ComboBoxItem>
+                                        <ComboBoxItem>4</ComboBoxItem>
+                                        <ComboBoxItem>5</ComboBoxItem>
+                                        <ComboBoxItem>6</ComboBoxItem>
+                                        <ComboBoxItem>7</ComboBoxItem>
+                                        <ComboBoxItem>8</ComboBoxItem>
                                         <ComboBoxItem>9</ComboBoxItem>
+                                        <ComboBoxItem>10</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
                                 <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
-                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Account:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                             </Grid>
                         </Border>
@@ -792,13 +794,13 @@
                             <ListView.View>
                                 <GridView>
                                     <GridView.Columns>
-                                        <GridViewColumn  Width="100">
+                                        <GridViewColumn  Width="50">
                                             <GridViewColumn.Header >
-                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" Foreground="#fab915" Content="Check All"/>
+                                                <CheckBox x:Name="btnCheckAll" Width="30" Click="btnCheckAll_Click" Foreground="#fab915"/>
                                             </GridViewColumn.Header>
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <CheckBox IsChecked="{Binding BIsAdd2PriTx}" Click="CheckBox_Click" Tag="{Binding ID}"/>
+                                                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding BIsAdd2PriTx}" Click="CheckBox_Click" Tag="{Binding ID}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -831,16 +833,27 @@
                             <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black" Click="btnCreatePriTx_Click"/>
                             <Grid Grid.Column="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition  Width="Auto"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox  Style="{StaticResource TextBoxStyle}" x:Name="txtredeemPay2Hash" Height="40" Margin="5,0,2.5,0" />
-                                <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
+                                <TextBlock Foreground="White" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBox Grid.Column="1" MinWidth="50" Style="{StaticResource TextBoxStyle}" x:Name="txtredeemPay2Hash" Height="40" Margin="5,0,2.5,0" />
+                                <TextBlock Foreground="White" Grid.Column="2" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
+                                <TextBox Grid.Column="3" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
                             </Grid>
                             <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
                             <Button Margin="5"  Grid.Row="2"  Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
-                            <Button Margin="5"  Grid.Row="2" Grid.Column="1"  Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
+                            <Grid Grid.Row="2" Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
+                                <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" />
+                            </Grid>
                        
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >
                                 <Grid.RowDefinitions>
