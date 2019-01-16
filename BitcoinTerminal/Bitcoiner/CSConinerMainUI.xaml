@@ -712,7 +712,7 @@
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
-                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
+                                    <ComboBox x:Name="cmbNList" Style="{StaticResource btCmb}"  Width="40" Height="30" FontSize="16" Foreground="#fab915" >
                                         <ComboBoxItem>0</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
@@ -732,7 +732,7 @@
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
-                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
+                                    <ComboBox x:Name="cmbMList" Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
                                         <ComboBoxItem>0</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
