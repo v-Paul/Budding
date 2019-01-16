@@ -712,7 +712,7 @@
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
-                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="20" FontSize="16" Foreground="#fab915" >
+                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
                                         <ComboBoxItem>3</ComboBoxItem>
@@ -731,7 +731,7 @@
                                             <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
                                         </TextBlock.ToolTip>
                                     </TextBlock>
-                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="20" FontSize="16" Foreground="#fab915" >
+                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="30" FontSize="16" Foreground="#fab915" >
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
                                         <ComboBoxItem>3</ComboBoxItem>
@@ -788,17 +788,17 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="Condition Position!" Foreground="white" FontSize="30"/>
-                        <ListView  Grid.Row="1" Background="Transparent" Foreground="#fab915" ItemsSource="{Binding MultiSignShows}" MinHeight="50" IsSynchronizedWithCurrentItem="True">
+                        <ListView x:Name="lstView"  Grid.Row="1" Background="Transparent" ItemsSource="{Binding MultiSignShows}" Foreground="#fab915" MinHeight="50">
                             <ListView.View>
                                 <GridView>
                                     <GridView.Columns>
                                         <GridViewColumn  Width="100">
                                             <GridViewColumn.Header >
-                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" Foreground="#fab915" >Check All</CheckBox>
+                                                <CheckBox x:Name="btnCheckAll" Click="btnCheckAll_Click" Foreground="#fab915" Content="Check All"/>
                                             </GridViewColumn.Header>
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <CheckBox Checked="CheckBox_Checked" IsChecked="{Binding Path=bIsAdd2PriTx}" Tag="{Binding Path=ID}"></CheckBox>
+                                                    <CheckBox IsChecked="{Binding BIsAdd2PriTx}" Click="CheckBox_Click" Tag="{Binding ID}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -829,18 +829,27 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black" Click="btnCreatePriTx_Click"/>
-                            <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox  Style="{StaticResource TextBoxStyle}" x:Name="txtredeemPay2Hash" Height="40" Margin="5,0,2.5,0" />
+                                <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
+                            </Grid>
                             <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
-                            <Button Margin="5" Grid.Row="2" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
-                            <TextBox  Style="{StaticResource TextBoxStyle}" x:Name="txtredeemPay2Hash" Height="40" Margin="5,0"  Grid.Row="2" Grid.Column="1"/>
+                            <Button Margin="5"  Grid.Row="2"  Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
+                            <Button Margin="5"  Grid.Row="2" Grid.Column="1"  Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
+                       
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Tx json" FontSize="12" Padding="0" Background="Transparent" Foreground="#fab915"/>
-                                <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}"  x:Name="txtTxjson" Margin="5,0"  />
+                                <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Tx json" FontSize="12" Margin="2,0" Padding="0" Background="Transparent" Foreground="White"/>
+                                <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}" VerticalContentAlignment="Top"  x:Name="txtTxjson" Margin="5,0" TextWrapping="Wrap"  AcceptsReturn="True"
+  VerticalScrollBarVisibility="Visible" />
                             </Grid>
                         </Grid>
                     </Grid>
