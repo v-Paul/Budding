@@ -472,7 +472,7 @@ namespace BaseSturct
                 msSM.OutputIndex = (int)item.Key.getIndex();
                 msSM.Value = item.Value.value;
                 msSM.OutScriptPKHash = item.Value.getPKHashFromScript();
-                msSM.bIsAdd2PriTx = false;
+                msSM.BIsAdd2PriTx = false;
                 msVM.AddItem(msSM);
                 i++;
             }

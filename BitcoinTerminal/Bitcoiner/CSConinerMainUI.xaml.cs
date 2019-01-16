@@ -853,7 +853,7 @@ namespace Bitcoiner
         private void MockData(MultiSignViewModel vm)
         {
             MultiSignShowModel ms = new MultiSignShowModel();
-            ms.bIsAdd2PriTx = true;
+            ms.BIsAdd2PriTx = true;
             ms.ID = "1";
             ms.TxHash = "1234567812345678123456781234567812345678123456781234567812345678";
             ms.OutputIndex = 0;
@@ -865,19 +865,48 @@ namespace Bitcoiner
 
         private void btnCheckAll_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                System.Windows.Controls.CheckBox cb = sender as System.Windows.Controls.CheckBox;
+                bool ret = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
+                if (this.vm.MultiSignShows?.Count != 0)
+                {
+                    foreach (MultiSignShowModel item in this.vm.MultiSignShows)
+                    {
+                        item.BIsAdd2PriTx = ret;
+                    }
+                }
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                System.Windows.Controls.CheckBox cb = sender as System.Windows.Controls.CheckBox;
 
+                MultiSignShowModel ms = (MultiSignShowModel)cb.DataContext;
+                if (ms != null)
+                {
+                    ms.BIsAdd2PriTx = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
-
         #endregion
 
         #region MultiSign
 
-        
+
         public void CreateMutiSignTrans(int iN, int iM, string strMutiPkHash)
         {
             LogHelper.WriteMethodLog(true);
@@ -1113,6 +1142,8 @@ namespace Bitcoiner
             #endregion
         }
         #endregion
+
+      
     }
 
 }

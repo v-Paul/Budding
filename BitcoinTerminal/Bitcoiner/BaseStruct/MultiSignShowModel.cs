@@ -1,26 +1,74 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace BaseSturct
 {
-    [Serializable]
-    public class MultiSignShowModel
-    {     
-        public string ID { get; set; }
-        public string TxHash { get; set; }
-        public int OutputIndex { get; set; }
-        public double Value { get; set; }    
-        public bool bIsAdd2PriTx { get; set; }
-        public string OutScriptPKHash { get; set; }
+    public class MultiSignShowModel : INotifyPropertyChanged
+    {
+        private string id;
 
+        public string ID
+        {
+            get { return id; }
+            set { id = value; OnPropertyChanged("ID"); }
+        }
+
+        private string txHash;
+
+        public string TxHash
+        {
+            get { return txHash; }
+            set { txHash = value; OnPropertyChanged("TxHash"); }
+        }
+
+        private int otputIndex;
+        public int OutputIndex
+        {
+            get { return otputIndex; }
+            set { otputIndex = value; OnPropertyChanged("OutputIndex"); }
+        }
+
+        private double mvalue;
+        public double Value
+        {
+            get { return mvalue; }
+            set { value = mvalue; OnPropertyChanged("Value"); }
+        }
+
+        private bool bIsAdd2PriTx;
+        public bool BIsAdd2PriTx
+        {
+            get { return bIsAdd2PriTx; }
+            set { bIsAdd2PriTx = value; OnPropertyChanged("BIsAdd2PriTx"); }
+        }
+
+        private string outScriptPKHash;
+
+        public string OutScriptPKHash
+        {
+            get { return outScriptPKHash; }
+            set { outScriptPKHash = value; OnPropertyChanged("OutScriptPKHash"); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName = "")
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     public class MultiSignViewModel
     {
-        public List<MultiSignShowModel> MultiSignShows { get; set; }
+        public ObservableCollection<MultiSignShowModel> MultiSignShows { get; set; }
         public MultiSignViewModel()
         {
-            MultiSignShows = new List<MultiSignShowModel>();
+            MultiSignShows = new ObservableCollection<MultiSignShowModel>();
         }
 
         public void  AddItem(MultiSignShowModel msSM)
@@ -28,7 +76,7 @@ namespace BaseSturct
             this.MultiSignShows.Add(msSM);
         }
 
-        public List<MultiSignShowModel> GetMultiSignShows()
+        public ObservableCollection<MultiSignShowModel> GetMultiSignShows()
         {
             return this.MultiSignShows;
         }
