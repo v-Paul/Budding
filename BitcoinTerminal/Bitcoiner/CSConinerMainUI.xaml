@@ -706,6 +706,44 @@
                                 </Grid.ColumnDefinitions>
                                 <Image Grid.RowSpan="2" Source="Resources/transferImg-gold.png" Margin="20,15" Height="75" Width="75" HorizontalAlignment="Left"/>
                                 <Button x:Name="btnTransfer" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Style="{StaticResource BtnInfoStyle}" Width="120" Height="40"  Content="Transfer" FontSize="16" Background="Black" Click="btnTransfer_Click"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0" >
+                                    <TextBlock Style="{StaticResource textblockStyle}" Text="M" FontSize="16"  Background="Transparent" Foreground="White" Padding="0">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
+                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="20" FontSize="16" Foreground="#fab915" >
+                                        <ComboBoxItem>1</ComboBoxItem>
+                                        <ComboBoxItem>2</ComboBoxItem>
+                                        <ComboBoxItem>3</ComboBoxItem>
+                                        <ComboBoxItem>4</ComboBoxItem>
+                                        <ComboBoxItem>5</ComboBoxItem>
+                                        <ComboBoxItem>6</ComboBoxItem>
+                                        <ComboBoxItem>7</ComboBoxItem>
+                                        <ComboBoxItem>8</ComboBoxItem>
+                                        <ComboBoxItem>9</ComboBoxItem>
+                                        <ComboBoxItem>9</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="10,0" >
+                                    <TextBlock Style="{StaticResource textblockStyle}" Text="N" FontSize="16"  Background="Transparent" Foreground="White" Padding="0">
+                                        <TextBlock.ToolTip>
+                                            <TextBlock Background="WhiteSmoke" Foreground="Black" Text="Connected nodes count"/>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
+                                    <ComboBox Style="{StaticResource btCmb}" Width="40" Height="20" FontSize="16" Foreground="#fab915" >
+                                        <ComboBoxItem>1</ComboBoxItem>
+                                        <ComboBoxItem>2</ComboBoxItem>
+                                        <ComboBoxItem>3</ComboBoxItem>
+                                        <ComboBoxItem>4</ComboBoxItem>
+                                        <ComboBoxItem>5</ComboBoxItem>
+                                        <ComboBoxItem>6</ComboBoxItem>
+                                        <ComboBoxItem>7</ComboBoxItem>
+                                        <ComboBoxItem>8</ComboBoxItem>
+                                        <ComboBoxItem>9</ComboBoxItem>
+                                        <ComboBoxItem>9</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
                                 <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                                 <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="Account:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
