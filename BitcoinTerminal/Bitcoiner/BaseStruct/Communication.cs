@@ -46,6 +46,10 @@ namespace BaseSturct
         public const string Accept = "Accept";
         public const string Reject = "Reject";
         public const string Accepted = "Accepted";
+
+        // MultiSign
+        public const string Informed = "Informed";
+        public const string RejectSign = "RejectSign";
     }
 
     [Serializable]
@@ -85,6 +89,7 @@ namespace BaseSturct
         private SocketsHelper TransFileHelper;
         private Dictionary<string, int> dicAddressesPool;
         public Func<Transaction, string> NewTransactionCallBack;
+        public Func<Transaction, string> PriTxCallBack;
         public Func<Block, string> NewBlockCallBack;
         public Action<int> RefresfNodeCountCallBack;
         public Action<string> PushTxhsPoolCallBack;
@@ -175,7 +180,10 @@ namespace BaseSturct
                     refMod.Type = XXPCoinMsgType.NewBlock;
                     refMod.Value = handleNewBlock(mod);
                     break;
-
+                case XXPCoinMsgType.Pritransaction:
+                    refMod.Type = XXPCoinMsgType.Pritransaction;
+                    refMod.Value = handlePriTx(mod);
+                    break;
                 case XXPCoinMsgType.Message:
                     break;
                 default:
@@ -541,8 +549,6 @@ namespace BaseSturct
         #endregion
 
         #region Newtransactions
-
-
         public string SendNewtransactions(string ip, Transaction Tx)
         {
             LogHelper.WriteMethodLog(true);
@@ -562,12 +568,25 @@ namespace BaseSturct
 
         }
 
+
+
         public void SendNewTx2AddressLst(Transaction Tx)
         {
             LogHelper.WriteMethodLog(true);
             foreach (var item in this.dicAddressesPool)
             {
                 string str = SendNewtransactions(item.Key, Tx);
+            }
+            LogHelper.WriteMethodLog(false);
+
+        }
+
+        public void SendNewTx2AddressLst(Transaction Tx, List<string> lstIP)
+        {
+            LogHelper.WriteMethodLog(true);
+            foreach (var item in lstIP)
+            {
+                string str = SendNewtransactions(item, Tx);
             }
             LogHelper.WriteMethodLog(false);
 
@@ -842,10 +861,45 @@ namespace BaseSturct
             return sRet;
         }
 
-       
+
 
         #endregion
-     
+
+        #region Primitive Tx
+        public string SendPriTx(string ip, Transaction Tx)
+        {
+            LogHelper.WriteMethodLog(true);
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.Pritransaction;
+            sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            if (RcvMod.Type == XXPCoinMsgType.Exception)
+            {
+                return "Exception";
+            }
+            else
+            {
+                LogHelper.WriteInfoLog("SendPriTx ret: " + RcvMod.Value);
+                return RcvMod.Value;
+            }
+
+        }
+
+        private string handlePriTx(XXPSocketsModel socketMod)
+        {
+            LogHelper.WriteMethodLog(true);
+            Transaction tx = new Transaction();
+            if (!string.IsNullOrEmpty(socketMod.Value))
+            {
+                tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
+            }
+            string sRet = this.PriTxCallBack(tx);
+           
+            LogHelper.WriteInfoLog("handlePriTx ret: " + sRet);
+            return sRet;
+        }
+        #endregion
+
 
     }
 }

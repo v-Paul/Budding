@@ -600,9 +600,23 @@ namespace BaseSturct
             bool bHaveSigned = true;
             foreach (var item in PrimitiveTx.listInputs)
             {
+                // 只要input有一个没有签名list，就认为没有签名
                 if(item.lstScriptSig == null)
                 {
                     bHaveSigned = false;
+                    break;
+                }
+                else
+                {   // 有签名list后 判断自己是否已经签名，
+                    bHaveSigned = false;
+                    foreach (var item1 in item.lstScriptSig)
+                    {
+                        string strKeyHash = Cryptor.SHA256(item1.PubKey, item1.PubKey.Length);
+                        if(KeyHashKeypair.ContainsKey(strKeyHash))
+                        {
+                            bHaveSigned = true;
+                        }
+                    }
                 }
             }
             if(bHaveSigned)

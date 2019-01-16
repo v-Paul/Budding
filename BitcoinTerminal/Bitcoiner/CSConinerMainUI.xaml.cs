@@ -82,6 +82,7 @@ namespace Bitcoiner
                 this.commHandler.RefresfNodeCountCallBack = this.RefresfNodeCountCallBack;
                 this.commHandler.PushTxhsPoolCallBack = this.PushTxhsPoolCallBack;
                 this.commHandler.PushLastBlockCallBack = this.PushLastBlockCallBack;
+                this.commHandler.PriTxCallBack = this.PriTxCallBack;
 
                 this.CurrentBkHash = string.Empty;
 
@@ -325,6 +326,33 @@ namespace Bitcoiner
             }
             LogHelper.WriteMethodLog(false);
         }
+
+        private string PriTxCallBack(Transaction Tx)
+        {
+            LogHelper.WriteMethodLog(true);
+            string sRet = string.Empty;
+
+
+            if (this.txHandler.handleTxs(Tx) == ConstHelper.BC_OK)
+            {
+                sRet = this.bkHandler.AddTx2hsPool(Tx);
+
+                this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+                this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+                this.RefreshKeyValueBox();
+
+                this.RefreshInterfaceTxCount();
+
+            }
+            else
+            {
+                sRet = Decision.Reject;
+            }
+            LogHelper.WriteInfoLog("NewTransactionCallBack ret: " + sRet);
+            return sRet;
+
+        }
+
         #endregion
 
         #region Sync fucntions
@@ -920,10 +948,6 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
         }
 
-
-
-
-
         private void btnCreatePriTx_Click(object sender, RoutedEventArgs e)
         {
             #region CreatePrimitiveTX
@@ -946,18 +970,29 @@ namespace Bitcoiner
             //    return;
             //}
 
+            //List<Input> lstInput = new List<Input>();
             //foreach (var item in this.vm.GetMultiSignShows())
             //{
-            //    Input input = new Input(item.TxHash, item.OutputIndex);
-            //    lstInput.Add(input);
+            //    if(item.bIsAdd2PriTx)
+            //    {
+            //        Input input = new Input(item.TxHash, item.OutputIndex);
+            //        lstInput.Add(input);
+            //    }
+
+            //}
+            //if(lstInput.Count == 0)
+            //{
+            //    Info001Show("No checked input");
+            //    return;
             //}
             //string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtAcount);
 
 
 
-            List<Input> lstInput = new List<Input>();
-            
+
+
             // test data
+            List<Input> lstInput = new List<Input>();
             Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
             lstInput.Add(input);
             string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
@@ -997,26 +1032,67 @@ namespace Bitcoiner
 
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
         {
+            if(string.IsNullOrEmpty(this.txtIpAddress.Text))
+            {
+                Info001Show("Please enter IP address, if there are multiple IP addesses , please separate by space.");
+                return;
+            }
+            List<string> lstIP = this.txtIpAddress.Text.Split(' ').ToList<string>();
+            foreach (var item in lstIP)
+            {
+                var seperateIPNum = (from x in item.Split('.')
+                                     where x != ""
+                                     select x).ToList();
+
+                if (seperateIPNum.Count != 4)
+                {
+                    Info001Show(string.Format("{0} Please enter a valid IP address", item) );
+                    return;
+                }
+                foreach (var item1 in seperateIPNum)
+                {
+                    int a = -1;
+                    bool bsucc = int.TryParse(item1, out a);
+                    if(a<0 || a>255 || !bsucc)
+                    {
+                        Info001Show(string.Format("{0} Please enter a valid IP address", item));
+                        return;
+                    }
+                }
+            }
+
+
+
 
         }
 
         private void btnCreateRedeemTx_Click(object sender, RoutedEventArgs e)
         {
             #region CreateRedeemTx
-            string strRet = this.txHandler.CreateRedeemTx(ref this.mPrimitiveTx);
+
+            if(this.mPrimitiveTx == null)
+            {
+                Info001Show("You haven't create redeem primitive Tx! ");
+                return;
+            }
+            Transaction PrimitiveTx = new Transaction();
+            PrimitiveTx = this.mPrimitiveTx;
+
+            string strRet = this.txHandler.CreateRedeemTx(ref PrimitiveTx);
             if (strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
                 return;
             }
-            strRet = this.txHandler.handleTxs(mPrimitiveTx);
+            strRet = this.txHandler.handleTxs(PrimitiveTx);
 
             if (strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
                 return;
             }
-            this.bkHandler.AddTx2hsPool(mPrimitiveTx);
+
+            this.bkHandler.AddTx2hsPool(PrimitiveTx);
 
             this.RefreshInterfaceTxCount();
 
@@ -1027,10 +1103,11 @@ namespace Bitcoiner
 
             Task.Run(() =>
             {
-                this.commHandler.SendNewTx2AddressLst(mPrimitiveTx);
+                this.commHandler.SendNewTx2AddressLst(PrimitiveTx);
 
             });
-
+            // Create redeem tx success dispose mPrimitiveTx
+            this.mPrimitiveTx = null;
             LogHelper.WriteMethodLog(false);
 
             #endregion
