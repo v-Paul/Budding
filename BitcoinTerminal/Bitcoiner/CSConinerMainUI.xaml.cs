@@ -994,50 +994,52 @@ namespace Bitcoiner
             #region CreatePrimitiveTX
             LogHelper.WriteMethodLog(false);
 
-            //if (string.IsNullOrEmpty(this.txtAmount.Text))
-            //{
-            //    Info001Show("Please enter transfer AMOUNT.");
-            //    return;
-            //}
-            //if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
-            //{
-            //    Info001Show("Please enter receiver's right publicKey hash. ");
-            //    return;
-            //}
-            //double dPaytoAmount = 0;
-            //if (!Double.TryParse(this.txtAmount.Text, out dPaytoAmount))
-            //{
-            //    Info001Show("Please enter transfer amount NUMBER");
-            //    return;
-            //}
+            if (string.IsNullOrEmpty(this.txtMultiSignAmount.Text))
+            {
+                Info001Show("Please enter MultiSign AMOUNT.");
+                return;
+            }
+            double dPaytoAmount = 0;
+            if (!Double.TryParse(this.txtMultiSignAmount.Text, out dPaytoAmount))
+            {
+                Info001Show("Please enter MultiSign amount NUMBER");
+                return;
+            }
 
-            //List<Input> lstInput = new List<Input>();
-            //foreach (var item in this.vm.GetMultiSignShows())
-            //{
-            //    if(item.bIsAdd2PriTx)
-            //    {
-            //        Input input = new Input(item.TxHash, item.OutputIndex);
-            //        lstInput.Add(input);
-            //    }
-
-            //}
-            //if(lstInput.Count == 0)
-            //{
-            //    Info001Show("No checked input");
-            //    return;
-            //}
-            //string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtAcount);
+            if (string.IsNullOrEmpty(this.txtMultiSignPay2Hash.Text) || this.txtMultiSignPay2Hash.Text.Length != 64)
+            {
+                Info001Show("Please enter receiver's right publicKey hash. ");
+                return;
+            }
 
 
-
-
-
-            // test data
             List<Input> lstInput = new List<Input>();
-            Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
-            lstInput.Add(input);
-            string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
-            // end test
+            foreach (var item in this.vm.GetMultiSignShows())
+            {
+                if (item.BIsAdd2PriTx)
+                {
+                    Input input = new Input(item.TxHash, item.OutputIndex);
+                    lstInput.Add(input);
+                }
+
+            }
+            if (lstInput.Count == 0)
+            {
+                Info001Show("No checked input");
+                return;
+            }
+            string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtAcount);
+
+
+
+
+
+            //// test data
+            //List<Input> lstInput = new List<Input>();
+            //Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
+            //lstInput.Add(input);
+            //string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
+            //// end test
 
 
             Transaction PriTx = new Transaction();
