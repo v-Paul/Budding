@@ -151,5 +151,15 @@ namespace BaseSturct
             return bContain;
         }
 
+        public double GetCheckedValue()
+        {
+            var cc = (from x in this.MultiSignShows
+                      where x.BIsAdd2PriTx == true
+                      select x.Value).ToList();
+            double sum = cc.Sum();
+            return sum;
+
+        }
+
     }
 }

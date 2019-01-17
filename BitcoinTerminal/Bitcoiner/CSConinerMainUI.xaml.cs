@@ -103,6 +103,10 @@ namespace Bitcoiner
                 InitNotifyIcon();
 
                 txtExpress.Text = @"Use puzzle's four numbers Calculate 24 point, you can use any + - * / ()," + Environment.NewLine + "but each Number must and only be used once.";
+
+                // MultiSign
+                this.SetMultiSignOriUI();
+
             }
             catch (Exception ex)
             {
@@ -364,7 +368,12 @@ namespace Bitcoiner
                         bcontain = true;
                         sRet = Decision.Busy;
                         break;
-                    }
+                    }           
+                }
+
+                if (!bcontain)
+                {
+                    sRet = Decision.NoRight;
                 }
             }
 
@@ -399,7 +408,7 @@ namespace Bitcoiner
 
         #endregion
 
-            #region Sync fucntions
+        #region Sync fucntions
 
         private int ReserchNodes()
         {
@@ -932,7 +941,9 @@ namespace Bitcoiner
                     {
                         item.BIsAdd2PriTx = ret;
                     }
+                    this.SetMultiSignValue();
                 }
+               
             }
             catch (Exception)
             {
@@ -952,6 +963,7 @@ namespace Bitcoiner
                 {
                     ms.BIsAdd2PriTx = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
                 }
+                this.SetMultiSignValue();
             }
             catch (Exception)
             {
@@ -1093,9 +1105,7 @@ namespace Bitcoiner
                 this.SetTxjson("Create primitive Tx Success");
                 this.SetTxSignStatus(mPrimitiveTx);
 
-
-
-
+                this.ShowRequestIP();
             }
             
         }
@@ -1124,25 +1134,32 @@ namespace Bitcoiner
             else
             {
                 LogHelper.WriteInfoLog("Signed MultiSign TX: " + JsonHelper.Serializer<Transaction>(PriTx));
-                
-                Info001Show("Sign Success");               
-            }
-           //接收到的签名后清空，再发回去
-            if(!string.IsNullOrEmpty(mSenderIP))
-            {
-                string str = this.commHandler.ReplyPriTx(mSenderIP, PriTx);
-                if(str == ConstHelper.BC_OK)
+                               
+                //接收到的签名后清空，再发回去
+                if(!string.IsNullOrEmpty(mSenderIP))
                 {
-                    this.mPrimitiveTx = null;
-                    this.mSenderIP = string.Empty;
+
+                    string str = this.commHandler.ReplyPriTx(mSenderIP, PriTx);
+                    if(str == ConstHelper.BC_OK)
+                    {
+                        this.mPrimitiveTx = null;
+                        this.mSenderIP = string.Empty;
+                        Info001Show("Sign Success");
+                    }
+                    else
+                    {
+                        Info001Show("Sign Success, Send fail, Please try again!");
+                    }
+                }
+                else//自己创建的Primitive Tx
+                {                
+                    this.mPrimitiveTx = PriTx;
+                    this.SetTxSignStatus(mPrimitiveTx);
+                    this.ShowRedeem();
+                    Info001Show("Sign Success");
                 }
             }
-            else
-            {                
-                this.mPrimitiveTx = PriTx;
-                this.SetTxSignStatus(mPrimitiveTx);
-            }
- 
+
             LogHelper.WriteMethodLog(false);
 
         }
@@ -1176,12 +1193,12 @@ namespace Bitcoiner
                 {
                     string str =this.commHandler.SendPriTx(item, this.mPrimitiveTx);
                     sendResult.AppendFormat("{0} {1}\r\n", item, str);
-                }
+                }                
                 Info001Show(sendResult.ToString());
 
             });
 
-
+            this.ShowSign();
 
         }
 
@@ -1280,16 +1297,81 @@ namespace Bitcoiner
         }
 
 
-        private void SetUIbtnShow()
+
+
+        // multiple Sign UI control
+        private void SetMultiSignOriUI()
         {
-            //
+            this.Dispatcher.Invoke(()=> {
+                this.btnMultiSign.Visibility = Visibility.Collapsed;
+                this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
+                this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
+                this.btnMultiSignReject.Visibility = Visibility.Collapsed;
+
+                this.btnMultiCreatePritx.IsEnabled = true;
+                this.txtMultiSignAmount.IsReadOnly = false;
+                this.txtMultiSignPay2Hash.IsReadOnly = false;
+            });
+
         }
-           
+
+        private void SetSignCallbackShow()
+        {
+            this.Dispatcher.Invoke(() => {
+                
+                this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
+                this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
+
+                this.btnMultiCreatePritx.IsEnabled = false;
+                this.txtMultiSignAmount.IsReadOnly = true;
+                this.txtMultiSignPay2Hash.IsReadOnly = true;
+                this.btnMultiSign.Visibility = Visibility.Visible;
+                this.btnMultiSignReject.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void SetMultiSignValue()
+        {
+            this.Dispatcher.Invoke(() => {
+                double sum = this.vm.GetCheckedValue();
+                this.txtMultiSignAmount.Text = sum.ToString("F2");
+            });
+        }
+
+        private void ShowRequestIP()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignRequestSign.Visibility = Visibility.Visible;
+                this.txtIpAddress.Visibility = Visibility.Visible;
+               
+            });
+        }
+
+        private void ShowSign()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSign.Visibility = Visibility.Visible;
+            });
+        }
+        private void ShowReject()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignReject.Visibility = Visibility.Visible;
+            });
+        }
+        private void ShowRedeem()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Visible;
+            });
+        }
 
 
         #endregion
 
-      
+
     }
 
 }
