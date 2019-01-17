@@ -34,6 +34,8 @@ namespace Bitcoiner
         private NotifyIcon notifyIcon;
 
         private Transaction mPrimitiveTx;
+        private string mSenderIP = string.Empty;
+        
         MultiSignViewModel vm = new MultiSignViewModel();
 
         public CSConinerMainUI()
@@ -41,17 +43,13 @@ namespace Bitcoiner
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
             LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
-            //MultiSignViewModel vm = new MultiSignViewModel();
-            //MockData(vm);
-            //this.DataContext = vm;
+
         }
 
         #region Events
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
-            //this.commHandler.NotifyOffline();
-            //this.Close();
         }
 
         private void spTtile_MouseDown(object sender, MouseButtonEventArgs e)
@@ -82,7 +80,7 @@ namespace Bitcoiner
                 this.commHandler.PushTxhsPoolCallBack = this.PushTxhsPoolCallBack;
                 this.commHandler.PushLastBlockCallBack = this.PushLastBlockCallBack;
                 this.commHandler.PriTxCallBack = this.PriTxCallBack;
-
+                this.commHandler.ReplyPriTxCallBack = this.ReplyPriTxCallBack;
                 this.CurrentBkHash = string.Empty;
 
                 // modify by fdp 加快form显示速度
@@ -105,6 +103,10 @@ namespace Bitcoiner
                 InitNotifyIcon();
 
                 txtExpress.Text = @"Use puzzle's four numbers Calculate 24 point, you can use any + - * / ()," + Environment.NewLine + "but each Number must and only be used once.";
+
+                // MultiSign
+                this.SetMultiSignOriUI();
+
             }
             catch (Exception ex)
             {
@@ -303,7 +305,6 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
         }
 
-
         void PushLastBlockCallBack(string ip)
         {
             LogHelper.WriteMethodLog(true);
@@ -326,30 +327,83 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
         }
 
-        private string PriTxCallBack(Transaction Tx)
+        private string PriTxCallBack(Transaction Tx, string senderIP)
         {
             LogHelper.WriteMethodLog(true);
             string sRet = string.Empty;
+            bool bcontain = false;
 
-
-            if (this.txHandler.handleTxs(Tx) == ConstHelper.BC_OK)
+            if(this.mPrimitiveTx == null)
             {
-                sRet = this.bkHandler.AddTx2hsPool(Tx);
+                foreach (var item in Tx.listInputs)
+                {
+                    if (this.vm.bContainSetChecked(item.PreTxHash, item.OutputIndex))
+                    {
+                        bcontain = true;
+                    }
+                }
+                if(bcontain)
+                {
+                    this.mPrimitiveTx = Tx;
+                    this.mSenderIP = senderIP;
+                    sRet = Decision.Informed;
+                    Task.Run(() => {
+                        Info001Show("Received a Multisign Tx to sign");
+                        this.SetTxjson("Received a Multisign Tx to Sign");
+                        this.SetTxSignStatus(mPrimitiveTx);
 
-                this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
-                this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
-                this.RefreshKeyValueBox();
-
-                this.RefreshInterfaceTxCount();
-
+                    });
+                }
+                else
+                {
+                    sRet = Decision.NoRight;
+                }
             }
             else
             {
-                sRet = Decision.Reject;
+                foreach (var item in Tx.listInputs)
+                {
+                    if (this.vm.bContainUtxo(item.PreTxHash, item.OutputIndex))
+                    {
+                        bcontain = true;
+                        sRet = Decision.Busy;
+                        break;
+                    }           
+                }
+
+                if (!bcontain)
+                {
+                    sRet = Decision.NoRight;
+                }
             }
-            LogHelper.WriteInfoLog("NewTransactionCallBack ret: " + sRet);
+
+
+            LogHelper.WriteInfoLog("PriTxCallBack ret: " + sRet);
             return sRet;
 
+        }
+
+        private string ReplyPriTxCallBack(Transaction Tx, string senderIP)
+        {
+            if(Tx == null)
+            {
+                this.SetTxjson(string.Format("IP:{} Reject to sign"));
+            }
+            else
+            {
+                for (int i = 0; i < Tx.listInputs.Count; i++)
+                {
+                    foreach (var item in Tx.listInputs[i].lstScriptSig)
+                    {
+                        this.mPrimitiveTx.listInputs[i].lstScriptSig.Add(item);
+                    }
+                }
+                this.SetTxjson(string.Format("IP:{} Have signed"));
+                this.SetTxSignStatus(mPrimitiveTx);
+            }
+
+
+            return "";
         }
 
         #endregion
@@ -533,6 +587,7 @@ namespace Bitcoiner
                 // todo add condition 
                 
                 vm = this.keyHandler.MultiSignUTXOPool2VM(true);
+                vm.SortbyScriptPKHashs();
                 this.DataContext = vm;
 
             });
@@ -573,11 +628,6 @@ namespace Bitcoiner
 
         private void btnCreateBlock_Click(object sender, RoutedEventArgs e)
         {
-            //Info001Show(new object[] { "PaulInfoInfoInfoInfoInfoInfoInfoInfoInfoInfo" });
-            //MessageHelper.Warn_001.Show(new object[] { "PaulWarnWarnWarnWarnWarnWarnWarnWarnWarnWarn" });
-            //MessageHelper.Error_001.Show(new object[] { "PaulErrorErrorErrorErrorErrorErrorErrorError" });
-            //MessageHelper.Question_001.Show(new object[] { "PaulQuestionQuestionQuestionQuestionQuestion" });
-            //return;
 
             LogHelper.WriteMethodLog(true);
             if (this.commHandler.GetAddressCount() == 0)
@@ -629,8 +679,6 @@ namespace Bitcoiner
                 MessageHelper.Error_001.Show("Offline, No nodes connected.");
                 return;
             }
-
-
 
             if (string.IsNullOrEmpty(this.txtAmount.Text))
             {
@@ -880,18 +928,6 @@ namespace Bitcoiner
             });
         }
 
-        private void MockData(MultiSignViewModel vm)
-        {
-            MultiSignShowModel ms = new MultiSignShowModel();
-            ms.BIsAdd2PriTx = true;
-            ms.ID = "1";
-            ms.TxHash = "1234567812345678123456781234567812345678123456781234567812345678";
-            ms.OutputIndex = 0;
-            ms.Value = 121.1;
-            ms.OutScriptPKHash = "1234567812345678"+ Environment.NewLine +"1234567812345678" + Environment.NewLine + "1234567812345678";
-            vm.MultiSignShows.Add(ms);
-            vm.MultiSignShows.Add(ms);
-        }
 
         private void btnCheckAll_Click(object sender, RoutedEventArgs e)
         {
@@ -901,11 +937,13 @@ namespace Bitcoiner
                 bool ret = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
                 if (this.vm.MultiSignShows?.Count != 0)
                 {
-                    foreach (MultiSignShowModel item in this.vm.MultiSignShows)
+                    foreach (MultiSignModel item in this.vm.MultiSignShows)
                     {
                         item.BIsAdd2PriTx = ret;
                     }
+                    this.SetMultiSignValue();
                 }
+               
             }
             catch (Exception)
             {
@@ -920,11 +958,12 @@ namespace Bitcoiner
             {
                 System.Windows.Controls.CheckBox cb = sender as System.Windows.Controls.CheckBox;
 
-                MultiSignShowModel ms = (MultiSignShowModel)cb.DataContext;
+                MultiSignModel ms = (MultiSignModel)cb.DataContext;
                 if (ms != null)
                 {
                     ms.BIsAdd2PriTx = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
                 }
+                this.SetMultiSignValue();
             }
             catch (Exception)
             {
@@ -932,10 +971,15 @@ namespace Bitcoiner
                 throw;
             }
         }
+
+
+        private void SetTxjson(string strData)
+        {
+            this.txtTxjson.Text = strData + Environment.NewLine + this.txtTxjson.Text;
+        }
         #endregion
 
         #region MultiSign
-
 
         public void CreateMutiSignTrans(int N, int M, double dPaytoAmount, string MutiPkHash)
         {
@@ -1003,10 +1047,13 @@ namespace Bitcoiner
 
         private void btnCreatePriTx_Click(object sender, RoutedEventArgs e)
         {
-            //SetCheckEnable(false);
-            //return;
-            #region CreatePrimitiveTX
+          
             LogHelper.WriteMethodLog(false);
+            if(this.mPrimitiveTx != null)
+            {
+                Info001Show("There is a primitive Tx wait to sign");
+                return;
+            }
 
             if (string.IsNullOrEmpty(this.txtMultiSignAmount.Text))
             {
@@ -1042,22 +1089,10 @@ namespace Bitcoiner
                 Info001Show("No checked input");
                 return;
             }
-            string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtAcount);
-
-
-
-
-
-            //// test data
-            //List<Input> lstInput = new List<Input>();
-            //Input input = new Input("C832E985B1D16ABFD7949589D4CFED1F4A19623B440ED1FD61AFD584C217463D", 0);
-            //lstInput.Add(input);
-            //string strp2Script = "OP_DUP OP_HASH160 69C79662330838155EF3474300908FAC9F14D912AF52F5863E5143B551F5D869 OP_EQUALVERIFY OP_CHECKSIG";
-            //// end test
-
+            string strp2Script = string.Format("OP_DUP OP_HASH160 {0} OP_EQUALVERIFY OP_CHECKSIG", this.txtMultiSignPay2Hash.Text);
 
             Transaction PriTx = new Transaction();
-            string strRet = this.txHandler.CreatPrimitiveTx(lstInput, 10, strp2Script, ref PriTx);
+            string strRet = this.txHandler.CreatPrimitiveTx(lstInput, dPaytoAmount, strp2Script, ref PriTx);
             if (strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
@@ -1066,25 +1101,67 @@ namespace Bitcoiner
             else
             {
                 this.mPrimitiveTx = PriTx;
+                //this.lstView.IsEnabled = false;
+                this.SetTxjson("Create primitive Tx Success");
+                this.SetTxSignStatus(mPrimitiveTx);
+
+                this.ShowRequestIP();
             }
-            #endregion
+            
         }
 
         private void btnSign_Click(object sender, RoutedEventArgs e)
         {
-            #region MultiSign
+            LogHelper.WriteMethodLog(true);
+            if(this.mPrimitiveTx == null)
+            {
+                Info001Show("No MultiSing Tx need to be signed!");
+                return;
+            }
+
             Dictionary<string, keyPair> dickHKeyPair = new Dictionary<string, keyPair>();
             this.keyHandler.GetdicPkHKeypair(ref dickHKeyPair);
 
-            string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref this.mPrimitiveTx);
+            Transaction PriTx = new Transaction();
+            PriTx = this.mPrimitiveTx;
+            string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref PriTx);
             if(strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
+                LogHelper.WriteErrorLog(strRet);
                 return;
             }
-            LogHelper.WriteInfoLog("MultiSign TX: " + JsonHelper.Serializer<Transaction>(this.mPrimitiveTx));
+            else
+            {
+                LogHelper.WriteInfoLog("Signed MultiSign TX: " + JsonHelper.Serializer<Transaction>(PriTx));
+                               
+                //接收到的签名后清空，再发回去
+                if(!string.IsNullOrEmpty(mSenderIP))
+                {
+
+                    string str = this.commHandler.ReplyPriTx(mSenderIP, PriTx);
+                    if(str == ConstHelper.BC_OK)
+                    {
+                        this.mPrimitiveTx = null;
+                        this.mSenderIP = string.Empty;
+                        Info001Show("Sign Success");
+                    }
+                    else
+                    {
+                        Info001Show("Sign Success, Send fail, Please try again!");
+                    }
+                }
+                else//自己创建的Primitive Tx
+                {                
+                    this.mPrimitiveTx = PriTx;
+                    this.SetTxSignStatus(mPrimitiveTx);
+                    this.ShowRedeem();
+                    Info001Show("Sign Success");
+                }
+            }
+
             LogHelper.WriteMethodLog(false);
-            #endregion
+
         }
 
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
@@ -1094,38 +1171,40 @@ namespace Bitcoiner
                 Info001Show("Please enter IP address, if there are multiple IP addesses , please separate by space.");
                 return;
             }
-            List<string> lstIP = this.txtIpAddress.Text.Split(' ').ToList<string>();
-            foreach (var item in lstIP)
+            if(this.mPrimitiveTx == null)
             {
-                var seperateIPNum = (from x in item.Split('.')
-                                     where x != ""
-                                     select x).ToList();
-
-                if (seperateIPNum.Count != 4)
-                {
-                    Info001Show(string.Format("{0} Please enter a valid IP address", item) );
-                    return;
-                }
-                foreach (var item1 in seperateIPNum)
-                {
-                    int a = -1;
-                    bool bsucc = int.TryParse(item1, out a);
-                    if(a<0 || a>255 || !bsucc)
-                    {
-                        Info001Show(string.Format("{0} Please enter a valid IP address", item));
-                        return;
-                    }
-                }
+                Info001Show("Please create primitive Tx first!");
+                return;
             }
 
+            List<string> lstIP = new List<string>();
+            string strRet = this.IsValidIpAddresses(this.txtIpAddress.Text, ref lstIP);
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
 
+            Task.Run(() =>
+            {
+               // string sendResult = string.Empty;
+                StringBuilder sendResult = new StringBuilder();
+                foreach (var item in lstIP)
+                {
+                    string str =this.commHandler.SendPriTx(item, this.mPrimitiveTx);
+                    sendResult.AppendFormat("{0} {1}\r\n", item, str);
+                }                
+                Info001Show(sendResult.ToString());
 
+            });
+
+            this.ShowSign();
 
         }
 
         private void btnCreateRedeemTx_Click(object sender, RoutedEventArgs e)
         {
-            #region CreateRedeemTx
+          
 
             if(this.mPrimitiveTx == null)
             {
@@ -1165,13 +1244,134 @@ namespace Bitcoiner
             });
             // Create redeem tx success dispose mPrimitiveTx
             this.mPrimitiveTx = null;
+            this.txtMultiSignAmount.Text = string.Empty;
+            this.txtMultiSignPay2Hash.Text = string.Empty;
+            this.txtTxjson.Text = string.Empty;
+
             LogHelper.WriteMethodLog(false);
 
-            #endregion
         }
+
+        private void SetTxSignStatus(Transaction PriTx)
+        {
+            foreach (var item in PriTx.listInputs)
+            {
+                this.SetTxjson(string.Format("input:{0}", item.PreTxHash));
+                int m = vm.GetOutScriptPKHashCount(item.PreTxHash);
+                int n = item.lstScriptSig == null ? 0 : item.lstScriptSig.Count;
+                this.SetTxjson(string.Format("Signed: {0}/{1}", n, m));
+            }
+        }
+
+        /// <summary>
+        /// 检验是否有效Ip地址，多个IP地址以空格分隔
+        /// </summary>
+        /// <param name="strIP"></param>
+        /// <returns></returns>
+        private string IsValidIpAddresses(string strIP, ref List<string> lstIP)
+        {
+            lstIP = strIP.Split(' ').ToList<string>();
+            foreach (var item in lstIP)
+            {
+                var seperateIPNum = (from x in item.Split('.')
+                                     where x != ""
+                                     select x).ToList();
+
+                if (seperateIPNum.Count != 4)
+                {
+                    return (string.Format("{0} Please enter a valid IP address", item));
+                   
+                }
+                foreach (var item1 in seperateIPNum)
+                {
+                    int a = -1;
+                    bool bsucc = int.TryParse(item1, out a);
+                    if (a < 0 || a > 255 || !bsucc)
+                    {
+                        return (string.Format("{0} Please enter a valid IP address", item));                       
+                    }
+                }
+            }
+
+            return ConstHelper.BC_OK;
+        }
+
+
+
+
+        // multiple Sign UI control
+        private void SetMultiSignOriUI()
+        {
+            this.Dispatcher.Invoke(()=> {
+                this.btnMultiSign.Visibility = Visibility.Collapsed;
+                this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
+                this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
+                this.btnMultiSignReject.Visibility = Visibility.Collapsed;
+
+                this.btnMultiCreatePritx.IsEnabled = true;
+                this.txtMultiSignAmount.IsReadOnly = false;
+                this.txtMultiSignPay2Hash.IsReadOnly = false;
+            });
+
+        }
+
+        private void SetSignCallbackShow()
+        {
+            this.Dispatcher.Invoke(() => {
+                
+                this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
+                this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
+
+                this.btnMultiCreatePritx.IsEnabled = false;
+                this.txtMultiSignAmount.IsReadOnly = true;
+                this.txtMultiSignPay2Hash.IsReadOnly = true;
+                this.btnMultiSign.Visibility = Visibility.Visible;
+                this.btnMultiSignReject.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void SetMultiSignValue()
+        {
+            this.Dispatcher.Invoke(() => {
+                double sum = this.vm.GetCheckedValue();
+                this.txtMultiSignAmount.Text = sum.ToString("F2");
+            });
+        }
+
+        private void ShowRequestIP()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignRequestSign.Visibility = Visibility.Visible;
+                this.txtIpAddress.Visibility = Visibility.Visible;
+               
+            });
+        }
+
+        private void ShowSign()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSign.Visibility = Visibility.Visible;
+            });
+        }
+        private void ShowReject()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignReject.Visibility = Visibility.Visible;
+            });
+        }
+        private void ShowRedeem()
+        {
+            this.Dispatcher.Invoke(() => {
+                this.btnMultiSignCreateRedeem.Visibility = Visibility.Visible;
+            });
+        }
+
+
         #endregion
 
-      
+
     }
 
 }

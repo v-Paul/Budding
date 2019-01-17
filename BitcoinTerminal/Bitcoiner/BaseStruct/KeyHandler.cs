@@ -463,18 +463,19 @@ namespace BaseSturct
             { dicMsUTXOPool = this.dicUnComitMsUTXOPool; }
 
             MultiSignViewModel msVM = new MultiSignViewModel();
-            int i = 0;
+            
             foreach (var item in dicMsUTXOPool)
             {
-                MultiSignShowModel msSM = new MultiSignShowModel();
-                msSM.ID = i.ToString();
+                MultiSignModel msSM = new MultiSignModel();
+               
                 msSM.TxHash = item.Key.getTxHash();
                 msSM.OutputIndex = (int)item.Key.getIndex();
                 msSM.Value = item.Value.value;
                 msSM.OutScriptPKHash = item.Value.getPKHashFromScript();
+                msSM.ID = Cryptor.SHA256(msSM.OutScriptPKHash, msSM.OutScriptPKHash.Length).Substring(0,8);
                 msSM.BIsAdd2PriTx = false;
                 msVM.AddItem(msSM);
-                i++;
+                
             }
             LogHelper.WriteMethodLog(false);
             return msVM;

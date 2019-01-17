@@ -49,6 +49,8 @@ namespace BaseSturct
 
         // MultiSign
         public const string Informed = "Informed";
+        public const string NoRight = "NoRight";
+        public const string Busy = "Busy";
         public const string RejectSign = "RejectSign";
     }
 
@@ -89,7 +91,8 @@ namespace BaseSturct
         private SocketsHelper TransFileHelper;
         private Dictionary<string, int> dicAddressesPool;
         public Func<Transaction, string> NewTransactionCallBack;
-        public Func<Transaction, string> PriTxCallBack;
+        public Func<Transaction,string, string> PriTxCallBack;
+        public Func<Transaction, string, string> ReplyPriTxCallBack;
         public Func<Block, string> NewBlockCallBack;
         public Action<int> RefresfNodeCountCallBack;
         public Action<string> PushTxhsPoolCallBack;
@@ -184,10 +187,15 @@ namespace BaseSturct
                     refMod.Type = XXPCoinMsgType.Pritransaction;
                     refMod.Value = handlePriTx(mod);
                     break;
+                case XXPCoinMsgType.SignedPriTx:
+                    refMod.Type = XXPCoinMsgType.SignedPriTx;
+                    refMod.Value = handleReplyPriTx(mod);
+                    break;
                 case XXPCoinMsgType.Message:
                     break;
                 default:
-                    
+                    refMod.Type = XXPCoinMsgType.Unkonw;
+                    refMod.Value = XXPCoinMsgType.Unkonw;
                     break;
             }
             LogHelper.WriteMethodLog(false);
@@ -880,6 +888,12 @@ namespace BaseSturct
             else
             {
                 LogHelper.WriteInfoLog("SendPriTx ret: " + RcvMod.Value);
+                // 兼容0.5及以下版本，
+                if(string.IsNullOrEmpty(RcvMod.Value) && string.IsNullOrEmpty(RcvMod.Value))
+                {
+                    RcvMod.Type = XXPCoinMsgType.Unkonw;
+                    RcvMod.Value = XXPCoinMsgType.Unkonw;
+                }
                 return RcvMod.Value;
             }
 
@@ -893,13 +907,63 @@ namespace BaseSturct
             {
                 tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
             }
-            string sRet = this.PriTxCallBack(tx);
+            string sRet = this.PriTxCallBack(tx, socketMod.IpAddress);
            
             LogHelper.WriteInfoLog("handlePriTx ret: " + sRet);
             return sRet;
         }
         #endregion
 
+        #region SignPriTx
+        public string ReplyPriTx(string ip, Transaction Tx)
+        {
+            LogHelper.WriteMethodLog(true);
+            XXPSocketsModel sendMod = new XXPSocketsModel();
+            sendMod.Type = XXPCoinMsgType.SignedPriTx;
+            if(Tx != null)
+            {
+                sendMod.Value = JsonHelper.Serializer<Transaction>(Tx);
+            }
+            else
+            {
+                sendMod.Value = Decision.Reject;
+            }
+            
+            XXPSocketsModel RcvMod = this.XXPSendMessage(ip, sendMod);
+            if (RcvMod.Type == XXPCoinMsgType.Exception)
+            {
+                return "Exception";
+            }
+            else
+            {
+                LogHelper.WriteInfoLog("ReplyPriTx ret: " + RcvMod.Value);
+
+                return RcvMod.Value;
+            }
+
+        }
+
+        private string handleReplyPriTx(XXPSocketsModel socketMod)
+        {
+            LogHelper.WriteMethodLog(true);
+            Task.Run(()=> {
+                if (!string.IsNullOrEmpty(socketMod.Value) || socketMod.Value != Decision.Reject)
+                {
+                    Transaction tx = new Transaction();
+                    tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
+                    this.ReplyPriTxCallBack(tx, socketMod.IpAddress);
+                }
+                else
+                {
+                    this.ReplyPriTxCallBack(null, socketMod.IpAddress);
+                }
+
+            });
+
+            LogHelper.WriteMethodLog(false);
+            return ConstHelper.BC_OK;
+        }
+        #endregion
 
     }
 }

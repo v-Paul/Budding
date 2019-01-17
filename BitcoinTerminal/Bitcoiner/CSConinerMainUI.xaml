@@ -874,7 +874,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black" Click="btnCreatePriTx_Click"/>
+                            <Button Margin="5" x:Name="btnMultiCreatePritx" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CreatePriTx" FontSize="16" Background="black" Click="btnCreatePriTx_Click"/>
                             <Grid Grid.Column="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -887,16 +887,16 @@
                                 <TextBlock Foreground="White" Grid.Column="2" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox Grid.Column="3" x:Name="txtMultiSignPay2Hash" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
                             </Grid>
-                            <Button Margin="5" Grid.Row="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
+                            <Button Margin="5" Grid.Row="1" x:Name="btnMultiSignRequestSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
-                            <Button Margin="5"  Grid.Row="2"  Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
+                            <Button Margin="5"  Grid.Row="2"  x:Name="btnMultiSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
                             <Grid Grid.Row="2" Grid.Column="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <Button Margin="5" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
-                                <Button Margin="5" Grid.Column="1" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" />
+                                <Button Margin="5" x:Name="btnMultiSignCreateRedeem" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
+                                <Button Margin="5" Grid.Column="1" x:Name="btnMultiSignReject" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" />
                             </Grid>
                        
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >
