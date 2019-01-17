@@ -173,6 +173,8 @@ namespace VTMC.Utils
         public const string Message = "Message";
         public const string Exception = "Exception";
         public const string Pritransaction = "Pritransaction";
+        public const string SignedPriTx = "SignedPriTx";
+        public const string Unkonw = "Unkonw";
     }
 
 
