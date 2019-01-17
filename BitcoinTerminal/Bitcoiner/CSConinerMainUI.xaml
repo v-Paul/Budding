@@ -610,7 +610,7 @@
                 </Grid>
             </StackPanel>
             <TabControl Grid.Row="1" Background="{Binding}">
-                <TabItem Header="Base">
+                <TabItem Header="Base" Cursor="Hand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100"/>
@@ -826,7 +826,7 @@
                         </Canvas>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Advanced">
+                <TabItem Header="Advanced" Cursor="Hand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="0"/>
