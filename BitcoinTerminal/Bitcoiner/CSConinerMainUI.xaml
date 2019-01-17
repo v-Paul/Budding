@@ -834,17 +834,17 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="Condition Position!" Foreground="white" FontSize="30"/>
-                        <ListView x:Name="lstView"  Grid.Row="1" Background="Transparent" ItemsSource="{Binding MultiSignShows}" Foreground="#fab915" MinHeight="50" MaxHeight="220">
+                        <ListView x:Name="lstView" Grid.Row="1" Background="Transparent" ItemsSource="{Binding MultiSignShows}" Foreground="#fab915" MinHeight="50" MaxHeight="220">
                             <ListView.View>
-                                <GridView>
+                                <GridView >
                                     <GridView.Columns>
                                         <GridViewColumn  Width="50">
                                             <GridViewColumn.Header >
-                                                <CheckBox x:Name="btnCheckAll" Width="30" Click="btnCheckAll_Click" Foreground="#fab915"/>
+                                                <CheckBox x:Name="btnCheckAll" Width="30" Click="btnCheckAll_Click" Foreground="#fab915" />
                                             </GridViewColumn.Header>
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding BIsAdd2PriTx}" Click="CheckBox_Click" Tag="{Binding ID}"/>
+                                                    <CheckBox IsEnabled="{Binding IsCheckbBoxEnable}" HorizontalAlignment="Center" IsChecked="{Binding BIsAdd2PriTx}" Click="CheckBox_Click" Tag="{Binding ID}"/>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>

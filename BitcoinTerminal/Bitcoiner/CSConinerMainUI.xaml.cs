@@ -585,6 +585,19 @@ namespace Bitcoiner
 
             LogHelper.WriteMethodLog(false);
         }
+       
+        /// <summary>
+        /// Set status of CheckBox
+        /// </summary>
+        /// <param name="isEnable"></param>
+        private void SetCheckEnable(bool isEnable)
+        {
+            foreach (var item in this.vm.MultiSignShows)
+            {
+                item.IsCheckbBoxEnable = isEnable;
+            }
+            this.btnCheckAll.IsEnabled = isEnable;
+        }
         #endregion
 
         #region Ui Click functions
