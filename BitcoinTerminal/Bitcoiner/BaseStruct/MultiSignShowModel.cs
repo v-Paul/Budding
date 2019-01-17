@@ -53,6 +53,14 @@ namespace BaseSturct
             set { outScriptPKHash = value; OnPropertyChanged("OutScriptPKHash"); }
         }
 
+        private bool isCheckbBoxEnable = true;
+
+        public bool IsCheckbBoxEnable
+        {
+            get { return isCheckbBoxEnable; }
+            set { isCheckbBoxEnable = value; OnPropertyChanged("IsCheckbBoxEnable"); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName = "")
         {

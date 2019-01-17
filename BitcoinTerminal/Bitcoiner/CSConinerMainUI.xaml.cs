@@ -41,7 +41,6 @@ namespace Bitcoiner
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
             LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
-
             //MultiSignViewModel vm = new MultiSignViewModel();
             //MockData(vm);
             //this.DataContext = vm;
@@ -540,6 +539,19 @@ namespace Bitcoiner
 
             LogHelper.WriteMethodLog(false);
         }
+       
+        /// <summary>
+        /// Set status of CheckBox
+        /// </summary>
+        /// <param name="isEnable"></param>
+        private void SetCheckEnable(bool isEnable)
+        {
+            foreach (var item in this.vm.MultiSignShows)
+            {
+                item.IsCheckbBoxEnable = isEnable;
+            }
+            this.btnCheckAll.IsEnabled = isEnable;
+        }
         #endregion
 
         #region Ui Click functions
@@ -991,6 +1003,8 @@ namespace Bitcoiner
 
         private void btnCreatePriTx_Click(object sender, RoutedEventArgs e)
         {
+            //SetCheckEnable(false);
+            //return;
             #region CreatePrimitiveTX
             LogHelper.WriteMethodLog(false);
 
