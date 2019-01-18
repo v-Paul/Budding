@@ -388,11 +388,13 @@ namespace Bitcoiner
         private string ReplyPriTxCallBack(Transaction Tx, string senderIP)
         {
             LogHelper.WriteMethodLog(true);
-
+            string msg = string.Empty;
             // tx==null reject, tx lstsign ==null sign fail, other sign success
             if (Tx == null)
             {
-                this.SetTxjson(string.Format("IP:{} Reject to sign"));
+                msg = string.Format("IP:{} Reject to sign");
+                Info001Show(msg);
+                this.SetTxjson(msg);
             }
             else
             {
@@ -411,11 +413,16 @@ namespace Bitcoiner
                 }
                 if(bAlllstScriptSigNull)
                 {
-                    this.SetTxjson(string.Format("IP:{0} sign fail", senderIP));
+                    
+                    msg = string.Format("IP:{0} sign fail", senderIP);
+                    Info001Show(msg);
+                    this.SetTxjson(msg);
                 }
                 else
                 {
-                    this.SetTxjson(string.Format("IP:{0} Have signed", senderIP));
+                    msg = string.Format("IP:{0} signed", senderIP);
+                    Info001Show(msg);
+                    this.SetTxjson(msg);
                     this.SetTxSignStatus(mPrimitiveTx);
                 }
 
@@ -1124,9 +1131,7 @@ namespace Bitcoiner
                 this.AfterCreatePriTx();
             }
             
-        }
-
-      
+        }      
 
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
         {
@@ -1252,7 +1257,13 @@ namespace Bitcoiner
         }
         private void btnCancelpriTx_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.WriteMethodLog(true);
+            this.mPrimitiveTx = null;
+            this.mSenderIP = string.Empty;
+            Info001Show("Primitive canceled");
+            this.SetMultiSignOriUI();
 
+            LogHelper.WriteMethodLog(false);
         }
 
         private void btnCreateRedeemTx_Click(object sender, RoutedEventArgs e)
@@ -1297,6 +1308,7 @@ namespace Bitcoiner
             });
             // Create redeem tx success dispose mPrimitiveTx
             this.mPrimitiveTx = null;
+            Info001Show("Create Redeem Tx Success!");
             this.SetMultiSignOriUI();
 
             LogHelper.WriteMethodLog(false);

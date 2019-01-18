@@ -56,7 +56,12 @@ namespace BaseSturct
             {
                 this.lstScriptSig = new List<scriptSig>();
             }
-            this.lstScriptSig.Add(Sig);
+            if(!this.lstScriptSig.Contains(Sig))
+            {
+                this.lstScriptSig.Add(Sig);
+            }
+            
+           
         }
         public string getrawdata()
         {
@@ -71,6 +76,29 @@ namespace BaseSturct
     {
         public string Signature { get; set; }
         public string PubKey { get; set; }
+
+        public override bool Equals(Object other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            scriptSig otherSc = (scriptSig)other;
+            // 直接对比hash是否一致
+            if (this.GetHashCode() != otherSc.GetHashCode())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return (Signature).GetHashCode();
+        }
     }
 
     /// <summary>
