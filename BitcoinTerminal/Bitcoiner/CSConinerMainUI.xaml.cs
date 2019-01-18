@@ -388,21 +388,37 @@ namespace Bitcoiner
         private string ReplyPriTxCallBack(Transaction Tx, string senderIP)
         {
             LogHelper.WriteMethodLog(true);
+
+            // tx==null reject, tx lstsign ==null sign fail, other sign success
             if (Tx == null)
             {
                 this.SetTxjson(string.Format("IP:{} Reject to sign"));
             }
             else
             {
+                bool bAlllstScriptSigNull = true;
                 for (int i = 0; i < Tx.listInputs.Count; i++)
                 {
-                    foreach (var item in Tx.listInputs[i].lstScriptSig)
+                    if(Tx.listInputs[i].lstScriptSig != null)
                     {
-                        this.mPrimitiveTx.listInputs[i].addMutiSignTolst(item);
+                        foreach (var item in Tx.listInputs[i].lstScriptSig)
+                        {
+                            this.mPrimitiveTx.listInputs[i].addMutiSignTolst(item);
+                        }
+                        bAlllstScriptSigNull = false;
                     }
+                    
                 }
-                this.SetTxjson(string.Format("IP:{} Have signed"));
-                this.SetTxSignStatus(mPrimitiveTx);
+                if(bAlllstScriptSigNull)
+                {
+                    this.SetTxjson(string.Format("IP:{} sign fail"));
+                }
+                else
+                {
+                    this.SetTxjson(string.Format("IP:{} Have signed"));
+                    this.SetTxSignStatus(mPrimitiveTx);
+                }
+
             }
 
             LogHelper.WriteMethodLog(false);
@@ -1127,6 +1143,10 @@ namespace Bitcoiner
             string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref PriTx);
             if(strRet != ConstHelper.BC_OK)
             {
+                // 
+                this.commHandler.ReplyPriTx(mSenderIP, this.mPrimitiveTx);
+                this.mPrimitiveTx = null;
+                this.mSenderIP = string.Empty;
                 Info001Show(strRet);
                 LogHelper.WriteErrorLog(strRet);
                 return;
