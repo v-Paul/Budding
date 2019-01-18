@@ -387,7 +387,8 @@ namespace Bitcoiner
 
         private string ReplyPriTxCallBack(Transaction Tx, string senderIP)
         {
-            if(Tx == null)
+            LogHelper.WriteMethodLog(true);
+            if (Tx == null)
             {
                 this.SetTxjson(string.Format("IP:{} Reject to sign"));
             }
@@ -397,14 +398,14 @@ namespace Bitcoiner
                 {
                     foreach (var item in Tx.listInputs[i].lstScriptSig)
                     {
-                        this.mPrimitiveTx.listInputs[i].lstScriptSig.Add(item);
+                        this.mPrimitiveTx.listInputs[i].addMutiSignTolst(item);
                     }
                 }
                 this.SetTxjson(string.Format("IP:{} Have signed"));
                 this.SetTxSignStatus(mPrimitiveTx);
             }
 
-
+            LogHelper.WriteMethodLog(false);
             return "";
         }
 
@@ -1165,7 +1166,8 @@ namespace Bitcoiner
 
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
         {
-            if(string.IsNullOrEmpty(this.txtIpAddress.Text))
+            LogHelper.WriteMethodLog(true);
+            if (string.IsNullOrEmpty(this.txtIpAddress.Text))
             {
                 Info001Show("Please enter IP address, if there are multiple IP addesses , please separate by space.");
                 return;
@@ -1198,14 +1200,15 @@ namespace Bitcoiner
             });
 
             this.ShowSign();
+            LogHelper.WriteMethodLog(false);
 
         }
 
         private void btnCreateRedeemTx_Click(object sender, RoutedEventArgs e)
         {
-          
+            LogHelper.WriteMethodLog(true);
 
-            if(this.mPrimitiveTx == null)
+            if (this.mPrimitiveTx == null)
             {
                 Info001Show("You haven't create redeem primitive Tx! ");
                 return;

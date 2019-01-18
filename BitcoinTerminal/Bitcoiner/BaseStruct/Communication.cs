@@ -947,15 +947,15 @@ namespace BaseSturct
         {
             LogHelper.WriteMethodLog(true);
             Task.Run(()=> {
-                if (!string.IsNullOrEmpty(socketMod.Value) || socketMod.Value != Decision.Reject)
+                if (string.IsNullOrEmpty(socketMod.Value) || socketMod.Value == Decision.Reject)
+                {
+                    this.ReplyPriTxCallBack(null, socketMod.IpAddress);
+                }
+                else
                 {
                     Transaction tx = new Transaction();
                     tx = JsonHelper.Deserialize<Transaction>(socketMod.Value);
                     this.ReplyPriTxCallBack(tx, socketMod.IpAddress);
-                }
-                else
-                {
-                    this.ReplyPriTxCallBack(null, socketMod.IpAddress);
                 }
 
             });
