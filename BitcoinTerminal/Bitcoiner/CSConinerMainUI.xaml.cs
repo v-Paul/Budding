@@ -351,6 +351,8 @@ namespace Bitcoiner
                         Info001Show("Received a Multisign Tx to sign");
                         this.SetTxjson("Received a Multisign Tx to Sign");
                         this.SetTxSignStatus(mPrimitiveTx);
+                        
+                        this.SetSignCallbackShow();
 
                     });
                 }
@@ -941,7 +943,7 @@ namespace Bitcoiner
                     {
                         item.BIsAdd2PriTx = ret;
                     }
-                    this.SetMultiSignValue();
+                    this.txtMultiSignAmount.Text = this.GetMultiSignValue();
                 }
                
             }
@@ -963,7 +965,7 @@ namespace Bitcoiner
                 {
                     ms.BIsAdd2PriTx = (cb.IsChecked == null ? false : (bool)cb.IsChecked);
                 }
-                this.SetMultiSignValue();
+                this.txtMultiSignAmount.Text = this.GetMultiSignValue();
             }
             catch (Exception)
             {
@@ -973,10 +975,7 @@ namespace Bitcoiner
         }
 
 
-        private void SetTxjson(string strData)
-        {
-            this.txtTxjson.Text = strData + Environment.NewLine + this.txtTxjson.Text;
-        }
+
         #endregion
 
         #region MultiSign
@@ -1296,13 +1295,34 @@ namespace Bitcoiner
             return ConstHelper.BC_OK;
         }
 
+        private string GetPrimitiveOutHash(Transaction PriTx)
+        {
+            var lst = PriTx.listOutputs[0].scriptPubKey.Split(' ').ToList();
+            var outHash = (from x in lst
+                           where x.Substring(0, 3) != "OP_"
+                           select x).ToList();
 
+            StringBuilder strHash = new StringBuilder();
+            foreach (var item in outHash)
+            {
+                strHash.Append(item+" ");
+            }
+            return strHash.ToString();
+        }
 
 
         // multiple Sign UI control
+        private void SetTxjson(string strData)
+        {
+            this.Dispatcher.Invoke(() => {
+                this.txtTxjson.Text = strData + Environment.NewLine + this.txtTxjson.Text;
+            });
+        }
         private void SetMultiSignOriUI()
         {
             this.Dispatcher.Invoke(()=> {
+
+                
                 this.btnMultiSign.Visibility = Visibility.Collapsed;
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
@@ -1323,21 +1343,24 @@ namespace Bitcoiner
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
                 this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
+                //CreatePritx btn 不可点击，可回显value 和PKHash
+                this.txtMultiSignPay2Hash.Text = GetPrimitiveOutHash(this.mPrimitiveTx);
+                this.txtMultiSignAmount.Text = GetMultiSignValue();
 
                 this.btnMultiCreatePritx.IsEnabled = false;
                 this.txtMultiSignAmount.IsReadOnly = true;
                 this.txtMultiSignPay2Hash.IsReadOnly = true;
+
                 this.btnMultiSign.Visibility = Visibility.Visible;
                 this.btnMultiSignReject.Visibility = Visibility.Visible;
             });
         }
 
-        private void SetMultiSignValue()
+        private string GetMultiSignValue()
         {
-            this.Dispatcher.Invoke(() => {
-                double sum = this.vm.GetCheckedValue();
-                this.txtMultiSignAmount.Text = sum.ToString("F2");
-            });
+            double sum = this.vm.GetCheckedValue();           
+            return sum.ToString("F2");
+
         }
 
         private void ShowRequestIP()
