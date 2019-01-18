@@ -1165,6 +1165,7 @@ namespace Bitcoiner
                         this.mPrimitiveTx = null;
                         this.mSenderIP = string.Empty;
                         Info001Show("Sign Success");
+                        this.SetMultiSignOriUI();
                     }
                     else
                     {
@@ -1266,9 +1267,7 @@ namespace Bitcoiner
             });
             // Create redeem tx success dispose mPrimitiveTx
             this.mPrimitiveTx = null;
-            this.txtMultiSignAmount.Text = string.Empty;
-            this.txtMultiSignPay2Hash.Text = string.Empty;
-            this.txtTxjson.Text = string.Empty;
+            this.SetMultiSignOriUI();
 
             LogHelper.WriteMethodLog(false);
 
@@ -1345,7 +1344,6 @@ namespace Bitcoiner
         {
             this.Dispatcher.Invoke(()=> {
 
-                
                 this.btnMultiSign.Visibility = Visibility.Collapsed;
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
@@ -1355,6 +1353,9 @@ namespace Bitcoiner
                 this.btnMultiCreatePritx.IsEnabled = true;
                 this.txtMultiSignAmount.IsReadOnly = false;
                 this.txtMultiSignPay2Hash.IsReadOnly = false;
+                this.txtMultiSignAmount.Text = string.Empty;
+                this.txtMultiSignPay2Hash.Text = string.Empty;
+                this.txtTxjson.Text = string.Empty;
             });
 
         }
