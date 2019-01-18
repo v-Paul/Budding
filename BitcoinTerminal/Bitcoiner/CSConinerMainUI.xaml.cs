@@ -1077,6 +1077,11 @@ namespace Bitcoiner
                 Info001Show("There is a primitive Tx wait to sign");
                 return;
             }
+            if(this.vm.MultiSignShows.Count == 0)
+            {
+                Info001Show("You don't have any MultiSign Tx to redeem ");
+                return;
+            }
 
             if (string.IsNullOrEmpty(this.txtMultiSignAmount.Text))
             {
@@ -1223,6 +1228,7 @@ namespace Bitcoiner
                 else//自己创建的Primitive Tx
                 {
                     this.mPrimitiveTx = PriTx;
+                    this.SetTxjson("Sign success");
                     this.SetTxSignStatus(mPrimitiveTx);
                     this.ShowRedeem();
                     Info001Show("Sign Success");

@@ -13,7 +13,7 @@ namespace VTMC.Utils
     {
 
         //bitcoin const
-
+        public const string BC_ProcessName = "Bitcoiner";
         public const string BC_OK = "OK";
         public const string BC_LastKey = "LastKey";
         public const string BC_All = "All";
