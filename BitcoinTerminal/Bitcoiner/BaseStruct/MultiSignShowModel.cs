@@ -161,5 +161,13 @@ namespace BaseSturct
 
         }
 
+        public void ResetCheckStatus()
+        {
+            foreach (var item in this.MultiSignShows)
+            {
+                item.BIsAdd2PriTx = false;
+            }
+        }
+
     }
 }

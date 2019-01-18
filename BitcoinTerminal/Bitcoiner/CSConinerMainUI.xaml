@@ -897,8 +897,8 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Button Margin="5" x:Name="btnMultiSignCreateRedeem" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="150" Height="40"  Content="CreateRedeemTx" FontSize="16" Background="black" Click="btnCreateRedeemTx_Click"/>
-                                <Button Margin="5" Grid.Column="1" x:Name="btnMultiSignReject" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" />
-                                <Button Margin="5" Grid.Column="2" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CancelPriTx" FontSize="16" Background="black" />
+                                <Button Margin="5" Grid.Column="1" x:Name="btnMultiSignReject" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" Click="btnMultiSignReject_Click" />
+                                <Button Margin="5" Grid.Column="2" x:Name="btnCancelPriTx" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CancelPriTx" FontSize="16" Background="black" Click="btnCancelpriTx_Click" />
                             </Grid>
                        
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >

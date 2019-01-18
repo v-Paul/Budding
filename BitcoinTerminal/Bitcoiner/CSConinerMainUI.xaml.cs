@@ -1121,69 +1121,12 @@ namespace Bitcoiner
                 this.SetTxjson("Create primitive Tx Success");
                 this.SetTxSignStatus(mPrimitiveTx);
 
-                this.ShowRequestIP();
+                this.AfterCreatePriTx();
             }
             
         }
 
-        private void btnSign_Click(object sender, RoutedEventArgs e)
-        {
-            LogHelper.WriteMethodLog(true);
-            if(this.mPrimitiveTx == null)
-            {
-                Info001Show("No MultiSing Tx need to be signed!");
-                return;
-            }
-
-            Dictionary<string, keyPair> dickHKeyPair = new Dictionary<string, keyPair>();
-            this.keyHandler.GetdicPkHKeypair(ref dickHKeyPair);
-
-            Transaction PriTx = new Transaction();
-            PriTx = this.mPrimitiveTx;
-            string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref PriTx);
-            if(strRet != ConstHelper.BC_OK)
-            {
-                // 
-                this.commHandler.ReplyPriTx(mSenderIP, this.mPrimitiveTx);
-                this.mPrimitiveTx = null;
-                this.mSenderIP = string.Empty;
-                Info001Show(strRet);
-                LogHelper.WriteErrorLog(strRet);
-                return;
-            }
-            else
-            {
-                LogHelper.WriteInfoLog("Signed MultiSign TX: " + JsonHelper.Serializer<Transaction>(PriTx));
-                               
-                //接收到的签名后清空，再发回去
-                if(!string.IsNullOrEmpty(mSenderIP))
-                {
-
-                    string str = this.commHandler.ReplyPriTx(mSenderIP, PriTx);
-                    if(str == ConstHelper.BC_OK)
-                    {
-                        this.mPrimitiveTx = null;
-                        this.mSenderIP = string.Empty;
-                        Info001Show("Sign Success");
-                        this.SetMultiSignOriUI();
-                    }
-                    else
-                    {
-                        Info001Show("Sign Success, Send fail, Please try again!");
-                    }
-                }
-                else//自己创建的Primitive Tx
-                {                
-                    this.mPrimitiveTx = PriTx;
-                    this.SetTxSignStatus(mPrimitiveTx);
-                    this.ShowRedeem();
-                    Info001Show("Sign Success");
-                }
-            }
-
-            LogHelper.WriteMethodLog(false);
-
-        }
+      
 
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
         {
@@ -1222,6 +1165,93 @@ namespace Bitcoiner
 
             this.ShowSign();
             LogHelper.WriteMethodLog(false);
+
+        }
+
+
+        private void btnSign_Click(object sender, RoutedEventArgs e)
+        {
+            LogHelper.WriteMethodLog(true);
+            if (this.mPrimitiveTx == null)
+            {
+                Info001Show("No MultiSing Tx need to be signed!");
+                return;
+            }
+
+            Dictionary<string, keyPair> dickHKeyPair = new Dictionary<string, keyPair>();
+            this.keyHandler.GetdicPkHKeypair(ref dickHKeyPair);
+
+            Transaction PriTx = new Transaction();
+            PriTx = this.mPrimitiveTx;
+            string strRet = this.txHandler.SignPrimitiveTx(dickHKeyPair, ref PriTx);
+            if (strRet != ConstHelper.BC_OK)
+            {
+                // 
+                this.commHandler.ReplyPriTx(mSenderIP, this.mPrimitiveTx);
+                this.mPrimitiveTx = null;
+                this.mSenderIP = string.Empty;
+                Info001Show(strRet);
+                LogHelper.WriteErrorLog(strRet);
+                return;
+            }
+            else
+            {
+                LogHelper.WriteInfoLog("Signed MultiSign TX: " + JsonHelper.Serializer<Transaction>(PriTx));
+
+                //接收到的签名后清空，再发回去
+                if (!string.IsNullOrEmpty(mSenderIP))
+                {
+
+                    string str = this.commHandler.ReplyPriTx(mSenderIP, PriTx);
+                    if (str == ConstHelper.BC_OK)
+                    {
+                        this.mPrimitiveTx = null;
+                        this.mSenderIP = string.Empty;
+                        Info001Show("Sign Success");
+                        this.SetMultiSignOriUI();
+                    }
+                    else
+                    {
+                        Info001Show("Sign Success, Send fail, Please try again!");
+                    }
+                }
+                else//自己创建的Primitive Tx
+                {
+                    this.mPrimitiveTx = PriTx;
+                    this.SetTxSignStatus(mPrimitiveTx);
+                    this.ShowRedeem();
+                    Info001Show("Sign Success");
+                }
+            }
+
+            LogHelper.WriteMethodLog(false);
+
+        }
+
+        private void btnMultiSignReject_Click(object sender, RoutedEventArgs e)
+        {
+            LogHelper.WriteMethodLog(true);
+
+            //接收到的签名后清空，再发回去
+            string str = this.commHandler.ReplyPriTx(mSenderIP, null);
+            if (str == ConstHelper.BC_OK)
+            {
+                this.mPrimitiveTx = null;
+                this.mSenderIP = string.Empty;
+                Info001Show("Sign Success");
+                this.SetMultiSignOriUI();
+            }
+            else
+            {
+                Info001Show("Sign Success, Send fail, Please try again!");
+            }
+
+
+
+            LogHelper.WriteMethodLog(false);
+        }
+        private void btnCancelpriTx_Click(object sender, RoutedEventArgs e)
+        {
 
         }
 
@@ -1272,6 +1302,8 @@ namespace Bitcoiner
             LogHelper.WriteMethodLog(false);
 
         }
+
+
 
         private void SetTxSignStatus(Transaction PriTx)
         {
@@ -1344,11 +1376,13 @@ namespace Bitcoiner
         {
             this.Dispatcher.Invoke(()=> {
 
+                this.vm.ResetCheckStatus();
                 this.btnMultiSign.Visibility = Visibility.Collapsed;
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
                 this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
                 this.btnMultiSignReject.Visibility = Visibility.Collapsed;
+                this.btnCancelPriTx.Visibility = Visibility.Collapsed;
 
                 this.btnMultiCreatePritx.IsEnabled = true;
                 this.txtMultiSignAmount.IsReadOnly = false;
@@ -1370,7 +1404,6 @@ namespace Bitcoiner
                 //CreatePritx btn 不可点击，可回显value 和PKHash
                 this.txtMultiSignPay2Hash.Text = GetPrimitiveOutHash(this.mPrimitiveTx);
                 this.txtMultiSignAmount.Text = GetMultiSignValue();
-
                 this.btnMultiCreatePritx.IsEnabled = false;
                 this.txtMultiSignAmount.IsReadOnly = true;
                 this.txtMultiSignPay2Hash.IsReadOnly = true;
@@ -1387,11 +1420,13 @@ namespace Bitcoiner
 
         }
 
-        private void ShowRequestIP()
+        private void AfterCreatePriTx()
         {
             this.Dispatcher.Invoke(() => {
                 this.btnMultiSignRequestSign.Visibility = Visibility.Visible;
                 this.txtIpAddress.Visibility = Visibility.Visible;
+                this.btnMultiSign.Visibility = Visibility.Visible;
+                this.btnCancelPriTx.Visibility = Visibility.Visible;
                
             });
         }
@@ -1414,6 +1449,8 @@ namespace Bitcoiner
                 this.btnMultiSignCreateRedeem.Visibility = Visibility.Visible;
             });
         }
+
+
 
 
         #endregion
