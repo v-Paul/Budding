@@ -411,11 +411,11 @@ namespace Bitcoiner
                 }
                 if(bAlllstScriptSigNull)
                 {
-                    this.SetTxjson(string.Format("IP:{} sign fail"));
+                    this.SetTxjson(string.Format("IP:{0} sign fail", senderIP));
                 }
                 else
                 {
-                    this.SetTxjson(string.Format("IP:{} Have signed"));
+                    this.SetTxjson(string.Format("IP:{0} Have signed", senderIP));
                     this.SetTxSignStatus(mPrimitiveTx);
                 }
 
