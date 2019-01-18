@@ -610,7 +610,7 @@
                 </Grid>
             </StackPanel>
             <TabControl Grid.Row="1" Background="{Binding}">
-                <TabItem Header="Base">
+                <TabItem Header="Base" Cursor="Hand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100"/>
@@ -798,7 +798,7 @@
                         </Border>
 
                         <Canvas Width="200" Height="200" Margin="60,-10,133,21" Grid.Row="1" Grid.RowSpan="2">
-                            <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="4" Canvas.Top="188">
+                            <Path Fill="Transparent" Stroke="Transparent" x:Name="path1" StrokeThickness="3" Canvas.Left="10.5" Canvas.Top="185">
                                 <Path.Data>
                                     <PathGeometry>
                                         <PathFigure StartPoint="120,-20">
@@ -826,7 +826,7 @@
                         </Canvas>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Advanced">
+                <TabItem Header="Advanced" Cursor="Hand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="0"/>
