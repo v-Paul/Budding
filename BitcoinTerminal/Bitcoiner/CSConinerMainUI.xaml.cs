@@ -803,7 +803,15 @@ namespace Bitcoiner
 
         private void btnRefreshIps_Click(object sender, RoutedEventArgs e)
         {
-            UpdateIPs();
+            try
+            {
+                UpdateIPs();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         private void Test_Double()
@@ -948,13 +956,13 @@ namespace Bitcoiner
 
         private void UpdateIPs()
         {
-            List<string> ipLst = new List<string>();
+            List<string> ipLst = commHandler?.GetIPList();
             Dictionary<string, object> dic = new Dictionary<string, object>();
             /*dic.Add("192.168.88.257", null);
             dic.Add("192.168.88.222", null);
             dic.Add("192.168.88.23", null);*/
 
-            if (ipLst == null)
+            if (ipLst != null)
             {
                 foreach (string item in ipLst)
                 {
@@ -968,6 +976,25 @@ namespace Bitcoiner
             }
 
         }
+
+        private string GetIPs()
+        {
+            if (this.cmbIPs.Text.ToLower().Equals("all"))
+            {
+                string ips = "";
+                foreach (var item in this.cmbIPs.SelectedItems)
+                {
+                    ips += item.Key + "|";
+                }
+                ips = ips.Substring(0, ips.Length - 1);
+                return ips;
+            }
+            else
+            {
+                return this.cmbIPs.Text;
+            }
+        }
+
         private void Close(object sender, EventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
