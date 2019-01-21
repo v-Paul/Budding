@@ -119,7 +119,7 @@ namespace BaseSturct
                 return ls.Length;
             }
             return 0;
-
+             
         }
 
         public bool bContainUtxo(string strHash, int index)
@@ -159,6 +159,14 @@ namespace BaseSturct
             double sum = cc.Sum();
             return sum;
 
+        }
+
+        public void ResetCheckStatus()
+        {
+            foreach (var item in this.MultiSignShows)
+            {
+                item.BIsAdd2PriTx = false;
+            }
         }
 
     }

@@ -115,7 +115,10 @@ namespace BaseSturct
         {
             return this.dicAddressesPool.Count;
         }
-
+        public List<string> GetIPList()
+        {
+            return this.dicAddressesPool.Keys.ToList();
+        }
 
         public XXPSocketsModel XXPSendMessage(string ip, XXPSocketsModel Request)
         {

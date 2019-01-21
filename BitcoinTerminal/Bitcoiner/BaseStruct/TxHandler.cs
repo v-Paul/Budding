@@ -669,21 +669,11 @@ namespace BaseSturct
         public string CreateRedeemTx(ref Transaction signedPrimitiveTx)
         {
             LogHelper.WriteMethodLog(true);
-            int iRet = this.CheckMultiSignCount(signedPrimitiveTx);
+            string strErrorMsg = string.Empty;
+            int iRet = this.CheckMultiSignCount(signedPrimitiveTx, ref strErrorMsg);
             if(iRet != 0)
             {
-                switch (iRet)
-                {
-                    case -1:
-                        return "one of inputs isn't MultiSign Tx";
-                    case -2:
-                        return "The number of signatures did not meet the minimum requirements";
-                    case -3:
-                        return "The number of signatures more than M";
-
-                    default:
-                        break;
-                }
+                return strErrorMsg;
             }
 
             signedPrimitiveTx.FinalSetTrans();
@@ -697,7 +687,7 @@ namespace BaseSturct
         /// </summary>
         /// <param name="signedPrimitiveTx"></param>
         /// <returns>0:succ, -1:not multiSign, -2:sign not enough -3: signature more than M </returns>
-        public int CheckMultiSignCount(Transaction signedPrimitiveTx)
+        public int CheckMultiSignCount(Transaction signedPrimitiveTx, ref string errorMsg)
         {
             int i = 0;
             foreach (var item in signedPrimitiveTx.listInputs)
@@ -709,6 +699,7 @@ namespace BaseSturct
                 if (lstScript.Last() != "OP_CHECKMULTISIG")
                 {
                     LogHelper.WriteErrorLog("input isn't MultiSign Tx ");
+                    errorMsg = "one of inputs isn't MultiSign Tx";
                     return -1;
                 }
                 string OP_N = lstScript.First();
@@ -718,11 +709,14 @@ namespace BaseSturct
                 if (item.lstScriptSig.Count < N )
                 {
                     LogHelper.WriteErrorLog(string.Format("input[{0}] signature count not meet mini request",i));
+                    errorMsg = string.Format("input:[{0}]\r\n is a {1}/{2} Tx.\r\nThe number of signatures({3}) did not meet the minimum requirements",
+                                             item.PreTxHash, N,M, item.lstScriptSig.Count);
                     return -2;
                 }
                 else if(item.lstScriptSig.Count > M)
                 {
                     LogHelper.WriteErrorLog(string.Format("input[{0}] signature more than M", i));
+                    errorMsg = "The number of signatures more than M";
                     return -3;
                 }
                 i++;
