@@ -43,12 +43,13 @@ namespace Bitcoiner
             InitializeComponent();
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.xml"));
             LogHelper.WriteInfoLog("####################XXPCoin Starting ##############################");
-
+            UpdateIPs();
         }
 
         #region Events
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+
             this.Hide();
         }
 
@@ -792,6 +793,12 @@ namespace Bitcoiner
         #endregion
 
         #region wfp UI
+
+        private void btnRefreshIps_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateIPs();
+        }
+
         private void Test_Double()
         {
             if (border1.Visibility != Visibility.Visible)
@@ -932,7 +939,28 @@ namespace Bitcoiner
             this.Visibility = System.Windows.Visibility.Hidden;
         }
 
+        private void UpdateIPs()
+        {
+            List<string> ipLst = new List<string>();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            /*dic.Add("192.168.88.257", null);
+            dic.Add("192.168.88.222", null);
+            dic.Add("192.168.88.23", null);*/
 
+            if (ipLst == null)
+            {
+                foreach (string item in ipLst)
+                {
+                    dic.Add(item, null);
+                }
+                this.cmbIPs.ItemsSource = dic;
+            }
+            else
+            {
+                this.cmbIPs.ItemsSource = null;
+            }
+
+        }
         private void Close(object sender, EventArgs e)
         {
             System.Windows.Application.Current.Shutdown();
@@ -1416,9 +1444,10 @@ namespace Bitcoiner
         }
 
 
+
         #endregion
 
-
+       
     }
 
 }

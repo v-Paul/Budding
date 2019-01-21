@@ -76,6 +76,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="CustomControls\CSBMutiCombox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -98,6 +102,9 @@
     <Compile Include="BaseStruct\UTXOPool.cs" />
     <Compile Include="CSConinerMainUI.xaml.cs">
       <DependentUpon>CSConinerMainUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\CSBMutiCombox.xaml.cs">
+      <DependentUpon>CSBMutiCombox.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -226,6 +233,11 @@
     <SplashScreen Include="Resources\CSplash.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refreshIps.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

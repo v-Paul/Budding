@@ -371,6 +371,26 @@
             </Setter>
         </Style>
 
+        <Style x:Key="BtnRrefreshStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                            <Image Source="pack://siteoforigin:,,,/Resources/refreshIps.png"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
         <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <!--<Setter Property="Background" Value="#FFFCF5"/>-->
             <Setter Property="Background" Value="#40000000"/>
@@ -889,6 +909,24 @@
                             </Grid>
                             <Button Margin="5" Grid.Row="1" x:Name="btnMultiSignRequestSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
+                            <!--<<ComboBox x:Name="cmbIPs"  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Width="130" Height="40" FontSize="16" Foreground="#fab915" >
+                                <ComboBoxItem>192.168.88.257</ComboBoxItem>
+                                <ComboBoxItem>192.168.88.222</ComboBoxItem>
+                                <ComboBoxItem>192.168.88.23</ComboBoxItem>
+                            </ComboBox>-->
+                            <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <local:CSBMutiCombox HorizontalAlignment="Left" Margin="5,0" x:Name="cmbIPs" Background="Transparent" Width="300" Height="40" FontSize="16"/>
+                                <!--<Button Grid.Column="1" Style="{StaticResource BtnInfoStyle}" Background="black" Content="Refresh" Width="50" Height="40" HorizontalAlignment="Left" />-->
+                                <Button Style="{StaticResource BtnRrefreshStyle}" Click="btnRefreshIps_Click"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" x:Name="btnRefreshIps" Grid.Column="1"  Width="20" Height="20" Background="Transparent"  HorizontalAlignment="Left"/>
+
+
+
+                            </Grid>
+                            
                             <Button Margin="5"  Grid.Row="2"  x:Name="btnMultiSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
                             <Grid Grid.Row="2" Grid.Column="1">
                                 <Grid.ColumnDefinitions>

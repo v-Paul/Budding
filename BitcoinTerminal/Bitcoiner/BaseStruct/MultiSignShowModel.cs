@@ -80,7 +80,7 @@ namespace BaseSturct
             MultiSignShows = new ObservableCollection<MultiSignModel>();
         }
 
-        public void  AddItem(MultiSignModel msSM)
+        public void AddItem(MultiSignModel msSM)
         {
             this.MultiSignShows.Add(msSM);
         }
@@ -104,14 +104,14 @@ namespace BaseSturct
             //          select x.OutScriptPKHash);
             var mod = this.MultiSignShows.FirstOrDefault(x => x.TxHash == TxHash);
 
-            return mod != null?mod.OutScriptPKHash:"";
+            return mod != null ? mod.OutScriptPKHash : "";
         }
 
         public int GetOutScriptPKHashCount(string TxHash)
         {
 
             var mod = this.MultiSignShows.FirstOrDefault(x => x.TxHash == TxHash);
-            if(mod!=null)
+            if (mod != null)
             {
                 char ch = '\r';
                 int i = mod.OutScriptPKHash.Count(x => x == ch);
@@ -119,14 +119,14 @@ namespace BaseSturct
                 return ls.Length;
             }
             return 0;
-             
+
         }
 
         public bool bContainUtxo(string strHash, int index)
         {
             int Count = 0;
-            Count = this.MultiSignShows.Count(xx => xx.TxHash == strHash && xx.OutputIndex==index);
-            if(Count>0)
+            Count = this.MultiSignShows.Count(xx => xx.TxHash == strHash && xx.OutputIndex == index);
+            if (Count > 0)
             {
                 return true;
             }
@@ -141,7 +141,7 @@ namespace BaseSturct
             bool bContain = false;
             foreach (var item in this.MultiSignShows)
             {
-                if(item.TxHash == strHash && item.OutputIndex == index)
+                if (item.TxHash == strHash && item.OutputIndex == index)
                 {
                     item.BIsAdd2PriTx = true;
                     bContain = true;
