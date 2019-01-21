@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,7 +20,9 @@ namespace Bitcoiner
 
             try
             {
-                if (ProcessHelper.IsProcessRun(ConstHelper.BC_ProcessName))
+                System.Diagnostics.Process[] proc = Process.GetProcessesByName(ConstHelper.BC_ProcessName);
+
+                if (proc.Length >1)
                 {
                     MessageHelper.Info_001.Show("Bitcoiner is Running, Please call from system tray");
 
