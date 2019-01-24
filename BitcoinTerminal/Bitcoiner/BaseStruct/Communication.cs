@@ -263,7 +263,10 @@ namespace BaseSturct
             sendMod.Value = DBRequestType.RequestDBInfo;
 
             List<DBFileInfo> lstDBInfo = new List<DBFileInfo>();
-            foreach (var item in this.dicAddressesPool)
+
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 
                 XXPSocketsModel RetMod = this.XXPSendMessage(item.Key, sendMod);
@@ -372,8 +375,9 @@ namespace BaseSturct
             XXPSocketsModel sendMod = new XXPSocketsModel();
             sendMod.Type = XXPCoinMsgType.Handshake;
             sendMod.Value = ConstHelper.BC_NotifyOffline;
-
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 XXPSocketsModel RcvMod = this.XXPSendMessage(item.Key, sendMod, 3000);
             }
@@ -446,7 +450,9 @@ namespace BaseSturct
             }
 
             HashSet<string> hsNew = new HashSet<string>();
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 List<string> lstAddress = this.RequestMoreNodes(item.Key);
 
@@ -510,8 +516,9 @@ namespace BaseSturct
             {
                 sendMod.Value += item + "|";
             }
-
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 this.XXPSendMessage(item.Key, sendMod);
             }
@@ -525,7 +532,9 @@ namespace BaseSturct
             string strRet = string.Empty;
             if(string.IsNullOrEmpty(socketMod.Value))// give my addresspool to sender
             {
-                foreach (var item in dicAddressesPool)
+                Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+                dicAddPool = this.dicAddressesPool;
+                foreach (var item in dicAddPool)
                 {
                     strRet += item.Key + "|";
                 }
@@ -584,7 +593,9 @@ namespace BaseSturct
         public void SendNewTx2AddressLst(Transaction Tx)
         {
             LogHelper.WriteMethodLog(true);
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 string str = SendNewtransactions(item.Key, Tx);
             }
@@ -639,7 +650,9 @@ namespace BaseSturct
 
             ResponseBlock ResponseBkInfo = new ResponseBlock();
             List<ResponseBlock> lstResponse = new List<ResponseBlock>();
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
 
                 XXPSocketsModel RetMod = this.SocketsHelp.XXPSendMessage(item.Key, sendMod, AppSettings.XXPCommport);
@@ -833,7 +846,9 @@ namespace BaseSturct
             LogHelper.WriteMethodLog(true);
             string strRet = string.Empty;
             List<string> listResult = new List<string>();
-            foreach (var item in this.dicAddressesPool)
+            Dictionary<string, int> dicAddPool = new Dictionary<string, int>();
+            dicAddPool = this.dicAddressesPool;
+            foreach (var item in dicAddPool)
             {
                 string str = SendNewBlock(item.Key, block);
                 listResult.Add(str);

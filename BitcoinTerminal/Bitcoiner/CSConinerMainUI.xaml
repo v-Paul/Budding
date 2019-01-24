@@ -849,7 +849,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="txtAcount" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
-                                    <CheckBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <CheckBox Grid.Column="1" x:Name="chkBaseinputAnything"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -944,7 +944,7 @@
                                 <TextBox Grid.Column="1" MinWidth="50" Style="{StaticResource TextBoxStyle}" x:Name="txtMultiSignAmount" Height="40" Margin="5,0,2.5,0" />
                                 <TextBlock Foreground="White" Grid.Column="2" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox Grid.Column="3" x:Name="txtMultiSignPay2Hash" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
-                                <CheckBox Grid.Column="4"/>
+                                <CheckBox Grid.Column="4" x:Name="chkAdvinputAnything"/>
                             </Grid>
                             <Button Margin="5" Grid.Row="1" x:Name="btnMultiSignRequestSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>

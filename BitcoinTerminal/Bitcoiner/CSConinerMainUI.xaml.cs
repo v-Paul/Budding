@@ -721,64 +721,35 @@ namespace Bitcoiner
             int N = this.cmbNList.SelectedIndex;
             int M = this.cmbMList.SelectedIndex;
             // m=n=0 single sign Tx
-            if ((M==0 && N==0) || (M == -1 && N == -1))
+            if( (bool)this.chkBaseinputAnything.IsChecked )
             {
-                #region single sign Tx
-                if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
+                if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length > 256)
                 {
-                    Info001Show("Please enter receiver's right publicKey hash. ");
+                    Info001Show("Please enter anything, length less than 256");
                     return;
                 }
-
-
-                string strChoice = this.cmbKeyList.SelectedItem.ToString();
-                string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
-
-                if (strRet != ConstHelper.BC_OK)
-                {
-                    Info001Show(strRet);
-                    return;
-                }
-
-                string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
-                string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
-
-
-                double dInputTatolAmount = 0;
-                Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
-                                                            this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
-
-
-                Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
-                                                                     strPaytoHash, strChangePuKScript);
-                LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
-                strRet = this.txHandler.handleTxs(Tx);
-
-                if (strRet != ConstHelper.BC_OK)
-                {
-                    Info001Show(strRet);
-                    return;
-                }
-                this.bkHandler.AddTx2hsPool(Tx);
-
-                this.RefreshInterfaceTxCount();
-
-                this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
-                this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
-                this.RefreshKeyValueBox();
-                this.ResetInterfacePayItem();
-
-                Task.Run(() =>
-                {
-                    this.commHandler.SendNewTx2AddressLst(Tx);
-
-                });
-                #endregion
+                this.CreateTx(this.txtAcount.Text, dPaytoAmount);
             }
             else
             {
-                this.CreateMutiSignTrans(N, M, dPaytoAmount, this.txtAcount.Text);
+                if ((M == 0 && N == 0) || (M == -1 && N == -1))
+                {
+                    if (string.IsNullOrEmpty(this.txtAcount.Text) || this.txtAcount.Text.Length != 64)
+                    {
+                        Info001Show("Please enter receiver's right publicKey hash. ");
+                        return;
+                    }
+                    string strPaytoHash = this.keyHandler.PubKeyHash2Script(this.txtAcount.Text);
+                    this.CreateTx(strPaytoHash, dPaytoAmount);
+                }
+                else
+                {
+                    this.CreateMutiSignTrans(N, M, dPaytoAmount, this.txtAcount.Text);
+                }
             }
+
+
+  
 
            
 
@@ -796,6 +767,54 @@ namespace Bitcoiner
 
         }
 
+        public void CreateTx(string strhash, double dPaytoAmount)
+        {
+            #region single sign Tx
+            string strPaytoHash = strhash; 
+            string strChoice = this.cmbKeyList.SelectedItem.ToString();
+            string strRet = this.keyHandler.CheckBalance(strChoice, dPaytoAmount, this.txHandler.GetUtxoPool(true));
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+
+            
+            string strChangePuKScript = this.keyHandler.PubKeyHash2Script(this.txtKeyHash.Text);
+
+
+            double dInputTatolAmount = 0;
+            Dictionary<UTXO, keyPair> dicInputUtxo = this.keyHandler.FindInputUtxo(strChoice, dPaytoAmount,
+                                                        this.txHandler.GetUtxoPool(true), ref dInputTatolAmount);
+
+
+            Transaction Tx = this.txHandler.CreatTransaction(dicInputUtxo, dInputTatolAmount, dPaytoAmount,
+                                                                 strPaytoHash, strChangePuKScript);
+            LogHelper.WriteInfoLog(JsonHelper.Serializer<Transaction>(Tx));
+            strRet = this.txHandler.handleTxs(Tx);
+
+            if (strRet != ConstHelper.BC_OK)
+            {
+                Info001Show(strRet);
+                return;
+            }
+            this.bkHandler.AddTx2hsPool(Tx);
+
+            this.RefreshInterfaceTxCount();
+
+            this.keyHandler.RefKUtxoList(true, this.txHandler.GetUtxoPool(true));
+            this.keyHandler.RefKUtxoList(false, this.txHandler.GetUtxoPool(false));
+            this.RefreshKeyValueBox();
+            this.ResetInterfacePayItem();
+
+            Task.Run(() =>
+            {
+                this.commHandler.SendNewTx2AddressLst(Tx);
+
+            });
+            #endregion
+        }
 
         #endregion
 
@@ -1196,9 +1215,11 @@ namespace Bitcoiner
         private void btnRequestSign_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.WriteMethodLog(true);
-            if (string.IsNullOrEmpty(this.txtIpAddress.Text))
+
+            string strIps = GetIPs();
+            if (string.IsNullOrEmpty(strIps))
             {
-                Info001Show("Please enter IP address, if there are multiple IP addesses , please separate by space.");
+                Info001Show("Please check IP first");
                 return;
             }
             if(this.mPrimitiveTx == null)
@@ -1208,7 +1229,7 @@ namespace Bitcoiner
             }
 
             List<string> lstIP = new List<string>();
-            string strRet = this.IsValidIpAddresses(this.txtIpAddress.Text, ref lstIP);
+            string strRet = this.IsValidIpAddresses(strIps, ref lstIP);
             if (strRet != ConstHelper.BC_OK)
             {
                 Info001Show(strRet);
@@ -1396,28 +1417,28 @@ namespace Bitcoiner
         /// <returns></returns>
         private string IsValidIpAddresses(string strIP, ref List<string> lstIP)
         {
-            lstIP = strIP.Split(' ').ToList<string>();
-            foreach (var item in lstIP)
-            {
-                var seperateIPNum = (from x in item.Split('.')
-                                     where x != ""
-                                     select x).ToList();
+            lstIP = strIP.Split('|').ToList<string>();
+            //foreach (var item in lstIP)
+            //{
+            //    var seperateIPNum = (from x in item.Split('.')
+            //                         where x != ""
+            //                         select x).ToList();
 
-                if (seperateIPNum.Count != 4)
-                {
-                    return (string.Format("{0} Please enter a valid IP address", item));
+            //    if (seperateIPNum.Count != 4)
+            //    {
+            //        return (string.Format("{0} Please enter a valid IP address", item));
                    
-                }
-                foreach (var item1 in seperateIPNum)
-                {
-                    int a = -1;
-                    bool bsucc = int.TryParse(item1, out a);
-                    if (a < 0 || a > 255 || !bsucc)
-                    {
-                        return (string.Format("{0} Please enter a valid IP address", item));                       
-                    }
-                }
-            }
+            //    }
+            //    foreach (var item1 in seperateIPNum)
+            //    {
+            //        int a = -1;
+            //        bool bsucc = int.TryParse(item1, out a);
+            //        if (a < 0 || a > 255 || !bsucc)
+            //        {
+            //            return (string.Format("{0} Please enter a valid IP address", item));                       
+            //        }
+            //    }
+            //}
 
             return ConstHelper.BC_OK;
         }
@@ -1453,6 +1474,8 @@ namespace Bitcoiner
                 this.btnMultiSign.Visibility = Visibility.Collapsed;
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.cmbIPs.Visibility = Visibility.Collapsed;
+                this.btnRefreshIps.Visibility = Visibility.Collapsed;
                 this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
                 this.btnMultiSignReject.Visibility = Visibility.Collapsed;
                 this.btnCancelPriTx.Visibility = Visibility.Collapsed;
@@ -1473,6 +1496,8 @@ namespace Bitcoiner
                 
                 this.btnMultiSignRequestSign.Visibility = Visibility.Collapsed;
                 this.txtIpAddress.Visibility = Visibility.Collapsed;
+                this.cmbIPs.Visibility = Visibility.Collapsed;
+                this.btnRefreshIps.Visibility = Visibility.Collapsed;
                 this.btnMultiSignCreateRedeem.Visibility = Visibility.Collapsed;
                 //CreatePritx btn 不可点击，可回显value 和PKHash
                 this.txtMultiSignPay2Hash.Text = GetPrimitiveOutHash(this.mPrimitiveTx);
@@ -1497,7 +1522,9 @@ namespace Bitcoiner
         {
             this.Dispatcher.Invoke(() => {
                 this.btnMultiSignRequestSign.Visibility = Visibility.Visible;
-                this.txtIpAddress.Visibility = Visibility.Visible;
+                //this.txtIpAddress.Visibility = Visibility.Visible;
+                this.cmbIPs.Visibility = Visibility.Visible;
+                this.btnRefreshIps.Visibility = Visibility.Visible;
                 this.btnMultiSign.Visibility = Visibility.Visible;
                 this.btnCancelPriTx.Visibility = Visibility.Visible;
                
