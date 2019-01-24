@@ -390,7 +390,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <!--<Setter Property="Background" Value="#FFFCF5"/>-->
             <Setter Property="Background" Value="#40000000"/>
@@ -462,7 +462,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style TargetType="{x:Type ListViewItem}">
             <Style.Setters>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -498,10 +498,10 @@
                         <Grid SnapsToDevicePixels="true" Height="30" MinWidth="100">
                             <Path Margin="0 0 0 -12" x:Name="PATH" Visibility="Collapsed" Data="M0.5,0.5 L109.5,0.5 109.5,39.5 64,40 57,51 49,40 0.5,39.5 z" Fill="White"  Height="40"  Stretch="Fill" Stroke="Transparent"  Width="100"/>
                             <Border x:Name="Bd" BorderThickness="1">
-                            <ContentPresenter Margin="5 0 5 0" x:Name="Content" ContentSource="Header" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-                        </Border>
+                                <ContentPresenter Margin="5 0 5 0" x:Name="Content" ContentSource="Header" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                            </Border>
                         </Grid>
-                        
+
                         <ControlTemplate.Triggers>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -524,6 +524,36 @@
                                 <Setter Property= "BorderBrush" Value="White" TargetName="Bd"/>
                                 <Setter Property="Visibility" Value="visible" TargetName="PATH"/>
                             </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="False" />
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource CheckBoxFocusVisual}" />
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="IsChecked" Value="False"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Height="{TemplateBinding Height}" Width="{TemplateBinding Height}">
+                            <Rectangle x:Name="CheckBoxRectangle" Width="15" Height="15" Fill="Transparent" Opacity="0.3" RadiusY="0" RadiusX="0"/>
+                            <Rectangle x:Name="CheckBoxRectangleOut" Width="15" Height="15"  Stroke="#fab915" StrokeThickness="1" RadiusY="0" RadiusX="0"/>
+                            <Grid x:Name="CheckedMark" Width="20" Height="20" Visibility="Collapsed">
+                                <Path SnapsToDevicePixels="False" StrokeThickness="2" Data="M 1,9 L8,17" Stroke="White"/>
+                                <Path SnapsToDevicePixels="False" StrokeThickness="2" Data="M 8,17 L20,4" Stroke="White"/>
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckedMark" Property="Visibility" Value="Visible"></Setter>
+                                <Setter TargetName="CheckBoxRectangle" Property="Fill" Value="Transparent"></Setter>
+                                <Setter TargetName="CheckBoxRectangleOut" Property="Stroke" Value="#fab915"></Setter>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -813,7 +843,14 @@
                                 <TextBlock Foreground="White" Grid.Column="3" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox x:Name="txtAmount" Grid.Column="4" Grid.Row="0" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
                                 <TextBlock Foreground="White" Grid.Column="3" Grid.Row="1" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
-                                <TextBox x:Name="txtAcount" Grid.Column="4" Grid.Row="1" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
+                                <Grid  Grid.Column="4" Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtAcount" Style="{StaticResource TextBoxStyle}" Height="40" Margin="5,0"/>
+                                    <CheckBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Grid>
                             </Grid>
                         </Border>
 
@@ -901,11 +938,13 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition  Width="Auto"/>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition  Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Foreground="White" Text="Amount:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox Grid.Column="1" MinWidth="50" Style="{StaticResource TextBoxStyle}" x:Name="txtMultiSignAmount" Height="40" Margin="5,0,2.5,0" />
                                 <TextBlock Foreground="White" Grid.Column="2" Text="PKhash:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="12" />
                                 <TextBox Grid.Column="3" x:Name="txtMultiSignPay2Hash" Style="{StaticResource TextBoxStyle}"  Height="40" Margin="2.5,0,5,0" />
+                                <CheckBox Grid.Column="4"/>
                             </Grid>
                             <Button Margin="5" Grid.Row="1" x:Name="btnMultiSignRequestSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="RequestSign" FontSize="16" Background="black" Click="btnRequestSign_Click"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" x:Name="txtIpAddress" Height="40" Margin="5,0"  Grid.Row="1" Grid.Column="1"/>
@@ -926,7 +965,7 @@
 
 
                             </Grid>
-                            
+
                             <Button Margin="5"  Grid.Row="2"  x:Name="btnMultiSign" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Sign" FontSize="16" Background="black" Click="btnSign_Click"/>
                             <Grid Grid.Row="2" Grid.Column="1">
                                 <Grid.ColumnDefinitions>
@@ -938,7 +977,7 @@
                                 <Button Margin="5" Grid.Column="1" x:Name="btnMultiSignReject" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="Reject" FontSize="16" Background="black" Click="btnMultiSignReject_Click" />
                                 <Button Margin="5" Grid.Column="2" x:Name="btnCancelPriTx" Style="{StaticResource BtnInfoStyle}" HorizontalAlignment="Left"  Width="120" Height="40"  Content="CancelPriTx" FontSize="16" Background="black" Click="btnCancelpriTx_Click" />
                             </Grid>
-                       
+
                             <Grid Grid.Row="3" Grid.ColumnSpan="2" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

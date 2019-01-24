@@ -66,10 +66,10 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid Height="{TemplateBinding Height}" Width="{TemplateBinding Height}">
-                                <Rectangle x:Name="CheckBoxRectangle" Width="15" Height="15" Fill="LightSkyBlue" Opacity="0.3" RadiusY="0" RadiusX="0"/>
-                                <Rectangle x:Name="CheckBoxRectangleOut" Width="15" Height="15"  Stroke="#FF06DAD1" StrokeThickness="1" RadiusY="0" RadiusX="0"/>
+                                <Rectangle x:Name="CheckBoxRectangle" Width="15" Height="15" Fill="Transparent" Opacity="0.3" RadiusY="0" RadiusX="0"/>
+                                <Rectangle x:Name="CheckBoxRectangleOut" Width="15" Height="15"  Stroke="#fab915" StrokeThickness="1" RadiusY="0" RadiusX="0"/>
                                 <Grid x:Name="CheckedMark" Width="20" Height="20" Visibility="Collapsed">
-                                    <Path SnapsToDevicePixels="False" StrokeThickness="2" Data="M1,9 L10,17" Stroke="White"/>
+                                    <Path SnapsToDevicePixels="False" StrokeThickness="2" Data="M1,9 L8,17" Stroke="White"/>
                                     <Path SnapsToDevicePixels="False" StrokeThickness="2" Data="M8,17 L20,4" Stroke="White"/>
                                 </Grid>
                             </Grid>
@@ -78,9 +78,9 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="CheckedMark" Property="Visibility" Value="Visible"></Setter>
-                                <Setter TargetName="CheckBoxRectangle" Property="Fill" Value="#FF00A8E0"></Setter>
-                                <Setter TargetName="CheckBoxRectangle" Property="Opacity" Value="1"></Setter>
-                                <Setter TargetName="CheckBoxRectangleOut" Property="Stroke" Value="Transparent"></Setter>
+                                <Setter TargetName="CheckBoxRectangle" Property="Fill" Value="Transparent"></Setter>
+                                <!--<Setter TargetName="CheckBoxRectangle" Property="Opacity" Value="1"></Setter>-->
+                                <Setter TargetName="CheckBoxRectangleOut" Property="Stroke" Value="#fab915"></Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
