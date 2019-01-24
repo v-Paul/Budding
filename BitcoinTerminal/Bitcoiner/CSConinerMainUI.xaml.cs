@@ -956,6 +956,8 @@ namespace Bitcoiner
 
         private void UpdateIPs()
         {
+            this.cmbIPs.SelectedItems?.Clear();
+            this.cmbIPs.Text = string.Empty;
             List<string> ipLst = commHandler?.GetIPList();
             Dictionary<string, object> dic = new Dictionary<string, object>();
             /*dic.Add("192.168.88.257", null);
