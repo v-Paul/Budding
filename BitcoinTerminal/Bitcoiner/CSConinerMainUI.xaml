@@ -983,7 +983,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Tx json" FontSize="12" Margin="2,0" Padding="0" Background="Transparent" Foreground="White"/>
+                                <TextBlock HorizontalAlignment="Left" Style="{StaticResource textblockStyle}" Text="Primitive Transaction Status" FontSize="12" Margin="2,0" Padding="0" Background="Transparent" Foreground="White"/>
                                 <TextBox Grid.Row="1" Style="{StaticResource TextBoxStyle}" VerticalContentAlignment="Top"  x:Name="txtTxjson" Margin="5,0" TextWrapping="Wrap"  AcceptsReturn="True"
   VerticalScrollBarVisibility="Visible" />
                             </Grid>
