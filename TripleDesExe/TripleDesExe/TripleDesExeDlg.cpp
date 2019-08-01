@@ -86,6 +86,7 @@ BEGIN_MESSAGE_MAP(CTripleDesExeDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CTripleDesExeDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDOK, &CTripleDesExeDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &CTripleDesExeDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_BUTTON4, &CTripleDesExeDlg::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -248,15 +249,18 @@ void CTripleDesExeDlg::OnBnClickedButton2()
 void CTripleDesExeDlg::OnBnClickedButton3()
 {
 	//int ret = -1;
-	//string strTest = "123456";
+	string strTest = "123456";
 	//string strHash = sha256((char*)strTest.c_str(), strTest.length());
-	//string strEndata = "";
-	//
-	//string strPubKey = "C:\\VTM\\BitcoinTerminal\\pubkey.pem";
-	//string strPriKey = "C:\\VTM\\BitcoinTerminal\\prikey.pem";
-	//strEndata = rsa_pub_encrypt(strTest.c_str(), strTest.length(), strPubKey.c_str(), true);
+	string strEndata = "";
+	string strPubKey = "C:\\Users\\phony\\Desktop\\temp\\pubkey.pem";
+	string strPriKey = "C:\\Users\\phony\\Desktop\\temp\\prikey.pkcs8";
+	strEndata = rsa_pub_encrypt(strTest.c_str(), strTest.length(), strPubKey.c_str(), true);
 
-	//string strOrigina = rsa_pri_decrypt(strEndata.c_str(), strEndata.length(), strPriKey.c_str(), true);
+	string strOrigina = rsa_pri_decrypt(strEndata.c_str(), strEndata.length(), strPriKey.c_str(), true);
+	
+	strOrigina = "";
+	strEndata = rsa_pri_sign(strTest.c_str(), strTest.length(), strPriKey.c_str(), true);
+	strOrigina = rsa_pub_DecryptSignature(strEndata.c_str(), strEndata.length(), strPubKey.c_str(), true);
 	//
 	//string strSignature = rsa_pri_sign(strTest.c_str(), strTest.length(), strPriKey.c_str(), true);
 	//string stroldData = rsa_pub_DecryptSignature(strSignature.c_str(), strSignature.length(), strPubKey.c_str(), true);
@@ -289,12 +293,12 @@ void CTripleDesExeDlg::OnBnClickedButton3()
 
 	//string sRet = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\test");
 
-	string sRet1 = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\leveldb222");
-	//string sputRet = PutKeyValue("testKey", "testValue");
-	string lastKey = GetlastKey();
-	string preKey = "10566987FAD49F8B64F7B4AB05D2A62919B7D8380D43935F9D9B5385B09CD4AC";
-	string lastValue = GetValue(preKey.c_str());
-	string strRet = PutKeyValue("LastKey", lastValue.c_str());
+	//string sRet1 = OpenDB("C:\\Users\\phony\\Documents\\XXPClient\\leveldb222");
+	////string sputRet = PutKeyValue("testKey", "testValue");
+	//string lastKey = GetlastKey();
+	//string preKey = "10566987FAD49F8B64F7B4AB05D2A62919B7D8380D43935F9D9B5385B09CD4AC";
+	//string lastValue = GetValue(preKey.c_str());
+	//string strRet = PutKeyValue("LastKey", lastValue.c_str());
 
 
 	//sRet = PutKeyValue("key0", "value0");
@@ -349,9 +353,6 @@ void CTripleDesExeDlg::OnBnClickedButton3()
 }
 
 
-
-
-
 void CTripleDesExeDlg::OnBnClickedOk()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -365,3 +366,20 @@ void CTripleDesExeDlg::OnBnClickedCancel()
 	CDialogEx::OnCancel();
 }
 
+
+//PKCS8
+void CTripleDesExeDlg::OnBnClickedButton4()
+{
+	// TODO:  在此添加控件通知处理程序代码
+
+	string strEndata = "";
+
+	string strPubKey = "C:\\Users\\phony\\Desktop\\temp\\pubkey.pem";
+	string strPriKey = "C:\\Users\\phony\\Desktop\\temp\\prikey.pkcs8";
+	
+	generateRSAPkcs8Key2File(strPubKey.c_str(), strPriKey.c_str());
+
+
+
+
+}

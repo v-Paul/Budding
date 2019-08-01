@@ -52,6 +52,7 @@ extern "C" DLL_API  char* rsa_pub_DecryptSignature(const char* pcText, int iTxtl
 extern "C" DLL_API void generate_Key();
 
 extern "C" DLL_API void generateRSAKey2File(const char* pcPubKeyPath = PUB_KEY_FILE, const char* pcPriKeyPath = PRI_KEY_FILE);
+extern "C" DLL_API void generateRSAPkcs8Key2File(const char* pcPubKeyPath = PUB_KEY_FILE, const char* pcPriKeyPath = PRI_KEY_FILE);
 extern "C" DLL_API int generaCSR_1();
 //extern "C" DLL_API int CSR2X509(X509_REQ **req);
 extern "C" DLL_API void x509FromCertString(string cert);

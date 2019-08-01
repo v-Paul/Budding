@@ -17,6 +17,7 @@
 #include "openssl/pkcs12.h"
 #include "openssl/pkcs7.h"
 #include "openssl/pkcs12.h"
+#include "openssl/evp.h"
 
 using namespace std;
 
@@ -588,29 +589,6 @@ std::string DecodeURL(const std::string &URL)
 	return result;
 }
 
-//--生成GUID    
-//const char* newGUID()
-//{
-//	static char buf[64] = { 0 };
-//	GUID guid;
-//	if (S_OK == ::CoCreateGuid(&guid))
-//	{
-//		_snprintf(buf, sizeof(buf)
-//			, "%08X%04X%04X%02X%02X%02X%02X%02X%02X%02X%02X"
-//			, guid.Data1
-//			, guid.Data2
-//			, guid.Data3
-//			, guid.Data4[0], guid.Data4[1]
-//			, guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5]
-//			, guid.Data4[6], guid.Data4[7]
-//			);
-//	}
-//	return (const char*)buf;
-//}
-
-
-
-
 
 //将二进制流转换成base64编码  
 const char * base64char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -688,196 +666,6 @@ char* sha256(char* pcOrigana, int iLength )
 	char* pEnd = ConstChar2Char(strhash.c_str());
 	return pEnd;
 }
-
-
-
-
-
-// 函数方法生成密钥对   
-void generateRSAKey(std::string strKey[2])
-{
-	// 公私密钥对    
-	size_t pri_len;
-	size_t pub_len;
-	char *pri_key = NULL;
-	char *pub_key = NULL;
-
-	// 生成密钥对    
-	RSA *keypair = RSA_generate_key(KEY_LENGTH, RSA_3, NULL, NULL);
-
-	BIO *pri = BIO_new(BIO_s_mem());
-	BIO *pub = BIO_new(BIO_s_mem());
-
-	PEM_write_bio_RSAPrivateKey(pri, keypair, NULL, NULL, 0, NULL, NULL);
-	PEM_write_bio_RSAPublicKey(pub, keypair);
-
-	// 获取长度    
-	pri_len = BIO_pending(pri);
-	pub_len = BIO_pending(pub);
-
-	// 密钥对读取到字符串    
-	pri_key = (char *)malloc(pri_len + 1);
-	pub_key = (char *)malloc(pub_len + 1);
-
-	BIO_read(pri, pri_key, pri_len);
-	BIO_read(pub, pub_key, pub_len);
-
-	pri_key[pri_len] = '\0';
-	pub_key[pub_len] = '\0';
-
-	// 存储密钥对    
-	strKey[0] = pub_key;
-	strKey[1] = pri_key;
-
-	// 存储到磁盘（这种方式存储的是begin rsa public key/ begin rsa private key开头的）  
-	FILE *pubFile = fopen(PUB_KEY_FILE, "w");
-	if (pubFile == NULL)
-	{
-	
-		return;
-	}
-	fputs(pub_key, pubFile);
-	fclose(pubFile);
-
-	FILE *priFile = fopen(PRI_KEY_FILE, "w");
-	if (priFile == NULL)
-	{
-		
-		return;
-	}
-	fputs(pri_key, priFile);
-	fclose(priFile);
-
-	// 内存释放  
-	RSA_free(keypair);
-	BIO_free_all(pub);
-	BIO_free_all(pri);
-
-	free(pri_key);
-	free(pub_key);
-}
-
-void generateRSAKey2File(const char* pcPubKeyPath , const char* pcPriKeyPath)
-{
-	// 公私密钥对    
-	size_t pri_len;
-	size_t pub_len;
-	char *pri_key = NULL;
-	char *pub_key = NULL;
-
-	// 生成密钥对    
-	RSA *keypair = RSA_generate_key(KEY_LENGTH, RSA_3, NULL, NULL);
-
-	BIO *pri = BIO_new(BIO_s_mem());
-	BIO *pub = BIO_new(BIO_s_mem());
-
-	PEM_write_bio_RSAPrivateKey(pri, keypair, NULL, NULL, 0, NULL, NULL);
-	PEM_write_bio_RSAPublicKey(pub, keypair);
-
-	// 获取长度    
-	pri_len = BIO_pending(pri);
-	pub_len = BIO_pending(pub);
-
-	// 密钥对读取到字符串    
-	pri_key = (char *)malloc(pri_len + 1);
-	pub_key = (char *)malloc(pub_len + 1);
-
-	BIO_read(pri, pri_key, pri_len);
-	BIO_read(pub, pub_key, pub_len);
-
-	pri_key[pri_len] = '\0';
-	pub_key[pub_len] = '\0';
-
-	// 存储到磁盘（这种方式存储的是begin rsa public key/ begin rsa private key开头的）  
-	FILE *pubFile = fopen(pcPubKeyPath, "w");
-	if (pubFile == NULL)
-	{
-		return;
-	}
-	fputs(pub_key, pubFile);
-	fclose(pubFile);
-
-	FILE *priFile = fopen(pcPriKeyPath, "w");
-	if (priFile == NULL)
-	{
-
-		return;
-	}
-	fputs(pri_key, priFile);
-	fclose(priFile);
-
-	// 内存释放  
-	RSA_free(keypair);
-	BIO_free_all(pub);
-	BIO_free_all(pri);
-
-	free(pri_key);
-	free(pub_key);
-}
-
-// 生成公钥文件和私钥文件，私钥文件带密码
-int generate_key_files(const char *pub_keyfile, const char *pri_keyfile,
-	const unsigned char *passwd, int passwd_len)
-{
-	RSA *rsa = NULL;
-	//RAND_seed(rnd_seed, sizeof(rnd_seed));
-	rsa = RSA_generate_key(KEY_LENGTH, RSA_F4, NULL, NULL);
-	if (rsa == NULL)
-	{
-		printf("RSA_generate_key error!\n");
-		return -1;
-	}
-
-	// 开始生成公钥文件
-	BIO *bp = BIO_new(BIO_s_file());
-	if (NULL == bp)
-	{
-		printf("generate_key bio file new error!\n");
-		return -1;
-	}
-
-	if (BIO_write_filename(bp, (void *)pub_keyfile) <= 0)
-	{
-		printf("BIO_write_filename error!\n");
-		return -1;
-	}
-
-	if (PEM_write_bio_RSAPublicKey(bp, rsa) != 1)
-	{
-		printf("PEM_write_bio_RSAPublicKey error!\n");
-		return -1;
-	}
-
-	// 公钥文件生成成功，释放资源
-	printf("Create public key ok!\n");
-	BIO_free_all(bp);
-
-	// 生成私钥文件
-	bp = BIO_new_file(pri_keyfile, "w+");
-	if (NULL == bp)
-	{
-		printf("generate_key bio file new error2!\n");
-		return -1;
-	}
-
-	if (PEM_write_bio_RSAPrivateKey(bp, rsa,
-		EVP_des_ede3_ofb(), (unsigned char *)passwd,
-		passwd_len, NULL, NULL) != 1)
-	{
-		printf("PEM_write_bio_RSAPublicKey error!\n");
-		return -1;
-	}
-
-	// 释放资源
-	printf("Create private key ok!\n");
-	BIO_free_all(bp);
-	RSA_free(rsa);
-
-	return 0;
-}
-
-
-
 
 // 打开公钥文件，返回EVP_PKEY结构的指针
 EVP_PKEY* open_public_key(const char *keyfile)
@@ -958,6 +746,285 @@ EVP_PKEY* open_private_key(const char *keyfile, const unsigned char *passwd)
 }
 
 
+
+// 函数方法生成密钥对   
+void generateRSAKey(std::string strKey[2])
+{
+	// 公私密钥对    
+	size_t pri_len;
+	size_t pub_len;
+	char *pri_key = NULL;
+	char *pub_key = NULL;
+
+	// 生成密钥对    
+	RSA *keypair = RSA_generate_key(KEY_LENGTH, RSA_3, NULL, NULL);
+
+	BIO *pri = BIO_new(BIO_s_mem());
+	BIO *pub = BIO_new(BIO_s_mem());
+
+	PEM_write_bio_RSAPrivateKey(pri, keypair, NULL, NULL, 0, NULL, NULL);
+	PEM_write_bio_RSAPublicKey(pub, keypair);
+
+	// 获取长度    
+	pri_len = BIO_pending(pri);
+	pub_len = BIO_pending(pub);
+
+	// 密钥对读取到字符串    
+	pri_key = (char *)malloc(pri_len + 1);
+	pub_key = (char *)malloc(pub_len + 1);
+
+	BIO_read(pri, pri_key, pri_len);
+	BIO_read(pub, pub_key, pub_len);
+
+	pri_key[pri_len] = '\0';
+	pub_key[pub_len] = '\0';
+
+	// 存储密钥对    
+	strKey[0] = pub_key;
+	strKey[1] = pri_key;
+
+	// 存储到磁盘（这种方式存储的是begin rsa public key/ begin rsa private key开头的）  
+	FILE *pubFile = fopen(PUB_KEY_FILE, "w");
+	if (pubFile == NULL)
+	{
+	
+		return;
+	}
+	fputs(pub_key, pubFile);
+	fclose(pubFile);
+
+	FILE *priFile = fopen(PRI_KEY_FILE, "w");
+	if (priFile == NULL)
+	{
+		
+		return;
+	}
+	fputs(pri_key, priFile);
+	fclose(priFile);
+
+	// 内存释放  
+	RSA_free(keypair);
+	BIO_free_all(pub);
+	BIO_free_all(pri);
+
+	free(pri_key);
+	free(pub_key);
+}
+
+EVP_PKEY* priv2pub(EVP_PKEY* key)
+{
+	int keylen;
+	unsigned char *p, *p1;
+	EVP_PKEY *pubkey;
+
+	keylen = i2d_PUBKEY(key, NULL);
+	p1 = p = (unsigned char *)OPENSSL_malloc(keylen);
+	
+	/* convert rsa/dsa/ec to Pubkey */
+	keylen = i2d_PUBKEY(key, &p);
+	
+	p = p1;
+	pubkey = d2i_PUBKEY(NULL, (const unsigned char**)&p, keylen);
+	OPENSSL_free(p1);
+	
+	return pubkey;
+}
+
+void generateRSAKey2File(const char* pcPubKeyPath , const char* pcPriKeyPath)
+{
+	// 公私密钥对    
+	size_t pri_len;
+	size_t pub_len;
+	char *pri_key = NULL;
+	char *pub_key = NULL;
+
+	// 生成密钥对    
+	RSA *keypair = RSA_generate_key(KEY_LENGTH, RSA_3, NULL, NULL);
+
+	BIO *pri = BIO_new(BIO_s_mem());
+	BIO *pub = BIO_new(BIO_s_mem());
+
+	PEM_write_bio_RSAPrivateKey(pri, keypair, NULL, NULL, 0, NULL, NULL);
+
+	
+	PEM_write_bio_RSAPublicKey(pub, keypair);
+
+	// 获取长度    
+	pri_len = BIO_pending(pri);
+	pub_len = BIO_pending(pub);
+
+	// 密钥对读取到字符串    
+	pri_key = (char *)malloc(pri_len + 1);
+	pub_key = (char *)malloc(pub_len + 1);
+
+	BIO_read(pri, pri_key, pri_len);
+	BIO_read(pub, pub_key, pub_len);
+
+	pri_key[pri_len] = '\0';
+	pub_key[pub_len] = '\0';
+
+	// 存储到磁盘（这种方式存储的是begin rsa public key/ begin rsa private key开头的）  
+	FILE *pubFile = fopen(pcPubKeyPath, "w");
+	if (pubFile == NULL)
+	{
+		return;
+	}
+	fputs(pub_key, pubFile);
+	fclose(pubFile);
+
+	FILE *priFile = fopen(pcPriKeyPath, "w");
+	if (priFile == NULL)
+	{
+
+		return;
+	}
+	fputs(pri_key, priFile);
+	fclose(priFile);
+
+	// 内存释放  
+	RSA_free(keypair);
+	BIO_free_all(pub);
+	BIO_free_all(pri);
+
+	free(pri_key);
+	free(pub_key);
+	
+
+
+}
+void generateRSAPkcs8Key2File(const char* pcPubKeyPath, const char* pcPriKeyPath)
+{
+	// 公私密钥对    
+	size_t pri_len;
+	size_t pub_len;
+	char *pri_key = NULL;
+	char *pub_key = NULL;
+
+	// 生成密钥对    
+	RSA *keypair = RSA_generate_key(KEY_LENGTH, RSA_3, NULL, NULL);
+
+	EVP_PKEY* evpKey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(evpKey, keypair);
+
+	BIO *pri = BIO_new(BIO_s_mem());
+	BIO *pub = BIO_new(BIO_s_mem());
+
+	PEM_write_bio_PKCS8PrivateKey(pri, evpKey,NULL,NULL,0,NULL,NULL);
+	PEM_write_bio_PUBKEY(pub, evpKey);
+	// 获取长度    
+	pri_len = BIO_pending(pri);
+	pub_len = BIO_pending(pub);
+
+	// 密钥对读取到字符串    
+	pri_key = (char *)malloc(pri_len + 1);
+	pub_key = (char *)malloc(pub_len + 1);
+
+	BIO_read(pri, pri_key, pri_len);
+	BIO_read(pub, pub_key, pub_len);
+
+	pri_key[pri_len] = '\0';
+	pub_key[pub_len] = '\0';
+
+	// 存储到磁盘（这种方式存储的是begin rsa public key/ begin rsa private key开头的）  
+	FILE *pubFile = fopen(pcPubKeyPath, "w");
+	if (pubFile == NULL)
+	{
+		return;
+	}
+	fputs(pub_key, pubFile);
+	fclose(pubFile);
+
+	FILE *priFile = fopen(pcPriKeyPath, "w");
+	if (priFile == NULL)
+	{
+
+		return;
+	}
+	fputs(pri_key, priFile);
+	fclose(priFile);
+
+	// 内存释放  
+	RSA_free(keypair);
+	BIO_free_all(pub);
+	BIO_free_all(pri);
+
+	free(pri_key);
+	free(pub_key);
+
+	
+
+}
+// 生成公钥文件和私钥文件，私钥文件带密码
+int generate_key_files(const char *pub_keyfile, const char *pri_keyfile,
+	const unsigned char *passwd, int passwd_len)
+{
+	RSA *rsa = NULL;
+	//RAND_seed(rnd_seed, sizeof(rnd_seed));
+	rsa = RSA_generate_key(KEY_LENGTH, RSA_F4, NULL, NULL);
+	if (rsa == NULL)
+	{
+		printf("RSA_generate_key error!\n");
+		return -1;
+	}
+
+	// 开始生成公钥文件
+	BIO *bp = BIO_new(BIO_s_file());
+	if (NULL == bp)
+	{
+		printf("generate_key bio file new error!\n");
+		return -1;
+	}
+
+	if (BIO_write_filename(bp, (void *)pub_keyfile) <= 0)
+	{
+		printf("BIO_write_filename error!\n");
+		return -1;
+	}
+
+	if (PEM_write_bio_RSAPublicKey(bp, rsa) != 1)
+	{
+		printf("PEM_write_bio_RSAPublicKey error!\n");
+		return -1;
+	}
+
+	// 公钥文件生成成功，释放资源
+	printf("Create public key ok!\n");
+	BIO_free_all(bp);
+
+	// 生成私钥文件
+	bp = BIO_new_file(pri_keyfile, "w+");
+	if (NULL == bp)
+	{
+		printf("generate_key bio file new error2!\n");
+		return -1;
+	}
+
+	if (PEM_write_bio_RSAPrivateKey(bp, rsa,
+		EVP_des_ede3_ofb(), (unsigned char *)passwd,
+		passwd_len, NULL, NULL) != 1)
+	{
+		printf("PEM_write_bio_RSAPublicKey error!\n");
+		return -1;
+	}
+
+	// 释放资源
+	printf("Create private key ok!\n");
+	BIO_free_all(bp);
+	RSA_free(rsa);
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
 // 公钥加密
 char* rsa_pub_encrypt(const char* clearText, int iTxtlen, const char* pubKey, bool bIsKeybyPath)
 {
@@ -974,6 +1041,20 @@ char* rsa_pub_encrypt(const char* clearText, int iTxtlen, const char* pubKey, bo
 	}
 	
 	rsa = PEM_read_bio_RSAPublicKey(keybio, &rsa, NULL, NULL);
+	// add by fdp 20190703
+	if (rsa == NULL && bIsKeybyPath)
+	{
+
+		EVP_PKEY* evpKey = EVP_PKEY_new();
+		FILE *pubFile = fopen(pubKey, "r");
+		if (pubFile == NULL)
+		{
+			//return;
+		}
+		evpKey = PEM_read_PUBKEY(pubFile, &evpKey,NULL,NULL);
+		
+		rsa = EVP_PKEY_get1_RSA(evpKey);
+	}
 
 	int len = RSA_size(rsa);
 
@@ -1085,7 +1166,20 @@ char* rsa_pub_DecryptSignature(const char* pcText, int iTxtlen, const char* pubK
 	}
 	
 	rsa = PEM_read_bio_RSAPublicKey(keybio, &rsa, NULL, NULL);
+	// add by fdp 20190703
+	if (rsa == NULL && bIsKeybyPath)
+	{
 
+		EVP_PKEY* evpKey = EVP_PKEY_new();
+		FILE *pubFile = fopen(pubKey, "r");
+		if (pubFile == NULL)
+		{
+			//return;
+		}
+		evpKey = PEM_read_PUBKEY(pubFile, &evpKey, NULL, NULL);
+
+		rsa = EVP_PKEY_get1_RSA(evpKey);
+	}
 	int len = RSA_size(rsa);
 	char *encryptText = (char*)malloc(len + 1);
 	memset(encryptText, 0, len + 1);
@@ -1159,287 +1253,6 @@ std::string rsa_pub_checkSignature_byKeyPath(const std::string &strText, const s
 	RSA_free(rsa);
 	return strRet;
 }
-/* generaCSR
-void generaCSR()
-{
-	X509 *x509 = NULL;
-	X509_NAME *subject = NULL;
-	BIO *bio = NULL;
-	X509_REQ *x509Req = NULL;
-	char *szCSR = NULL;
-	// 提取私钥
-	EVP_PKEY_assign_RSA(m_pKey, m_rsa);
-
-	x509 = X509_new();
-	X509_set_pubkey(x509, m_pKey);
-
-	// 设置属性
-	subject = X509_get_subject_name(x509);
-	// 国家
-	X509_NAME_add_entry_by_txt(subject, SN_countryName, MBSTRING_UTF8,
-		(unsigned char *)"CN", -1, -1, 0);
-	// 省份
-	X509_NAME_add_entry_by_txt(subject, SN_stateOrProvinceName, MBSTRING_UTF8,
-		(unsigned char *)"GuangDong", -1, -1, 0);
-	// 城市
-	X509_NAME_add_entry_by_txt(subject, SN_localityName, MBSTRING_UTF8,
-		(unsigned char *)"ShenZhen", -1, -1, 0);
-
-	X509_set_subject_name(x509, subject);
-
-
-
-	//X509 *ptemp = NULL;
-	//X509 *m_pClientCert;
-	//m_pClientCert = X509_new();
-	////设置版本号
-	//X509_set_version(ptemp, 2);
-	////设置证书序列号，这个sn就是CA中心颁发的第N份证书
-	//ASN1_INTEGER_set(X509_get_serialNumber(ptemp),1);
-	////设置证书开始时间
-	//X509_gmtime_adj(X509_get_notBefore(ptemp), 0);
-	////设置证书结束时间
-	//X509_gmtime_adj(X509_get_notAfter(ptemp), (long)60 * 60 * 24 * 10);
-	////设置证书的主体名称，req就是刚刚生成的请求证书
-	//X509_set_subject_name(ptemp, X509_REQ_get_subject_name(x509Req));
-	////设置证书的公钥信息
-	//X509_set_pubkey(ptemp, X509_PUBKEY_get(x509Req->req_info->pubkey));
-	//设置证书的签发者信息，m_pCACert是CA证书
-	//X509_set_issuer_name(ptemp, X509_get_subject_name(m_pCACert));
-	//设置扩展项目
-	//X509V3_CTX ctx;
-	//X509V3_set_ctx(&ctx, m_pCACert, m_pClientCert, NULL, NULL, 0);
-	//X509_EXTENSION *x509_ext = X509_EXTENSION_new();
-	//x509_ext = X509V3_EXT_conf(NULL, name，value);
-	//X509_add_ext(m_pClientCert, x509_ext, -1);
-	////设置签名值
-	//X509_sign(m_pClientCert, m_pCAKey, EVP_md5());
-	////这样一份X509证书就生成了，下面的任务就是对它进行编码保存。
-	//i2d_X509_bio(pbio, m_pClientCert);// DER格式
-	//	PEM_write_bio_X509(pbio, m_pClientCert);// PEM格式
-
-
-
-	x509Req = X509_to_X509_REQ(x509, m_pKey, EVP_md5());
-	if (!x509Req)
-	{
-		goto free_all;
-	}
-
-	// 可视化输出
-	bio = BIO_new(BIO_s_mem());
-	PEM_write_bio_X509_REQ(bio, x509Req);
-	if (bio->num_write == 0)
-	{
-		goto free_all;
-	}
-
-	szCSR = (char*)malloc(bio->num_write + 1);
-	if (!szCSR)
-	{
-		goto free_all;
-	}
-
-	memset(szCSR, 0, bio->num_write + 1);
-	BIO_read(bio, szCSR, bio->num_write);
-
-
-free_all:
-	if (x509)
-		X509_free(x509);
-	if (x509Req)
-		X509_REQ_free(x509Req);
-	if (bio)
-		BIO_free(bio);
-	if (szCSR)
-		free(szCSR);
-
-
-}
-*/
-
-//int generaCSR_1()
-//{
-//	X509_REQ *req;
-//	int ret;
-//	long version;
-//
-//	X509_NAME *name;
-//	EVP_PKEY *pkey;
-//	RSA *rsa;
-//	X509_NAME_ENTRY   *entry = NULL;
-//	char bytes[100], mdout[20];
-//	unsigned int len, mdlen;
-//	int bits = 1024;
-//	//unsigned long  e = RSA_3;
-//	unsigned long  e = RSA_F4;
-//	unsigned char*der, *p;
-//	FILE *fp;
-//	const EVP_MD *md;
-//	X509  *x509;
-//	BIO *b;
-//	STACK_OF(X509_EXTENSION) *exts;
-//	req = X509_REQ_new();
-//
-//	version = 1;
-//	ret = X509_REQ_set_version(req, version);
-//	name = X509_NAME_new();
-//	strcpy(bytes, "openssl");
-//	len = strlen(bytes);
-//	entry = X509_NAME_ENTRY_create_by_txt(&entry, "commonName", V_ASN1_UTF8STRING, (unsigned char *)bytes, len);
-//	X509_NAME_add_entry(name, entry, 0, -1);
-//	strcpy(bytes, "bj");
-//	len = strlen(bytes);
-//	entry = X509_NAME_ENTRY_create_by_txt(&entry, "countryName", V_ASN1_UTF8STRING, (const unsigned char *)bytes, len);
-//	X509_NAME_add_entry(name, entry, 1, -1);
-//
-//
-//	// 国家
-//	X509_NAME_add_entry_by_txt(name, SN_countryName, MBSTRING_UTF8,
-//		(unsigned char *)"CN", -1, -1, 0);
-//	// 省份
-//	X509_NAME_add_entry_by_txt(name, SN_stateOrProvinceName, MBSTRING_UTF8,
-//		(unsigned char *)"GuangDong", -1, -1, 0);
-//	// 城市
-//	X509_NAME_add_entry_by_txt(name, SN_localityName, MBSTRING_UTF8,
-//		(unsigned char *)"ShenZhen", -1, -1, 0);
-//
-//
-//
-//	/* subject name */
-//
-//	ret = X509_REQ_set_subject_name(req, name);
-//
-//	/* pub key */
-//
-//	pkey = EVP_PKEY_new();
-//
-//	rsa = RSA_generate_key(bits, e, NULL, NULL);
-//
-//	EVP_PKEY_assign_RSA(pkey, rsa);
-//
-//	ret = X509_REQ_set_pubkey(req, pkey);
-//
-//	/* attribute */
-//
-//	strcpy(bytes, "test");
-//
-//	len = strlen(bytes);
-//
-//	ret = X509_REQ_add1_attr_by_txt(req, "organizationName", V_ASN1_UTF8STRING, (const unsigned char*)bytes, len);
-//
-//	strcpy(bytes, "ttt");
-//
-//	len = strlen(bytes);
-//
-//	ret = X509_REQ_add1_attr_by_txt(req, "organizationalUnitName", V_ASN1_UTF8STRING, (const unsigned char*)bytes, len);
-//
-//	md = EVP_sha1();
-//
-//	ret = X509_REQ_digest(req, md, ( unsigned char*)mdout, &mdlen);
-//
-//	ret = X509_REQ_sign(req, pkey, md);
-//
-//	if (!ret)
-//
-//	{
-//
-//		printf("sign err!\n");
-//
-//		X509_REQ_free(req);
-//
-//		return -1;
-//
-//	}
-//
-//	/* 写入文件PEM格式 */
-//
-//	b = BIO_new_file("certreq.txt", "w");
-//
-//	PEM_write_bio_X509_REQ(b, req);
-//
-//	BIO_free(b);
-//
-//	/* DER编码 */
-//
-//	len = i2d_X509_REQ(req, NULL);
-//
-//	der = (unsigned char*)malloc(len);
-//
-//	p = der;
-//
-//	len = i2d_X509_REQ(req, &p);
-//
-//	OpenSSL_add_all_algorithms();
-//
-//	ret = X509_REQ_verify(req, pkey);
-//
-//	if (ret < 0)
-//
-//	{
-//
-//		printf("verify err.\n");
-//
-//	}
-//
-//	fp = fopen("certreq2.txt", "wb");
-//
-//	fwrite(der, 1, len, fp);
-//	
-//	
-//	//test begin
-//	X509 *ptemp = X509_new();
-//	X509 *m_pClientCert;
-//	m_pClientCert = X509_new();
-//
-//	X509_set_version(ptemp, 2);
-//
-//	ASN1_INTEGER_set(X509_get_serialNumber(ptemp), 100);
-//
-//	X509_gmtime_adj(X509_get_notBefore(ptemp), 0);
-//
-//	X509_gmtime_adj(X509_get_notAfter(ptemp), (long)60 * 60 * 24 * 100);
-//
-//	X509_set_subject_name(ptemp, X509_REQ_get_subject_name(req));
-//
-//	X509_set_pubkey(ptemp, X509_PUBKEY_get(req->req_info->pubkey));
-//
-//	X509_set_issuer_name(ptemp, X509_get_subject_name(m_pCACert));
-//
-//	m_pClientCert = ptemp;
-//	X509V3_CTX ctx;
-//	X509V3_set_ctx(&ctx, m_pCACert, m_pClientCert, NULL, NULL, 0);
-//
-//	X509_EXTENSION *x509_ext = X509_EXTENSION_new();
-//	string name_ext = "fan";
-//	string value_ext = "test";
-//
-//	x509_ext = X509V3_EXT_conf(NULL, &ctx, (char*)name_ext.c_str(),(char*)value_ext.c_str());
-//	X509_add_ext(m_pClientCert, x509_ext, -1);
-//	X509_sign(m_pClientCert, pkey, EVP_md5());
-//	//BIO *pbio = new BIO();
-//	BIO *pbio = BIO_new_file("certreq3.txt", "w");
-//	
-//	//i2d_X509_bio(pbio, m_pClientCert);
-//	
-//	PEM_write_bio_X509(pbio, m_pClientCert);
-//
-//	//b = BIO_new_file("certreq.txt", "w");
-//
-//	//PEM_write_bio_X509_REQ(b, req);
-//
-//	BIO_free(pbio);
-//
-//	//end
-//	fclose(fp);
-//
-//	free(der);
-//
-//	X509_REQ_free(req);
-//
-//	return 0;
-//
-//}
 
 int CSR2X509(X509_REQ **req)
 {
@@ -1531,50 +1344,6 @@ bool checkX509Data(X509 *x509, EVP_PKEY *pKey)
 	return true;
 }
 
-
-/*
-void importCert(string cert, string path)
-{
-	if (cert.length() == 0 || path.length() == 0)
-		return;
-
-	int ret = 0;
-	X509 *x509 = NULL;
-	BIO *bioW = NULL;
-
-	ret = x509FromCertString(cert, &x509);
-	if (ret)
-	{
-		goto free_all;
-	}
-
-	ret = checkX509Data(x509, false);
-	if (ret)
-	{
-		goto free_all;
-	}
-
-	bioW = BIO_new_file(path.c_str(), "wb");
-	if (!bioW)
-	{
-		goto free_all;
-	}
-
-	// 写入文件
-	if (i2d_X509_bio(bioW, x509) != 1)
-	{
-		goto free_all;
-	}
-
-
-free_all:
-	if (x509)
-		X509_free(x509);
-	if (bioW)
-		BIO_free(bioW);
-
-}
-*/
 
 // 生成CSR文件
 int generaCSRFile(string strCSRFile, int iRSALen, int iVersion, unsigned long ulMod, string strcommonName,
@@ -1952,7 +1721,6 @@ void generaCERFile_1(long lVersion, long lValidDays, int iSN, string strinCSRFil
 	X509_REQ_free(req);
 
 }
-
 
 void generaP12(string strCerFile, string strPrivateKey, string strOutp12)
 {
